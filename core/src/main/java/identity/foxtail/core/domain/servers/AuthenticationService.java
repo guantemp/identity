@@ -25,7 +25,7 @@ import identity.foxtail.core.domain.model.id.UserRepository;
  * @since JDK8.0
  * @version 0.0.1 20180106
  */
-public final class AuthenticationService {
+public class AuthenticationService {
     private UserRepository repository;
 
     public AuthenticationService(UserRepository repository) {

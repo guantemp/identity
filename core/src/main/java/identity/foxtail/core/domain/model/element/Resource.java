@@ -65,7 +65,7 @@ public class Resource {
     }
 
     private void setCreator(Creator creator) {
-        this.creator = Objects.requireNonNull(creator, "Creator is required");
+        this.creator = Objects.requireNonNull(creator, "creator is required");
     }
 
     public String id() {

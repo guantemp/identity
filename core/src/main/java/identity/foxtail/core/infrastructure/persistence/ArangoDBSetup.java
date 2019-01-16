@@ -92,7 +92,7 @@ public class ArangoDBSetup {
         list.add(new EdgeDefinition().collection("act").from("group", "user").to("role"));
         list.add(new EdgeDefinition().collection("subordinate").from("group", "resource").to("group", "user", "resource"));
         list.add(new EdgeDefinition().collection("power").from("role").to("resource"));
-        db.createGraph("identity", list);
+        db.createGraph(databaseName, list);
         arangoDB.shutdown();
         logger.info("{} be created", databaseName);
     }
