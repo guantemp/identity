@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<identity>
+    <dataSources loadBalancingStrategy="true">
+        <dataSource>
+            <!-- http://host:port/customer-->
+            <host>127.0.0.1:8592/identity</host>
+            <protocol>VST</protocol>
+            <timeout>3000</timeout>
+            <username>admin</username>
+            <password>Qwe123465</password>
+        </dataSource>
+        <dataSource>
+            <host>https://www.foxtail.cc:8592/13679692301</host>
+            <timeout>5000</timeout>
+            <username>admin</username>
+            <password>Qwe123465</password>
+        </dataSource>
+    </dataSources>
+    <encryption>scrypt</encryption>
+</identity>

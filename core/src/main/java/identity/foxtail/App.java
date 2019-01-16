@@ -1,21 +1,4 @@
-/*
- *  Copyright 2018 www.foxtail.cc All rights Reserved.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- *
- */
-
-package identity.foxtail.core;
+package identity.foxtail;
 
 import identity.foxtail.core.annotation.Encryption;
 import identity.foxtail.core.consumer.EncryptionConsumer;
@@ -44,7 +27,7 @@ public class App {
         System.out.println("Hello World!");
         System.out.println(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         System.out.println(LocalDateTime.parse("2018-01-13T16:37:53.570Z", DateTimeFormatter.ISO_ZONED_DATE_TIME));
-        App app = new App();
+        identity.foxtail.core.App app = new identity.foxtail.core.App();
         System.out.println(app.getEs());
         //System.out.println("".getBytes().length);
         Field field = Group.class.getDeclaredField("members");
