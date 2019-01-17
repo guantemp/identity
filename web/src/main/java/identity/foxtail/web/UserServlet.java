@@ -16,12 +16,12 @@
  */
 package identity.foxtail.web;
 
-import cc.foxtail.util.NumberHelper;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import identity.foxtail.core.application.UserApplicationService;
 import identity.foxtail.core.application.command.RegisterUserCommand;
 import identity.foxtail.core.domain.model.id.UserDescriptor;
+import mi.foxtail.util.NumberHelper;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

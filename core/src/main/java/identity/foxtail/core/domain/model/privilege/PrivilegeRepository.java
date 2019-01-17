@@ -1,5 +1,5 @@
 /*
- *  Copyright (c)2019 www.foxtail.cc All rights Reserved.
+ *  Copyright 2018 www.foxtail.cc All rights Reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,28 +15,32 @@
  *
  */
 
-package identity.foxtail.core.domain.model.job;
+package identity.foxtail.core.domain.model.privilege;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 2019-01-16
+ * @version 0.0.1 2018-12-03
  */
-public abstract class Schedule {
-    protected boolean executable;
-    protected String cron;
+public interface PrivilegeRepository {
+    /**
+     * @param privilege
+     */
+    void save(Privilege privilege);
 
-    public boolean isExecutable() {
-        return executable;
-    }
+    /**
+     * @param id
+     * @return
+     */
+    Privilege find(String id);
 
-    public void unenforceable() {
-        if (executable)
-            executable = false;
-    }
+    /**
+     * @return
+     */
+    String nextIdentity();
 
-    public void execute() {
-        if (!executable)
-            executable = true;
-    }
+    /**
+     * @param id
+     */
+    void remove(String id);
 }

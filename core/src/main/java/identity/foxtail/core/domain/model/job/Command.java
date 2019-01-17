@@ -23,6 +23,7 @@ package identity.foxtail.core.domain.model.job;
  * @version 0.0.1 2018-12-02
  */
 public interface Command {
-    default void excute() {
+    default boolean isAllow() {
+        return true;
     }
 }

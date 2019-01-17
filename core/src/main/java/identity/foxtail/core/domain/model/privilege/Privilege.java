@@ -15,14 +15,13 @@
  *
  */
 
-package identity.foxtail.core.domain.model.power;
+package identity.foxtail.core.domain.model.privilege;
 
 import com.arangodb.entity.DocumentField;
 import com.arangodb.velocypack.annotations.Expose;
 import identity.foxtail.core.domain.model.element.ResourceDescriptor;
 import identity.foxtail.core.domain.model.element.RoleDescriptor;
 import identity.foxtail.core.domain.model.job.Command;
-import identity.foxtail.core.domain.model.job.Schedule;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -32,14 +31,13 @@ import java.util.StringJoiner;
  * @since JDK8.0
  * @version 0.0.1 2018-12-03
  */
-public class Power {
+public class Privilege {
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String name;
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
     private Command command;
-    private Schedule schedule;
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
 
@@ -49,15 +47,13 @@ public class Power {
      * @param roleDescriptor
      * @param command
      * @param resourceDescriptor
-     * @param schedule
      */
-    public Power(String id, String name, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor, Schedule schedule) {
+    public Privilege(String id, String name, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
         setId(id);
         setName(name);
         setRoleDescriptor(roleDescriptor);
         setCommand(command);
         setResourceDescriptor(resourceDescriptor);
-        this.schedule = schedule;
     }
 
     private void setId(String id) {
@@ -105,10 +101,6 @@ public class Power {
         return command;
     }
 
-    public Schedule schedule() {
-        return schedule;
-    }
-
     public RoleDescriptor roleDescriptor() {
         return roleDescriptor;
     }
@@ -118,9 +110,9 @@ public class Power {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Power power = (Power) o;
+        Privilege privilege = (Privilege) o;
 
-        return id != null ? id.equals(power.id) : power.id == null;
+        return id != null ? id.equals(privilege.id) : privilege.id == null;
     }
 
     @Override
@@ -130,12 +122,11 @@ public class Power {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Power.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", Privilege.class.getSimpleName() + "[", "]")
                 .add("id='" + id + "'")
                 .add("name='" + name + "'")
                 .add("resourceDescriptor=" + resourceDescriptor)
                 .add("command=" + command)
-                .add("schedule=" + schedule)
                 .add("roleDescriptor=" + roleDescriptor)
                 .toString();
     }

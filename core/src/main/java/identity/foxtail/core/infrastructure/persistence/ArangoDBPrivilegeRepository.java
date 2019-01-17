@@ -23,9 +23,8 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.VertexUpdateOptions;
 import identity.foxtail.core.domain.model.job.Command;
-import identity.foxtail.core.domain.model.job.Schedule;
-import identity.foxtail.core.domain.model.power.Power;
-import identity.foxtail.core.domain.model.power.PowerRepository;
+import identity.foxtail.core.domain.model.privilege.Privilege;
+import identity.foxtail.core.domain.model.privilege.PrivilegeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,26 +33,26 @@ import org.slf4j.LoggerFactory;
  * @since JDK8.0
  * @version 0.0.1 2018-12-03
  */
-public class ArangoDBPowerRepository implements PowerRepository {
-    private static final Logger logger = LoggerFactory.getLogger(ArangoDBPowerRepository.class);
+public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
+    private static final Logger logger = LoggerFactory.getLogger(ArangoDBPrivilegeRepository.class);
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private ArangoDatabase identity = ArangoDBUtil.getDatabase();
 
     @Override
-    public void save(Power power) {
-        boolean exists = identity.collection("power").documentExists(power.id());
+    public void save(Privilege privilege) {
+        boolean exists = identity.collection("privilege").documentExists(privilege.id());
         if (exists) {
 
         } else {
             ArangoGraph graph = identity.graph("identity");
-            VertexEntity role = graph.vertexCollection("role").getVertex(power.roleDescriptor().id(), VertexEntity.class);
-            VertexEntity resource = graph.vertexCollection("resource").getVertex(power.resourceDescriptor().id(), VertexEntity.class);
-            graph.edgeCollection("power").insertEdge(new PowerEdge(role.getId(), resource.getId(), power));
+            VertexEntity role = graph.vertexCollection("role").getVertex(privilege.roleDescriptor().id(), VertexEntity.class);
+            VertexEntity resource = graph.vertexCollection("resource").getVertex(privilege.resourceDescriptor().id(), VertexEntity.class);
+            graph.edgeCollection("privilege").insertEdge(new PowerEdge(role.getId(), resource.getId(), privilege));
         }
     }
 
     @Override
-    public Power find(String id) {
+    public Privilege find(String id) {
         return null;
     }
 
@@ -72,21 +71,19 @@ public class ArangoDBPowerRepository implements PowerRepository {
         private String id;
         private String name;
         private Command command;
-        private Schedule schedule;
         @DocumentField(DocumentField.Type.FROM)
         private String from;
 
         @DocumentField(DocumentField.Type.TO)
         private String to;
-        private Power power;
+        private Privilege privilege;
 
-        public PowerEdge(String from, String to, Power power) {
+        public PowerEdge(String from, String to, Privilege privilege) {
             this.from = from;
             this.to = to;
-            this.id = power.id();
-            this.name = power.name();
-            this.command = power.command();
-            this.schedule = power.schedule();
+            this.id = privilege.id();
+            this.name = privilege.name();
+            this.command = privilege.command();
         }
     }
 }

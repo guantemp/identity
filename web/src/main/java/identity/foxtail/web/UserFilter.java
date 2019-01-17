@@ -17,10 +17,10 @@
 
 package identity.foxtail.web;
 
-import cc.foxtail.util.NumberHelper;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import identity.foxtail.core.domain.servers.PasswordService;
+import mi.foxtail.util.NumberHelper;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

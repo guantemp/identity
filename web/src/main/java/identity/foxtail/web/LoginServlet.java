@@ -16,12 +16,12 @@
  */
 package identity.foxtail.web;
 
-import cc.foxtail.cache.Cache;
-import cc.foxtail.util.NumberHelper;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import identity.foxtail.core.application.UserApplicationService;
 import identity.foxtail.core.domain.model.id.UserDescriptor;
+import mi.foxtail.cache.Cache;
+import mi.foxtail.util.NumberHelper;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -97,7 +97,7 @@ public class LoginServlet extends HttpServlet {
                 generator.writeObjectFieldStart("user");
                 generator.writeStringField("id", userDescriptor.id());
                 generator.writeStringField("username", userDescriptor.username());
-                generator.writeStringField("expired", userDescriptor.expired().toString());
+                generator.writeStringField("expired", userDescriptor.expiryDateTime().toString());
                 generator.writeEndObject();
                 generator.writeEndObject();
             }

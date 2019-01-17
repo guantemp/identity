@@ -27,7 +27,7 @@ public class App {
         System.out.println("Hello World!");
         System.out.println(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         System.out.println(LocalDateTime.parse("2018-01-13T16:37:53.570Z", DateTimeFormatter.ISO_ZONED_DATE_TIME));
-        identity.foxtail.core.App app = new identity.foxtail.core.App();
+        App app = new App();
         System.out.println(app.getEs());
         //System.out.println("".getBytes().length);
         Field field = Group.class.getDeclaredField("members");
