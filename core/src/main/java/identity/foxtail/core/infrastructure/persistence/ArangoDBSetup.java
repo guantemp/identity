@@ -103,10 +103,9 @@ public class ArangoDBSetup {
         ArangoDatabase database = arangoDB.db("identity");
         ArangoGraph graph = database.graph("identity");
         Group group = new Group("1", "管理员组", "具有所有权限");
-        VertexEntity g = arangoDB.db("identity").graph("identity").vertexCollection("group")
-                .insertVertex(group);
+        arangoDB.db("identity").graph("identity").vertexCollection("group").insertVertex(group);
         group = new Group("2", "一般人员组", "具有基本权限");
-        VertexEntity g1 = arangoDB.db("identity").graph("identity").vertexCollection("group")
+        arangoDB.db("identity").graph("identity").vertexCollection("group")
                 .insertVertex(group);
         //graph.edgeCollection("contain").insertEdge(new ArangoDBGroupRepository.ActEdge(g.getId(), g1.getId()));
 

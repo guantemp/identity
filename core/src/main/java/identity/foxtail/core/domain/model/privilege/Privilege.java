@@ -21,7 +21,6 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.velocypack.annotations.Expose;
 import identity.foxtail.core.domain.model.element.ResourceDescriptor;
 import identity.foxtail.core.domain.model.element.RoleDescriptor;
-import identity.foxtail.core.domain.model.job.Command;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -37,7 +36,7 @@ public class Privilege {
     private String name;
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
-    private Command command;
+    private Job job;
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
 
@@ -45,14 +44,14 @@ public class Privilege {
      * @param id
      * @param name
      * @param roleDescriptor
-     * @param command
+     * @param job
      * @param resourceDescriptor
      */
-    public Privilege(String id, String name, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
+    public Privilege(String id, String name, RoleDescriptor roleDescriptor, Job job, ResourceDescriptor resourceDescriptor) {
         setId(id);
         setName(name);
         setRoleDescriptor(roleDescriptor);
-        setCommand(command);
+        setJob(job);
         setResourceDescriptor(resourceDescriptor);
     }
 
@@ -75,9 +74,9 @@ public class Privilege {
         this.resourceDescriptor = resourceDescriptor;
     }
 
-    private void setCommand(Command command) {
-        Objects.requireNonNull(command, "The command required");
-        this.command = command;
+    private void setJob(Job job) {
+        Objects.requireNonNull(job, "The job required");
+        this.job = job;
     }
 
     private void setRoleDescriptor(RoleDescriptor roleDescriptor) {
@@ -97,8 +96,8 @@ public class Privilege {
         return resourceDescriptor;
     }
 
-    public Command command() {
-        return command;
+    public Job command() {
+        return job;
     }
 
     public RoleDescriptor roleDescriptor() {
@@ -126,7 +125,7 @@ public class Privilege {
                 .add("id='" + id + "'")
                 .add("name='" + name + "'")
                 .add("resourceDescriptor=" + resourceDescriptor)
-                .add("command=" + command)
+                .add("job=" + job)
                 .add("roleDescriptor=" + roleDescriptor)
                 .toString();
     }

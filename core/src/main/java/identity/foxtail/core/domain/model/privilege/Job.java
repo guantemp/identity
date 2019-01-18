@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 www.foxtail.cc All rights Reserved.
+ *  Copyright 2019 www.foxtail.cc All rights Reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  *
  */
 
-package identity.foxtail.core.domain.model.job;
+package identity.foxtail.core.domain.model.privilege;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2018-12-02
+ * @version 0.0.1 2019-01-18
  */
-public interface Command {
+public interface Job {
     default boolean isAllow() {
         return true;
     }

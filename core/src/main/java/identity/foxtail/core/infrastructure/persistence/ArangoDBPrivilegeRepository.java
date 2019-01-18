@@ -22,7 +22,7 @@ import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.VertexUpdateOptions;
-import identity.foxtail.core.domain.model.job.Command;
+import identity.foxtail.core.domain.model.privilege.Job;
 import identity.foxtail.core.domain.model.privilege.Privilege;
 import identity.foxtail.core.domain.model.privilege.PrivilegeRepository;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
         @DocumentField(DocumentField.Type.KEY)
         private String id;
         private String name;
-        private Command command;
+        private Job job;
         @DocumentField(DocumentField.Type.FROM)
         private String from;
 
@@ -83,7 +83,7 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
             this.to = to;
             this.id = privilege.id();
             this.name = privilege.name();
-            this.command = privilege.command();
+            this.job = privilege.command();
         }
     }
 }
