@@ -38,18 +38,21 @@ public class Privilege {
     private Job job;
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
+    private String descriptor;
 
     /**
      * @param id
      * @param roleDescriptor
      * @param job
      * @param resourceDescriptor
+     * @param descriptor
      */
-    public Privilege(String id, RoleDescriptor roleDescriptor, Job job, ResourceDescriptor resourceDescriptor) {
+    public Privilege(String id, RoleDescriptor roleDescriptor, Job job, ResourceDescriptor resourceDescriptor, String descriptor) {
         setId(id);
         setRoleDescriptor(roleDescriptor);
         setJob(job);
         setResourceDescriptor(resourceDescriptor);
+        this.descriptor = descriptor;
     }
 
     public String toConstantName() {
@@ -113,6 +116,11 @@ public class Privilege {
                 .add("resourceDescriptor=" + resourceDescriptor)
                 .add("job=" + job)
                 .add("roleDescriptor=" + roleDescriptor)
+                .add("descriptor='" + descriptor + "'")
                 .toString();
+    }
+
+    public String descriptor() {
+        return descriptor;
     }
 }

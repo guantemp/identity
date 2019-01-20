@@ -10,6 +10,7 @@ public class Job {
     private String name;
     private JobContext jobContext;
 
+
     public Job(String name, JobContext jobContext) {
         this.name = name;
         this.jobContext = jobContext;
@@ -17,5 +18,9 @@ public class Job {
 
     public String name() {
         return name;
+    }
+
+    public JobContext jobContext() {
+        return jobContext;
     }
 }

@@ -56,14 +56,14 @@ public class PrivilegeRepositoryTest {
         resourceRepository.save(fresh);
 
         Job job = new Job("open", null);
-        Privilege privilege = new Privilege("open_box", casher.toRoleDescriptor(), job, box.toResourceDescriptor());
+        Privilege privilege = new Privilege("open_box", casher.toRoleDescriptor(), job, box.toResourceDescriptor(), "打开钱箱");
         System.out.println(privilege);
         System.out.println(privilege.toConstantName());
         job = new Job("read", null);
-        privilege = new Privilege("read_catalog", casher.toRoleDescriptor(), job, fresh.toResourceDescriptor());
+        privilege = new Privilege("read_catalog", casher.toRoleDescriptor(), job, fresh.toResourceDescriptor(), "读取产品目录");
         System.out.println(privilege.toConstantName());
         job = new Job("discount", null);
-        privilege = new Privilege("read_catalog", casher.toRoleDescriptor(), job, fresh.toResourceDescriptor());
+        privilege = new Privilege("discount_catalog", casher.toRoleDescriptor(), job, fresh.toResourceDescriptor(), "商品打折");
         System.out.println(privilege.toConstantName());
 
         //powerRepository.save(privilege);
