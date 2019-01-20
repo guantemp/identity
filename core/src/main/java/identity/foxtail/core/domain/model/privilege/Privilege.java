@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 www.foxtail.cc All rights Reserved.
+ *  Copyright (c)2019 www.foxtail.cc All rights Reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,12 +28,11 @@ import java.util.StringJoiner;
 /***
  * @author <job href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</job>
  * @since JDK8.0
- * @version 0.0.1 2018-12-03
+ * @version 0.0.2 2019-01-20
  */
 public class Privilege {
     @DocumentField(DocumentField.Type.KEY)
     private String id;
-    private String name;
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
     private Job job;
@@ -42,14 +41,12 @@ public class Privilege {
 
     /**
      * @param id
-     * @param name
      * @param roleDescriptor
      * @param job
      * @param resourceDescriptor
      */
-    public Privilege(String id, String name, RoleDescriptor roleDescriptor, Job job, ResourceDescriptor resourceDescriptor) {
+    public Privilege(String id, RoleDescriptor roleDescriptor, Job job, ResourceDescriptor resourceDescriptor) {
         setId(id);
-        setName(name);
         setRoleDescriptor(roleDescriptor);
         setJob(job);
         setResourceDescriptor(resourceDescriptor);
@@ -65,13 +62,6 @@ public class Privilege {
         if (id.isEmpty() || id.length() > 64)
             throw new IllegalArgumentException("The id length is [1-64]");
         this.id = id;
-    }
-
-    private void setName(String name) {
-        Objects.requireNonNull(name, "The name is required");
-        if (name.isEmpty() || name.length() > 255)
-            throw new IllegalArgumentException("The name must be 1 to 255 characters");
-        this.name = name;
     }
 
     private void setResourceDescriptor(ResourceDescriptor resourceDescriptor) {
@@ -91,10 +81,6 @@ public class Privilege {
 
     public String id() {
         return id;
-    }
-
-    public String name() {
-        return name;
     }
 
     public ResourceDescriptor resourceDescriptor() {
@@ -124,7 +110,6 @@ public class Privilege {
     public String toString() {
         return new StringJoiner(", ", Privilege.class.getSimpleName() + "[", "]")
                 .add("id='" + id + "'")
-                .add("name='" + name + "'")
                 .add("resourceDescriptor=" + resourceDescriptor)
                 .add("job=" + job)
                 .add("roleDescriptor=" + roleDescriptor)

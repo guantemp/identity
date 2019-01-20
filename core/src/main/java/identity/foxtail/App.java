@@ -22,7 +22,6 @@ public class App {
     public App() {
         EncryptionConsumer.processEncryptionAnnotation(this);
     }
-
     public static void main(String[] args) throws NoSuchFieldException, UnsupportedEncodingException {
         System.out.println("Hello World!");
         System.out.println(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));

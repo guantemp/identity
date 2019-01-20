@@ -70,15 +70,14 @@ public class ArangoDBSetup {
         index.add("username");
         HashIndexOptions hashIndexOptions = new HashIndexOptions().unique(true);
         db.collection("user").ensureHashIndex(index, hashIndexOptions);
+        index.clear();
+        index.add("telephoneNumber");
+        db.collection("user").ensureHashIndex(index, hashIndexOptions);
         //
         index.clear();
         index.add("name");
         db.collection("group").ensureHashIndex(index, hashIndexOptions);
         db.collection("role").ensureHashIndex(index, hashIndexOptions);
-        //other index
-        index.clear();
-        index.add("telephoneNumber");
-        db.collection("user").ensureHashIndex(index, hashIndexOptions);
         //edge
         CollectionCreateOptions edgeOptions = new CollectionCreateOptions().type(CollectionType.EDGES);
         for (String s : new String[]{"subordinate", "act", "create"}) {

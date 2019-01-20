@@ -134,7 +134,7 @@ public class Resource {
         if (treePath != null)
             return new ResourceDescriptor(id, name, treePath.getFirst());
         else
-            return new ResourceDescriptor(id, name, name);
+            return new ResourceDescriptor(id, name, id);
     }
 
     /**

@@ -1,5 +1,7 @@
 package identity.foxtail.core.domain.model.privilege;
 
+import java.util.Map;
+
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
@@ -7,4 +9,6 @@ package identity.foxtail.core.domain.model.privilege;
  */
 public class JobContext {
     public static final JobContext NULL_JOB_CONTEXT = new JobContext();
+    private String rule;
+    private Map bindVars;
 }

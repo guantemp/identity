@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 www.foxtail.cc All rights Reserved.
+ *  Copyright (c)2019 www.foxtail.cc All rights Reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.VertexUpdateOptions;
-import identity.foxtail.core.domain.model.privilege.Job;
 import identity.foxtail.core.domain.model.privilege.Privilege;
 import identity.foxtail.core.domain.model.privilege.PrivilegeRepository;
 import org.slf4j.Logger;
@@ -31,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /***
  * @author <job href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</job>
  * @since JDK8.0
- * @version 0.0.1 2018-12-03
+ * @version 0.0.1 2019-01-20
  */
 public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
     private static final Logger logger = LoggerFactory.getLogger(ArangoDBPrivilegeRepository.class);
@@ -69,8 +68,6 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
     private static class JobEdge {
         @DocumentField(DocumentField.Type.KEY)
         private String id;
-        private String name;
-        private Job job;
         @DocumentField(DocumentField.Type.FROM)
         private String from;
 
@@ -82,8 +79,6 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
             this.from = from;
             this.to = to;
             this.id = privilege.id();
-            this.name = privilege.name();
-            this.job = null;
         }
     }
 }

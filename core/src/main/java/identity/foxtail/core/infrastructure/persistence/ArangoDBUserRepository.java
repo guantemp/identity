@@ -150,7 +150,7 @@ public class ArangoDBUserRepository implements UserRepository {
     public User usernameAuthenticCredentials(String username, String password) {
         final String query = "FOR v IN user FILTER v.username == @username RETURN v";
         final Map<String, Object> bindVars = new MapBuilder().put("username", username).get();
-        final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, null, VPackSlice.class);
+        final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, VPackSlice.class);
         return checkPassword(password, cursor);
     }
 
@@ -158,7 +158,7 @@ public class ArangoDBUserRepository implements UserRepository {
     public boolean isUsernameExists(String username) {
         final String query = "FOR v IN user FILTER v.username == @username RETURN v";
         final Map<String, Object> bindVars = new MapBuilder().put("username", username).get();
-        final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, null, VPackSlice.class);
+        final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, VPackSlice.class);
         return cursor.hasNext() ? true : false;
     }
 
