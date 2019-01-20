@@ -23,6 +23,7 @@ import com.arangodb.entity.DocumentEntity;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.entity.VertexUpdateEntity;
+import com.arangodb.model.VertexUpdateOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import com.arangodb.velocypack.ValueType;
@@ -44,6 +45,7 @@ import java.util.*;
  */
 public class ArangoDBResourceRepository implements ResourceRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBUserRepository.class);
+    private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private static Field FIELD;
     private static Constructor<Creator> CONSTRUCTOR;
 
@@ -105,7 +107,7 @@ public class ArangoDBResourceRepository implements ResourceRepository {
         ArangoGraph graph = identity.graph("identity");
         boolean exists = identity.collection("resource").documentExists(resource.id());
         if (exists) {
-            VertexUpdateEntity vertex = graph.vertexCollection("resource").updateVertex(resource.id(), resource);
+            VertexUpdateEntity vertex = graph.vertexCollection("resource").updateVertex(resource.id(), resource, UPDATE_OPTIONS);
             final String query = "WITH resource,subordinate\n" +
                     "FOR v,e IN 1..1 INBOUND @startVertex subordinate REMOVE e IN subordinate ";
             final Map<String, Object> bindVars = new MapBuilder().put("startVertex", "resource/" + resource.id()).get();

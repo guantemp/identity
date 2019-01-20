@@ -56,7 +56,8 @@ public class Privilege {
     }
 
     public String toConstantName() {
-        return new StringJoiner("_", "", "").add(job.name().toUpperCase()).add(name.toUpperCase()).toString();
+        return new StringJoiner("_", "", "").add(job.name().toUpperCase())
+                .add(resourceDescriptor.rootName().toUpperCase()).toString();
     }
 
     private void setId(String id) {

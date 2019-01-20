@@ -123,7 +123,7 @@ public class Resource {
     private void setId(String id) {
         Objects.requireNonNull(id, "id is required");
         if (id.isEmpty() || id.length() > 64)
-            throw new IllegalArgumentException("The resource id length must be less than 64 characters");
+            throw new IllegalArgumentException("id length must be less than 64 characters");
         this.id = id;
     }
 
@@ -131,7 +131,10 @@ public class Resource {
      * @return
      */
     public ResourceDescriptor toResourceDescriptor() {
-        return new ResourceDescriptor(id, name);
+        if (treePath != null)
+            return new ResourceDescriptor(id, name, treePath.getFirst());
+        else
+            return new ResourceDescriptor(id, name, name);
     }
 
     /**

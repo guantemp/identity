@@ -83,7 +83,7 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
             this.to = to;
             this.id = privilege.id();
             this.name = privilege.name();
-            this.job = null
+            this.job = null;
         }
     }
 }

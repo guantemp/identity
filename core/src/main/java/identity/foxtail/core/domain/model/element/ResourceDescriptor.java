@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 www.foxtail.cc All rights Reserved.
+ *  Copyright (c) 2019 www.foxtail.cc All rights Reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,32 +21,25 @@ import java.util.StringJoiner;
 /***
  * @author <a href="www.foxtail.cc/author/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 20180129
+ * @version 0.0.2 2019-01-20
  */
 public class ResourceDescriptor {
     private String id;
     private String name;
+    private String rootName;
 
-    protected ResourceDescriptor(String id, String name) {
+    protected ResourceDescriptor(String id, String name, String rootName) {
         this.id = id;
         this.name = name;
+        this.rootName = rootName;
     }
 
     public String id() {
         return id;
     }
 
-
     public String name() {
         return name;
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", ResourceDescriptor.class.getSimpleName() + "[", "]")
-                .add("id='" + id + "'")
-                .add("name='" + name + "'")
-                .toString();
     }
 
     @Override
@@ -56,11 +49,29 @@ public class ResourceDescriptor {
 
         ResourceDescriptor that = (ResourceDescriptor) o;
 
-        return id != null ? id.equals(that.id) : that.id == null;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        return rootName != null ? rootName.equals(that.rootName) : that.rootName == null;
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (rootName != null ? rootName.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", ResourceDescriptor.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("name='" + name + "'")
+                .add("rootName='" + rootName + "'")
+                .toString();
+    }
+
+    public String rootName() {
+        return rootName;
     }
 }
