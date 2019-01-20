@@ -104,7 +104,7 @@ public class ArangoDBSetup {
         ArangoGraph graph = database.graph("identity");
         Group group = new Group("1", "管理员组", "具有所有权限");
         arangoDB.db("identity").graph("identity").vertexCollection("group").insertVertex(group);
-        group = new Group("2", "一般人员组", "具有基本权限");
+        new Group("2", "一般人员组", "具有基本权限");
         arangoDB.db("identity").graph("identity").vertexCollection("group")
                 .insertVertex(group);
         //graph.edgeCollection("contain").insertEdge(new ArangoDBGroupRepository.ActEdge(g.getId(), g1.getId()));

@@ -130,7 +130,8 @@ public class User {
      * @param telephoneNumber
      */
     public void changTelephoneNumber(String telephoneNumber) {
-        if (null != telephoneNumber && !this.telephoneNumber.equals(telephoneNumber) && CELLPHONE_NUMBER_ZH.matcher(telephoneNumber).find()) {
+        if (null != telephoneNumber && !this.telephoneNumber.equals(telephoneNumber) &&
+                (CELLPHONE_NUMBER_ZH.matcher(telephoneNumber).find() || FIXED_TELEPHONE_ZH.matcher(telephoneNumber).find())) {
             this.telephoneNumber = telephoneNumber;
             DomainRegistry.domainEventPublisher().publish(new UserTelephoneNumberChanged(id, telephoneNumber));
         }
@@ -179,7 +180,7 @@ public class User {
         return new UserDescriptor(id, username, enablement.expiryDateTime());
     }
 
-    protected GroupMember toGroupMember() {
+    public GroupMember toGroupMember() {
         return new GroupMember(GroupMemberType.USER, id);
     }
 
@@ -216,25 +217,17 @@ public class User {
      */
     protected void protectPassword(String currentPassword, String changedPassword) {
         if (new PasswordService().isWeak(changedPassword))
-            throw new IllegalArgumentException("The password is weak.");
-        setPassword(DomainRegistry.encryption().encrypt(changedPassword));
+            throw new IllegalArgumentException("changedPassword is weak.");
+        this.password = DomainRegistry.encryption().encrypt(changedPassword);
     }
-
-    /**
-     * @param password
-     */
-    protected void setPassword(String password) {
-        this.password = password;
-    }
-
     /**
      * @param username
      * @throws IllegalArgumentException If the length of the username is not [1,255)
      */
     protected void setUsername(String username) {
-        Objects.requireNonNull(username, "The id is required");
+        Objects.requireNonNull(username, "username is required");
         if (username.length() < 1 || username.length() >= 255)
-            throw new IllegalArgumentException("The username must be 1 to 255 characters");
+            throw new IllegalArgumentException("username must be 1 to 255 characters");
         this.username = username;
     }
 
@@ -243,11 +236,11 @@ public class User {
      * @throws IllegalArgumentException If the length of the id is not [1,128) or is reservation
      */
     private void setId(String id) {
-        id = Objects.requireNonNull(id, "The id is required").trim();
+        id = Objects.requireNonNull(id, "id is required").trim();
         if (id.length() < 1 || id.length() > 128)
-            throw new IllegalArgumentException("The id must be 1 to 128 characters");
+            throw new IllegalArgumentException("id must be 1 to 128 characters");
         if (ANONYMOUS_OF_ID.equals(id))
-            throw new IllegalArgumentException("The " + ANONYMOUS_OF_ID + " is reservation");
+            throw new IllegalArgumentException(ANONYMOUS_OF_ID + " is reservation");
         this.id = id;
     }
 
@@ -255,11 +248,11 @@ public class User {
         if (null == telephoneNumber)
             telephoneNumber = username;
         if (!CELLPHONE_NUMBER_ZH.matcher(telephoneNumber).find() && !FIXED_TELEPHONE_ZH.matcher(telephoneNumber).find())
-            throw new IllegalArgumentException("Illegal phone number");
+            throw new IllegalArgumentException("Illegal telephone number");
         this.telephoneNumber = telephoneNumber;
     }
 
     protected void setEnablement(Enablement enablement) {
-        this.enablement = Objects.requireNonNull(enablement, "The enablement is required");
+        this.enablement = Objects.requireNonNull(enablement, "enablement is required");
     }
 }

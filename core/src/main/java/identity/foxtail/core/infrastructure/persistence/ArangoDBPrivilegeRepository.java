@@ -3,7 +3,7 @@
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *  You may obtain job copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /***
- * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
+ * @author <job href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</job>
  * @since JDK8.0
  * @version 0.0.1 2018-12-03
  */
@@ -47,7 +47,7 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
             ArangoGraph graph = identity.graph("identity");
             VertexEntity role = graph.vertexCollection("role").getVertex(privilege.roleDescriptor().id(), VertexEntity.class);
             VertexEntity resource = graph.vertexCollection("resource").getVertex(privilege.resourceDescriptor().id(), VertexEntity.class);
-            graph.edgeCollection("privilege").insertEdge(new PowerEdge(role.getId(), resource.getId(), privilege));
+            graph.edgeCollection("privilege").insertEdge(new JobEdge(role.getId(), resource.getId(), privilege));
         }
     }
 
@@ -66,7 +66,7 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
 
     }
 
-    private static class PowerEdge {
+    private static class JobEdge {
         @DocumentField(DocumentField.Type.KEY)
         private String id;
         private String name;
@@ -78,12 +78,12 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
         private String to;
         private Privilege privilege;
 
-        public PowerEdge(String from, String to, Privilege privilege) {
+        public JobEdge(String from, String to, Privilege privilege) {
             this.from = from;
             this.to = to;
             this.id = privilege.id();
             this.name = privilege.name();
-            this.job = privilege.command();
+            this.job = null
         }
     }
 }

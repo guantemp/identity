@@ -3,7 +3,7 @@
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *  You may obtain job copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 /***
- * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
+ * @author <job href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</job>
  * @since JDK8.0
  * @version 0.0.1 2018-12-03
  */
@@ -53,6 +53,10 @@ public class Privilege {
         setRoleDescriptor(roleDescriptor);
         setJob(job);
         setResourceDescriptor(resourceDescriptor);
+    }
+
+    public String toConstantName() {
+        return new StringJoiner("_", "", "").add(job.name().toUpperCase()).add(name.toUpperCase()).toString();
     }
 
     private void setId(String id) {
@@ -94,10 +98,6 @@ public class Privilege {
 
     public ResourceDescriptor resourceDescriptor() {
         return resourceDescriptor;
-    }
-
-    public Job command() {
-        return job;
     }
 
     public RoleDescriptor roleDescriptor() {
