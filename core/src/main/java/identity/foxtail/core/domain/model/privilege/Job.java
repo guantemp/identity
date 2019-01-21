@@ -27,17 +27,17 @@ import java.util.StringJoiner;
 public class Job {
     //such as:READ_CATLOG,DISCOUNT_CATALOG
     private String name;
-    private String strategy;
+    private String query;
     private String description;
 
-    public Job(String name, String strategy) {
+    public Job(String name, String query) {
         this.name = name;
-        this.strategy = strategy;
+        this.query = query;
     }
 
-    public Job(String name, String strategy, String description) {
+    public Job(String name, String query, String description) {
         this.name = name;
-        this.strategy = strategy;
+        this.query = query;
         this.description = description;
     }
 
@@ -61,11 +61,11 @@ public class Job {
     }
 
     public String strategy() {
-        return strategy;
+        return query;
     }
 
     public String strategyBindVars(JobContext jobContext) {
-        return strategy;
+        return query;
     }
 
     public String description() {
@@ -76,7 +76,7 @@ public class Job {
     public String toString() {
         return new StringJoiner(", ", Job.class.getSimpleName() + "[", "]")
                 .add("name='" + name + "'")
-                .add("strategy='" + strategy + "'")
+                .add("query='" + query + "'")
                 .add("description='" + description + "'")
                 .toString();
     }
