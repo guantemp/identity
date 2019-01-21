@@ -5,6 +5,9 @@ package identity.foxtail.core.domain.model.privilege;
  * @since JDK8.0
  * @version 0.0.1 2019-01-18
  */
-public class SchedulePrivilege {
-    private String cronExpression;
+public class PermitPrivilege {
+
+    public boolean isPermited(JobContext jobContext) {
+        return true;
+    }
 }

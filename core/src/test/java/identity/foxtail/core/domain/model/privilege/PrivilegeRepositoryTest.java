@@ -55,17 +55,19 @@ public class PrivilegeRepositoryTest {
         fresh.assignTo(catalog);
         resourceRepository.save(fresh);
 
-        Job job = new Job("open", null);
-        Privilege privilege = new Privilege("open_box", casher.toRoleDescriptor(), job, box.toResourceDescriptor(), "打开钱箱");
+        Job job = new Job("OPEN_BOX", "WITH category,belong,sku,has,barcode,attribute\n" +
+                "FOR s,b IN 1..1 INBOUND @startVertex belong LIMIT @offset,@limit\n" +
+                "LET attributes = (FOR v,e IN 1..1 OUTBOUND s._id has FILTER v._id =~ '^attribute' RETURN v)\n" +
+                "LET barcodes = (FOR v,e IN 1..1 OUTBOUND s._id has FILTER v._id =~ '^barcode' RETURN v)\n" +
+                "RETURN {'sku':s,barcodes,attributes}", "打开钱箱");
+        Privilege privilege = new Privilege("6767", casher.toRoleDescriptor(), job, box.toResourceDescriptor());
         System.out.println(privilege);
-        System.out.println(privilege.toConstantName());
-        job = new Job("read", null);
-        privilege = new Privilege("read_catalog", casher.toRoleDescriptor(), job, fresh.toResourceDescriptor(), "读取产品目录");
-        System.out.println(privilege.toConstantName());
-        job = new Job("discount", null);
-        privilege = new Privilege("discount_catalog", casher.toRoleDescriptor(), job, fresh.toResourceDescriptor(), "商品打折");
-        System.out.println(privilege.toConstantName());
-
+        job = new Job("READ_CATALOG_WITH_AQL", null, "读取产品目录");
+        privilege = new Privilege("77777", casher.toRoleDescriptor(), job, fresh.toResourceDescriptor());
+        System.out.println(privilege);
+        job = new Job("DISCOUNT_CATALOG_WITH_AQL", "", "商品打折");
+        privilege = new Privilege("8888", casher.toRoleDescriptor(), job, fresh.toResourceDescriptor());
+        System.out.println(privilege);
         //powerRepository.save(privilege);
     }
 

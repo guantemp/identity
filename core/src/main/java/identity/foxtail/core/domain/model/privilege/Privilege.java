@@ -1,5 +1,5 @@
 /*
- *  Copyright (c)2019 www.foxtail.cc All rights Reserved.
+ *  Copyright (c) 2019 www.foxtail.cc All rights Reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,28 +36,21 @@ public class Privilege {
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
     private Job job;
+    private Schedule schedule;
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
-    private String descriptor;
 
     /**
      * @param id
      * @param roleDescriptor
      * @param job
      * @param resourceDescriptor
-     * @param descriptor
      */
-    public Privilege(String id, RoleDescriptor roleDescriptor, Job job, ResourceDescriptor resourceDescriptor, String descriptor) {
+    public Privilege(String id, RoleDescriptor roleDescriptor, Job job, ResourceDescriptor resourceDescriptor) {
         setId(id);
         setRoleDescriptor(roleDescriptor);
         setJob(job);
         setResourceDescriptor(resourceDescriptor);
-        this.descriptor = descriptor;
-    }
-
-    public String toConstantName() {
-        return new StringJoiner("_", "", "").add(job.name().toUpperCase())
-                .add(resourceDescriptor.rootName().toUpperCase()).toString();
     }
 
     private void setId(String id) {
@@ -116,11 +109,6 @@ public class Privilege {
                 .add("resourceDescriptor=" + resourceDescriptor)
                 .add("job=" + job)
                 .add("roleDescriptor=" + roleDescriptor)
-                .add("descriptor='" + descriptor + "'")
                 .toString();
-    }
-
-    public String descriptor() {
-        return descriptor;
     }
 }
