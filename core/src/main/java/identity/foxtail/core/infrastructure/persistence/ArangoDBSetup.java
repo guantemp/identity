@@ -48,6 +48,7 @@ public class ArangoDBSetup {
 
     public static void main(String[] args) {
         ArangoDBSetup.setup("identity");
+        ArangoDBSetup.setup("identity_a71");
     }
 
     public static void setup(String databaseName) {
@@ -91,7 +92,7 @@ public class ArangoDBSetup {
         list.add(new EdgeDefinition().collection("act").from("group", "user").to("role"));
         list.add(new EdgeDefinition().collection("subordinate").from("group", "resource").to("group", "user", "resource"));
         list.add(new EdgeDefinition().collection("privilege").from("role").to("resource"));
-        db.createGraph(databaseName, list);
+        db.createGraph("identity", list);
         arangoDB.shutdown();
         logger.info("{} be created", databaseName);
     }

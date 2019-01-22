@@ -108,6 +108,7 @@ public class Privilege {
                 .add("id='" + id + "'")
                 .add("resourceDescriptor=" + resourceDescriptor)
                 .add("job=" + job)
+                .add("schedule=" + schedule)
                 .add("roleDescriptor=" + roleDescriptor)
                 .toString();
     }

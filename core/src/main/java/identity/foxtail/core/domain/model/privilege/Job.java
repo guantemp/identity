@@ -17,67 +17,19 @@
 
 package identity.foxtail.core.domain.model.privilege;
 
-import java.util.StringJoiner;
-
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
  * @version 0.0.1 2019-01-19
  */
 public class Job {
-    //such as:READ_CATLOG,DISCOUNT_CATALOG
+    //such as:READ,DISCOUNT,REMOVE
     private String name;
     private String query;
-    private String description;
 
     public Job(String name, String query) {
         this.name = name;
         this.query = query;
     }
 
-    public Job(String name, String query, String description) {
-        this.name = name;
-        this.query = query;
-        this.description = description;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Job job = (Job) o;
-
-        return name != null ? name.equals(job.name) : job.name == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return name != null ? name.hashCode() : 0;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    public String strategy() {
-        return query;
-    }
-
-    public String strategyBindVars(JobContext jobContext) {
-        return query;
-    }
-
-    public String description() {
-        return description;
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", Job.class.getSimpleName() + "[", "]")
-                .add("name='" + name + "'")
-                .add("query='" + query + "'")
-                .add("description='" + description + "'")
-                .toString();
-    }
 }

@@ -55,17 +55,13 @@ public class PrivilegeRepositoryTest {
         fresh.assignTo(catalog);
         resourceRepository.save(fresh);
 
-        Job job = new Job("OPEN_BOX", "WITH category,belong,sku,has,barcode,attribute\n" +
-                "FOR s,b IN 1..1 INBOUND @startVertex belong LIMIT @offset,@limit\n" +
-                "LET attributes = (FOR v,e IN 1..1 OUTBOUND s._id has FILTER v._id =~ '^attribute' RETURN v)\n" +
-                "LET barcodes = (FOR v,e IN 1..1 OUTBOUND s._id has FILTER v._id =~ '^barcode' RETURN v)\n" +
-                "RETURN {'sku':s,barcodes,attributes}", "打开钱箱");
+        Job job = new Job("OPEN", "AQL_OPEN_BOX");
         Privilege privilege = new Privilege("6767", casher.toRoleDescriptor(), job, box.toResourceDescriptor());
         System.out.println(privilege);
-        job = new Job("READ_CATALOG_WITH_AQL", null, "读取产品目录");
+        job = new Job("READ", "AQL_READ_CATALOG");
         privilege = new Privilege("77777", casher.toRoleDescriptor(), job, fresh.toResourceDescriptor());
         System.out.println(privilege);
-        job = new Job("DISCOUNT_CATALOG_WITH_AQL", "", "商品打折");
+        job = new Job("discount", "AQL_DISCOUNT_CATALOG");
         privilege = new Privilege("8888", casher.toRoleDescriptor(), job, fresh.toResourceDescriptor());
         System.out.println(privilege);
         //powerRepository.save(privilege);

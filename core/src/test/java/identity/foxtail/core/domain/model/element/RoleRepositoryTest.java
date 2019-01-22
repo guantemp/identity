@@ -20,7 +20,6 @@ import identity.foxtail.core.domain.model.id.*;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBGroupRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBRoleRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBUserRepository;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -79,7 +78,7 @@ public class RoleRepositoryTest {
         role_cashier.assignGroup(cashier, service);
         roleRepository.save(role_cashier);
     }
-
+/*
     @AfterClass
     public static void terndown() {
         roleRepository.remove("CFO");
@@ -96,6 +95,7 @@ public class RoleRepositoryTest {
         groupRepository.remove("cashier_leader");
         groupRepository.remove("finance_and_accounting_department");
     }
+    */
 
     @Test
     public void find() {

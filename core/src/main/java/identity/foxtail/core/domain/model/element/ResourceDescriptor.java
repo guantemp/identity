@@ -26,12 +26,16 @@ import java.util.StringJoiner;
 public class ResourceDescriptor {
     private String id;
     private String name;
-    private String rootName;
+    private String rootId;
 
-    protected ResourceDescriptor(String id, String name, String rootName) {
+    protected ResourceDescriptor(String id, String name, String rootId) {
         this.id = id;
         this.name = name;
-        this.rootName = rootName;
+        this.rootId = rootId;
+    }
+
+    public boolean isRoot() {
+        return id.equals(rootId);
     }
 
     public String id() {
@@ -51,14 +55,14 @@ public class ResourceDescriptor {
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return rootName != null ? rootName.equals(that.rootName) : that.rootName == null;
+        return rootId != null ? rootId.equals(that.rootId) : that.rootId == null;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (rootName != null ? rootName.hashCode() : 0);
+        result = 31 * result + (rootId != null ? rootId.hashCode() : 0);
         return result;
     }
 
@@ -67,11 +71,11 @@ public class ResourceDescriptor {
         return new StringJoiner(", ", ResourceDescriptor.class.getSimpleName() + "[", "]")
                 .add("id='" + id + "'")
                 .add("name='" + name + "'")
-                .add("rootName='" + rootName + "'")
+                .add("rootId='" + rootId + "'")
                 .toString();
     }
 
-    public String rootName() {
-        return rootName;
+    public String rootId() {
+        return rootId;
     }
 }

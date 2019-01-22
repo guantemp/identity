@@ -17,6 +17,8 @@
 
 package identity.foxtail.core.domain.model.privilege;
 
+import java.util.StringJoiner;
+
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
@@ -28,5 +30,13 @@ public class Schedule {
 
     public boolean isInSchedule() {
         return isInSchedule;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Schedule.class.getSimpleName() + "[", "]")
+                .add("cron='" + cron + "'")
+                .add("isInSchedule=" + isInSchedule)
+                .toString();
     }
 }
