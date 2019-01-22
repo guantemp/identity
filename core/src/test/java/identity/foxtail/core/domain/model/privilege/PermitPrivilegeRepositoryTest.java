@@ -42,22 +42,31 @@ public class PermitPrivilegeRepositoryTest {
     @BeforeClass
     public static void setUpBeforeClass() {
         Role casher = new Role("casher", "收銀員", "就是收钱的");
-        User user = new User("Son_Goku", "孫悟空", "中文密碼也是可以的", "0830-2135679", Enablement.FOREVER);
-        userRepository.save(user);
-        casher.assignUser(user);
+        User Son_Goku = new User("Son_Goku", "孫悟空", "中文密碼也是可以的", "0830-2135679", Enablement.FOREVER);
+        userRepository.save(Son_Goku);
+        casher.assignUser(Son_Goku);
         roleRepository.save(casher);
+        User Zhu_Bajie = new User("Zhu_Bajie", "猪八戒", "可以的，好幸福et", "13679692301", Enablement.FOREVER);
+        casher.assignUser(Zhu_Bajie);
+        userRepository.save(Zhu_Bajie);
 
-        Resource box = new Resource("box", "錢箱", user.toCreator());
+        Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
-        Job job = new Job("open", "OPEN_BOX_AQL");
+        Job job = new Job("open", "AQL_OPEN_BOX");
         PermitPrivilege privilege = new PermitPrivilege("676767", casher.toRoleDescriptor(), job, box.toResourceDescriptor());
         repo.save(privilege);
 
-        Resource catalog = new Resource("catalog", "产品目录", user.toCreator());
+        Resource catalog = new Resource("catalog", "产品目录", Son_Goku.toCreator());
         resourceRepository.save(catalog);
-        Resource fresh = new Resource("fresh", "生鲜", user.toCreator());
+        Resource fresh = new Resource("fresh", "生鲜", Son_Goku.toCreator());
         fresh.assignTo(catalog);
         resourceRepository.save(fresh);
+        Resource meat = new Resource("meat", "鲜肉", Zhu_Bajie.toCreator());
+        meat.assignTo(fresh);
+        resourceRepository.save(meat);
+        Resource sku = new Resource("sku", "二刀肉", Zhu_Bajie.toCreator());
+        sku.assignTo(meat);
+        resourceRepository.save(sku);
     }
 
     @Test

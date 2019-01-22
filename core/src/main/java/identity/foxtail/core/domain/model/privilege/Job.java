@@ -17,6 +17,8 @@
 
 package identity.foxtail.core.domain.model.privilege;
 
+import java.util.StringJoiner;
+
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
@@ -32,4 +34,37 @@ public class Job {
         this.query = query;
     }
 
+    public String name() {
+        return name;
+    }
+
+    public String query() {
+        return query;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Job job = (Job) o;
+
+        if (name != null ? !name.equals(job.name) : job.name != null) return false;
+        return query != null ? query.equals(job.query) : job.query == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (query != null ? query.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Job.class.getSimpleName() + "[", "]")
+                .add("name='" + name + "'")
+                .add("query='" + query + "'")
+                .toString();
+    }
 }
