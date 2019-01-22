@@ -34,11 +34,11 @@ public class ResourceRepositoryTest {
 
     @BeforeClass
     public static void setUp() {
-        User admin = new User("admin", "管理员", "ERSdgre7783", "0830-2357120");
+        User admin = new User("admin", "管理员", "ERSdgre7783", "0830-2517210");
         userRepository.save(admin);
         creator = admin.toCreator();
 
-        Resource root = new Resource("root", "root", creator);
+        Resource root = new Resource("root", "全部区域", creator);
         resourceRepository.save(root);
 
         Resource sichuan = new Resource("sichuan", "四川", creator);
@@ -83,6 +83,7 @@ public class ResourceRepositoryTest {
         Assert.assertTrue(sichuan.isCreator(admin));
 
         Resource luzhou = resourceRepository.find("luzhou");
+        System.out.println(luzhou);
         luzhou.rename("管得泸州");
         luzhou.unassign();
         resourceRepository.save(luzhou);

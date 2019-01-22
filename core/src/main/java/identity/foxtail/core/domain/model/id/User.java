@@ -91,7 +91,7 @@ public class User {
     public User(String id, String username, String password, String telephoneNumber, Enablement enablement) {
         setId(id);
         setUsername(username);
-        protectPassword("", password);
+        protectPassword(password);
         setTelephoneNumber(telephoneNumber);
         setEnablement(enablement);
     }
@@ -117,12 +117,12 @@ public class User {
      * @throws IllegalArgumentException if password no change or currentPassword isn't correct
      */
     public void changPassword(String currentPassword, String changedPassword) {
-        currentPassword = Objects.requireNonNull(currentPassword, "The currentPassword is required");
+        currentPassword = Objects.requireNonNull(currentPassword, "currentPassword is required");
         if (currentPassword.equals(changedPassword))
-            throw new IllegalArgumentException("The password not chang.");
+            throw new IllegalArgumentException("password not chang.");
         if (!DomainRegistry.encryption().check(currentPassword, password))
-            throw new IllegalArgumentException("Current password not confirmed.");
-        protectPassword(currentPassword, changedPassword);
+            throw new IllegalArgumentException("currentPassword not confirmed.");
+        protectPassword(changedPassword);
         DomainRegistry.domainEventPublisher().publish(new UserPasswordChanged(id));
     }
 
@@ -211,14 +211,13 @@ public class User {
     }
 
     /**
-     * @param currentPassword
-     * @param changedPassword
+     * @param password
      * @throws IllegalArgumentException if password is weak
      */
-    protected void protectPassword(String currentPassword, String changedPassword) {
-        if (new PasswordService().isWeak(changedPassword))
-            throw new IllegalArgumentException("changedPassword is weak.");
-        this.password = DomainRegistry.encryption().encrypt(changedPassword);
+    protected void protectPassword(String password) {
+        if (new PasswordService().isWeak(password))
+            throw new IllegalArgumentException("password is weak.");
+        this.password = DomainRegistry.encryption().encrypt(password);
     }
     /**
      * @param username

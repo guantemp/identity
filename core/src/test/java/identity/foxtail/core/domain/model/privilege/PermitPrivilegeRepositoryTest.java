@@ -49,6 +49,7 @@ public class PermitPrivilegeRepositoryTest {
         User Zhu_Bajie = new User("Zhu_Bajie", "猪八戒", "可以的，好幸福et", "13679692301", Enablement.FOREVER);
         casher.assignUser(Zhu_Bajie);
         userRepository.save(Zhu_Bajie);
+        roleRepository.save(casher);
 
         Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
