@@ -23,7 +23,6 @@ import identity.foxtail.core.domain.model.element.ResourceDescriptor;
 import identity.foxtail.core.domain.model.element.RoleDescriptor;
 
 import java.util.Objects;
-import java.util.StringJoiner;
 
 /***
  * @author <job href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</job>
@@ -35,22 +34,25 @@ public class Privilege {
     private String id;
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
-    private Job job;
-    private Schedule schedule;
+    private Command command;
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
 
     /**
      * @param id
      * @param roleDescriptor
-     * @param job
+     * @param command
      * @param resourceDescriptor
      */
-    public Privilege(String id, RoleDescriptor roleDescriptor, Job job, ResourceDescriptor resourceDescriptor) {
+    public Privilege(String id, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
         setId(id);
         setRoleDescriptor(roleDescriptor);
-        setJob(job);
+        setCommand(command);
         setResourceDescriptor(resourceDescriptor);
+    }
+
+    public String toContstName() {
+        return "";
     }
 
     private void setId(String id) {
@@ -65,9 +67,9 @@ public class Privilege {
         this.resourceDescriptor = resourceDescriptor;
     }
 
-    private void setJob(Job job) {
-        Objects.requireNonNull(job, "The job required");
-        this.job = job;
+    private void setCommand(Command command) {
+        Objects.requireNonNull(command, "The job required");
+        this.command = command;
     }
 
     private void setRoleDescriptor(RoleDescriptor roleDescriptor) {
@@ -87,29 +89,7 @@ public class Privilege {
         return roleDescriptor;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Privilege privilege = (Privilege) o;
-
-        return id != null ? id.equals(privilege.id) : privilege.id == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", Privilege.class.getSimpleName() + "[", "]")
-                .add("id='" + id + "'")
-                .add("resourceDescriptor=" + resourceDescriptor)
-                .add("job=" + job)
-                .add("schedule=" + schedule)
-                .add("roleDescriptor=" + roleDescriptor)
-                .toString();
+    public Command command() {
+        return command;
     }
 }

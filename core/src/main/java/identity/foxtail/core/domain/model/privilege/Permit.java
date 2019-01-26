@@ -17,12 +17,19 @@
 
 package identity.foxtail.core.domain.model.privilege;
 
+
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019-01-22
+ * @version 0.0.1 2019-01-26
  */
-public class Query {
-    private String name;
-    private String query;
+public class Permit implements Executor<Boolean> {
+    private static final String query = "WITH user,act,role,privilege,resource\n" +
+            "FOR v,e,p IN 1..2 OUTBOUND @start  act,privilege FILTER p.edges[1].job.name == 'open'" +
+            "FILTER p.vertices[1]._key == @roleId and p.vertex[2]._key == @resourceId RETURN p.edges[1]";
+
+    @Override
+    public Boolean execute(CommandContext context) {
+        return Boolean.TRUE;
+    }
 }

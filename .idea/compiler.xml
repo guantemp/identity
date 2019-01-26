@@ -12,6 +12,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="core" target="1.8" />
+      <module name="job" target="1.7" />
       <module name="web" target="1.7" />
     </bytecodeTargetLevel>
   </component>

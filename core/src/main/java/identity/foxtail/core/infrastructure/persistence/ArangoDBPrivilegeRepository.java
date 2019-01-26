@@ -22,6 +22,7 @@ import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.VertexUpdateOptions;
+import identity.foxtail.core.domain.model.privilege.Command;
 import identity.foxtail.core.domain.model.privilege.Privilege;
 import identity.foxtail.core.domain.model.privilege.PrivilegeRepository;
 import org.slf4j.Logger;
@@ -39,14 +40,14 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
 
     @Override
     public void save(Privilege privilege) {
-        boolean exists = identity.collection("privilege").documentExists(privilege.id());
+        boolean exists = identity.collection("command").documentExists(privilege.id());
         if (exists) {
 
         } else {
             ArangoGraph graph = identity.graph("identity");
             VertexEntity role = graph.vertexCollection("role").getVertex(privilege.roleDescriptor().id(), VertexEntity.class);
             VertexEntity resource = graph.vertexCollection("resource").getVertex(privilege.resourceDescriptor().id(), VertexEntity.class);
-            graph.edgeCollection("privilege").insertEdge(new JobEdge(role.getId(), resource.getId(), privilege));
+            graph.edgeCollection("command").insertEdge(new CommandEdge(role.getId(), resource.getId(), privilege));
         }
     }
 
@@ -65,7 +66,7 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
 
     }
 
-    private static class JobEdge {
+    private static class CommandEdge {
         @DocumentField(DocumentField.Type.KEY)
         private String id;
         @DocumentField(DocumentField.Type.FROM)
@@ -73,12 +74,13 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
 
         @DocumentField(DocumentField.Type.TO)
         private String to;
-        private Privilege privilege;
+        private Command command;
 
-        public JobEdge(String from, String to, Privilege privilege) {
+        public CommandEdge(String from, String to, Privilege privilege) {
             this.from = from;
             this.to = to;
             this.id = privilege.id();
+            this.command = privilege.command();
         }
     }
 }

@@ -20,14 +20,7 @@ package identity.foxtail.core.domain.model.privilege;
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019-01-22
+ * @version 0.0.1 2019-01-26
  */
-public interface PermitPrivilegeRepository {
-    void save(PermitPrivilege permitPrivilege);
-
-    void remove(String id);
-
-    PermitPrivilege find(String id);
-
-    PermitPrivilege validPermitPrivilegrFromResourceAndRole();
+public class CommandContext {
 }

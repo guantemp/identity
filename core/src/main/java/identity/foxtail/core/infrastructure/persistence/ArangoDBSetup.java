@@ -85,13 +85,13 @@ public class ArangoDBSetup {
             db.createCollection(s, edgeOptions);
         }
         edgeOptions.keyOptions(true, KeyType.traditional, 1, 1);
-        db.createCollection("privilege", edgeOptions);
+        db.createCollection("command", edgeOptions);
         //graph
         Collection<EdgeDefinition> list = new ArrayList<>();
         list.add(new EdgeDefinition().collection("create").from("user").to("resource"));
         list.add(new EdgeDefinition().collection("act").from("group", "user").to("role"));
         list.add(new EdgeDefinition().collection("subordinate").from("group", "resource").to("group", "user", "resource"));
-        list.add(new EdgeDefinition().collection("privilege").from("role").to("resource"));
+        list.add(new EdgeDefinition().collection("command").from("role").to("resource"));
         db.createGraph("identity", list);
         arangoDB.shutdown();
         logger.info("{} be created", databaseName);
