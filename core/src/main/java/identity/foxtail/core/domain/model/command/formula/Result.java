@@ -15,7 +15,7 @@
  *
  */
 
-package identity.foxtail.core.domain.model.command;
+package identity.foxtail.core.domain.model.command.formula;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
@@ -23,7 +23,19 @@ package identity.foxtail.core.domain.model.command;
  * @version 0.0.1 2019-01-27
  */
 public class Result {
-    private Permit permit;
+    private boolean permit;
     private String message;
 
+    public Result(boolean permit, String message) {
+        this.permit = permit;
+        this.message = message;
+    }
+
+    public String toJson() {
+        return "";
+    }
+
+    public boolean isPermit() {
+        return permit;
+    }
 }

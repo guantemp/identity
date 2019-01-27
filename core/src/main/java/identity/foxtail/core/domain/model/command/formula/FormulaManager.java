@@ -29,22 +29,10 @@ import java.util.Map;
  */
 public class FormulaManager {
     private static Map<String, FunctionIntf> funcMap = new HashMap<String, FunctionIntf>();
-    public final FunctionIntf<Boolean> OPEN_BOX = new FunctionIntf<Boolean>() {
+    public final FunctionIntf OPEN_BOX = new FunctionIntf() {
         @Override
-        public Boolean execute(VariantContext context) {
-            return Boolean.TRUE;
-        }
-    };
-    public final FunctionIntf<Boolean> DISCOUNT = new FunctionIntf<Boolean>() {
-        @Override
-        public Boolean execute(VariantContext context) {
-            return null;
-        }
-    };
-    public final FunctionIntf<Boolean> RED_CATALOG = new FunctionIntf<Boolean>() {
-        @Override
-        public Boolean execute(VariantContext context) {
-            return null;
+        public Result execute(VariantContext context) {
+            return new Result(true, "passed");
         }
     };
 

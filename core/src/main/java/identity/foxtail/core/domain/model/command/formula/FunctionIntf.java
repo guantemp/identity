@@ -24,10 +24,10 @@ import identity.foxtail.core.domain.model.command.VariantContext;
  * @since JDK8.0
  * @version 0.0.1 2019-01-24
  */
-public interface FunctionIntf<T> {
+public interface FunctionIntf {
     /**
      * @param context
      * @return
      */
-    T execute(VariantContext context);
+    Result execute(VariantContext context);
 }
