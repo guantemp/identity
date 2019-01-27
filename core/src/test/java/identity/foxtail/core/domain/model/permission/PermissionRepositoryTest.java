@@ -15,8 +15,10 @@
  *
  */
 
-package identity.foxtail.core.domain.model.privilege;
+package identity.foxtail.core.domain.model.permission;
 
+import identity.foxtail.core.domain.model.command.Command;
+import identity.foxtail.core.domain.model.command.formula.Formula;
 import identity.foxtail.core.domain.model.element.Resource;
 import identity.foxtail.core.domain.model.element.ResourceRepository;
 import identity.foxtail.core.domain.model.element.Role;
@@ -31,13 +33,13 @@ import org.junit.Test;
  * @since JDK8.0
  * @version 0.0.1 2019-01-22
  */
-public class PrivilegeRepositoryTest {
+public class PermissionRepositoryTest {
     private static final RoleRepository roleRepository = new ArangoDBRoleRepository();
     private static final GroupRepository groupRepository = new ArangoDBGroupRepository();
     private static final UserRepository userRepository = new ArangoDBUserRepository();
     private static final GroupMemberService service = new GroupMemberService(groupRepository);
     private static final ResourceRepository resourceRepository = new ArangoDBResourceRepository();
-    private static final PrivilegeRepository repo = new ArangoDBPrivilegeRepository();
+    private static final PermissionRepository repo = new ArangoDBPermissionRepository();
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -53,12 +55,9 @@ public class PrivilegeRepositoryTest {
 
         Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
-        Command command = new Command("open", new Open());
-        Privilege privilege = new Privilege("676767", casher.toRoleDescriptor(), command, box.toResourceDescriptor());
-        repo.save(privilege);
-        if (privilege.command().<Boolean>executor().execute(null)) {
-
-        }
+        Command open = new Command("open", new Formula(""));
+        Permission permission = new Permission("676767", casher.toRoleDescriptor(), open, box.toResourceDescriptor());
+        repo.save(permission);
 
         Resource catalog = new Resource("catalog", "产品目录", Son_Goku.toCreator());
         resourceRepository.save(catalog);
@@ -71,6 +70,13 @@ public class PrivilegeRepositoryTest {
         Resource sku = new Resource("sku", "二刀肉", Zhu_Bajie.toCreator());
         sku.assignTo(meat);
         resourceRepository.save(sku);
+
+        Command discount = new Command("discount", new Formula("rate>=0.35"));
+        Permission discountPermission = new Permission("8989", casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        repo.save(discountPermission);
+        Command red = new Command("red_catalog", new Formula("value<=45.00"));
+        Permission redPermission = new Permission("999999", casher.toRoleDescriptor(), red, meat.toResourceDescriptor());
+        repo.save(redPermission);
     }
 
     @Test

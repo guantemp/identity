@@ -136,7 +136,7 @@ public class ArangoDBResourceRepository implements ResourceRepository {
                 key = treePath.peekLast();
         } catch (IllegalAccessException e) {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Can't privilege private filed treePath", e);
+                LOGGER.debug("Can't permission private filed treePath", e);
         }
         if (key != null) {
             VertexEntity entity = graph.vertexCollection("resource").getVertex(key, VertexEntity.class);

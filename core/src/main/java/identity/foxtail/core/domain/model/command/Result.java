@@ -15,17 +15,15 @@
  *
  */
 
-package identity.foxtail.core.domain.model.privilege;
+package identity.foxtail.core.domain.model.command;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019-01-24
+ * @version 0.0.1 2019-01-27
  */
-public interface Executor<T> {
-    /**
-     * @param context
-     * @return
-     */
-    T execute(CommandContext context);
+public class Result {
+    private Permit permit;
+    private String message;
+
 }

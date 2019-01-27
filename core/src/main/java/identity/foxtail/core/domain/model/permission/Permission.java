@@ -15,10 +15,11 @@
  *
  */
 
-package identity.foxtail.core.domain.model.privilege;
+package identity.foxtail.core.domain.model.permission;
 
 import com.arangodb.entity.DocumentField;
 import com.arangodb.velocypack.annotations.Expose;
+import identity.foxtail.core.domain.model.command.Command;
 import identity.foxtail.core.domain.model.element.ResourceDescriptor;
 import identity.foxtail.core.domain.model.element.RoleDescriptor;
 
@@ -29,7 +30,7 @@ import java.util.Objects;
  * @since JDK8.0
  * @version 0.0.2 2019-01-20
  */
-public class Privilege {
+public class Permission {
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     @Expose(serialize = false, deserialize = false)
@@ -44,7 +45,7 @@ public class Privilege {
      * @param command
      * @param resourceDescriptor
      */
-    public Privilege(String id, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
+    public Permission(String id, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
         setId(id);
         setRoleDescriptor(roleDescriptor);
         setCommand(command);

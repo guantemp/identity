@@ -22,9 +22,9 @@ import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.VertexUpdateOptions;
-import identity.foxtail.core.domain.model.privilege.Command;
-import identity.foxtail.core.domain.model.privilege.Privilege;
-import identity.foxtail.core.domain.model.privilege.PrivilegeRepository;
+import identity.foxtail.core.domain.model.command.Command;
+import identity.foxtail.core.domain.model.permission.Permission;
+import identity.foxtail.core.domain.model.permission.PermissionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,26 +33,26 @@ import org.slf4j.LoggerFactory;
  * @since JDK8.0
  * @version 0.0.1 2019-01-20
  */
-public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
-    private static final Logger logger = LoggerFactory.getLogger(ArangoDBPrivilegeRepository.class);
+public class ArangoDBPermissionRepository implements PermissionRepository {
+    private static final Logger logger = LoggerFactory.getLogger(ArangoDBPermissionRepository.class);
     private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
     private ArangoDatabase identity = ArangoDBUtil.getDatabase();
 
     @Override
-    public void save(Privilege privilege) {
-        boolean exists = identity.collection("command").documentExists(privilege.id());
+    public void save(Permission permission) {
+        boolean exists = identity.collection("command").documentExists(permission.id());
         if (exists) {
 
         } else {
             ArangoGraph graph = identity.graph("identity");
-            VertexEntity role = graph.vertexCollection("role").getVertex(privilege.roleDescriptor().id(), VertexEntity.class);
-            VertexEntity resource = graph.vertexCollection("resource").getVertex(privilege.resourceDescriptor().id(), VertexEntity.class);
-            graph.edgeCollection("command").insertEdge(new CommandEdge(role.getId(), resource.getId(), privilege));
+            VertexEntity role = graph.vertexCollection("role").getVertex(permission.roleDescriptor().id(), VertexEntity.class);
+            VertexEntity resource = graph.vertexCollection("resource").getVertex(permission.resourceDescriptor().id(), VertexEntity.class);
+            graph.edgeCollection("command").insertEdge(new CommandEdge(role.getId(), resource.getId(), permission));
         }
     }
 
     @Override
-    public Privilege find(String id) {
+    public Permission find(String id) {
         return null;
     }
 
@@ -76,11 +76,11 @@ public class ArangoDBPrivilegeRepository implements PrivilegeRepository {
         private String to;
         private Command command;
 
-        public CommandEdge(String from, String to, Privilege privilege) {
+        public CommandEdge(String from, String to, Permission permission) {
             this.from = from;
             this.to = to;
-            this.id = privilege.id();
-            this.command = privilege.command();
+            this.id = permission.id();
+            this.command = permission.command();
         }
     }
 }

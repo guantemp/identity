@@ -1,21 +1,23 @@
 /*
- *  Copyright (c) 2019 www.foxtail.cc All rights Reserved.
+ * Copyright (c) 2019 www.foxtail.cc All rights Reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain job copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
  */
 
-package identity.foxtail.core.domain.model.privilege;
+package identity.foxtail.core.domain.model.command;
+
+import identity.foxtail.core.domain.model.command.formula.Formula;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
@@ -25,22 +27,17 @@ package identity.foxtail.core.domain.model.privilege;
 public class Command {
     //such as:READ,DISCOUNT,MODIFY,PRINT                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ,REMOVE
     private String name;
-    private Executor executor;
+    private Formula formula;
     private Schedule schedule;
 
-    public Command(String name, Executor executor, Schedule schedule) {
+    public Command(String name, Formula formula, Schedule schedule) {
         this.name = name;
-        this.executor = executor;
+        this.formula = formula;
         this.schedule = schedule;
     }
 
-    public Command(String name, Executor executor) {
+    public Command(String name, Formula formula) {
         this.name = name;
-        this.executor = executor;
-    }
-
-
-    public <T> Executor<T> executor() {
-        return executor;
+        this.formula = formula;
     }
 }

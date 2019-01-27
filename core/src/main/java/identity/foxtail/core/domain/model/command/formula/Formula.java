@@ -15,21 +15,20 @@
  *
  */
 
-package identity.foxtail.core.domain.model.privilege;
-
+package identity.foxtail.core.domain.model.command.formula;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019-01-24
+ * @version 0.0.1 2019-01-27
  */
-public class Open implements Executor<Boolean> {
-    private static final String QUERY = "WITH user,act,role,privilege,resource\n" +
-            "FOR v,e,p IN 1..2 OUTBOUND @start  act,privilege FILTER p.edges[1].job.name == 'open'" +
+public class Formula {
+    private static final String QUERY = "WITH user,act,role,permission,resource\n" +
+            "FOR v,e,p IN 1..2 OUTBOUND @start  act,permission FILTER p.edges[1].job.name == 'open'" +
             "FILTER p.vertices[1]._key == @roleId and p.vertex[2]._key == @resourceId RETURN p.edges[1]";
+    private String formula;
 
-    @Override
-    public Boolean execute(CommandContext context) {
-        return Boolean.TRUE;
+    public Formula(String formula) {
+        this.formula = formula;
     }
 }
