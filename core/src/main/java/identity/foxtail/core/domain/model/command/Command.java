@@ -17,8 +17,6 @@
 
 package identity.foxtail.core.domain.model.command;
 
-import identity.foxtail.core.domain.model.command.formula.Formula;
-
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0

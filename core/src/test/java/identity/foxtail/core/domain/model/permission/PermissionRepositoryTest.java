@@ -18,7 +18,7 @@
 package identity.foxtail.core.domain.model.permission;
 
 import identity.foxtail.core.domain.model.command.Command;
-import identity.foxtail.core.domain.model.command.formula.Formula;
+import identity.foxtail.core.domain.model.command.Formula;
 import identity.foxtail.core.domain.model.element.Resource;
 import identity.foxtail.core.domain.model.element.ResourceRepository;
 import identity.foxtail.core.domain.model.element.Role;

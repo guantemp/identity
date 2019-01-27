@@ -15,19 +15,27 @@
  *
  */
 
-package identity.foxtail.core.domain.model.command.formula;
+package identity.foxtail.core.domain.model.command;
 
-import identity.foxtail.core.domain.model.command.VariantContext;
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019-01-24
+ * @version 0.0.1 2019-01-27
  */
-public interface FunctionIntf {
-    /**
-     * @param context
-     * @return
-     */
-    Result execute(VariantContext context);
+public class FormulaManager {
+    private static Map<String, FunctionIntf> funcMap = new HashMap<String, FunctionIntf>();
+    public final FunctionIntf OPEN_BOX = context -> new Result(true, "passed");
+
+    public static void registerFunction(String funcName, FunctionIntf func) {
+    }
+
+    public static void unRegisterFunction(String funcName) {
+    }
+
+    public static FunctionIntf queryFunction(String funcName) {
+        return null;
+    }
 }
