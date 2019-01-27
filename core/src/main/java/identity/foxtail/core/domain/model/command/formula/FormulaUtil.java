@@ -17,42 +17,10 @@
 
 package identity.foxtail.core.domain.model.command.formula;
 
-import identity.foxtail.core.domain.model.command.VariantContext;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
  * @version 0.0.1 2019-01-27
  */
 public class FormulaUtil {
-
-
-    public final FunctionIntf<Boolean> OPEN_BOX = new FunctionIntf<Boolean>() {
-        @Override
-        public Boolean execute(VariantContext context) {
-            return null;
-        }
-    };
-    public final FunctionIntf<Boolean> DISCOUNT = new FunctionIntf<Boolean>() {
-        @Override
-        public Boolean execute(VariantContext context) {
-            return null;
-        }
-    };
-    public final FunctionIntf<Boolean> RED_CATALOG = new FunctionIntf<Boolean>() {
-        @Override
-        public Boolean execute(VariantContext context) {
-            return null;
-        }
-    };
-    private Map<String, FunctionIntf> funcMap = new HashMap<String, FunctionIntf>();
-
-    public FormulaUtil() {
-        funcMap.put("openbox", OPEN_BOX);
-        funcMap.put("openbox", DISCOUNT);
-        funcMap.put("openbox", RED_CATALOG);
-    }
 }
