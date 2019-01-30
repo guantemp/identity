@@ -35,12 +35,19 @@ public interface PermissionRepository {
     Permission find(String id);
 
     /**
+     * @param name
+     * @return
+     */
+    Permission[] findByName(String name);
+
+    /**
      * @return
      */
     String nextIdentity();
-
     /**
      * @param id
      */
     void remove(String id);
+
+    Permission findByRoleAndCommandAndResource(String roleId, String commandName, String resourceId);
 }

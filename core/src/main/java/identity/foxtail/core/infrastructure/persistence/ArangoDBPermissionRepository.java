@@ -66,6 +66,16 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
 
     }
 
+    @Override
+    public Permission[] findByName(String name) {
+        return new Permission[0];
+    }
+
+    @Override
+    public Permission findByRoleAndCommandAndResource(String roleId, String commandName, String resourceId) {
+        return null;
+    }
+
     private static class CommandEdge {
         @DocumentField(DocumentField.Type.KEY)
         private String id;
@@ -75,12 +85,14 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         @DocumentField(DocumentField.Type.TO)
         private String to;
         private Command command;
+        private String name;
 
         public CommandEdge(String from, String to, Permission permission) {
             this.from = from;
             this.to = to;
             this.id = permission.id();
             this.command = permission.command();
+            this.name = permission.name();
         }
     }
 }

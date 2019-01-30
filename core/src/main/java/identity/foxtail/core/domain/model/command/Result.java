@@ -32,7 +32,7 @@ public class Result {
     }
 
     public String toJson() {
-        return "";
+        return "{\\n}";
     }
 
     public boolean isPermit() {

@@ -28,32 +28,35 @@ import java.util.Objects;
 /***
  * @author <job href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</job>
  * @since JDK8.0
- * @version 0.0.2 2019-01-20
+ * @version 0.0.2 2019-01-30
  */
 public class Permission {
     @DocumentField(DocumentField.Type.KEY)
     private String id;
+    private String name;
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
     private Command command;
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
 
-    /**
-     * @param id
-     * @param roleDescriptor
-     * @param command
-     * @param resourceDescriptor
-     */
-    public Permission(String id, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
+    public Permission(String id, String name, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
         setId(id);
+        setName(name);
         setRoleDescriptor(roleDescriptor);
         setCommand(command);
         setResourceDescriptor(resourceDescriptor);
     }
 
-    public String toContstName() {
-        return "";
+    private void setName(String name) {
+        name = Objects.requireNonNull(name, "name is required").trim();
+        if (name.isEmpty() || name.length() >= 255)
+            throw new IllegalArgumentException("name length is [1-256]");
+        this.name = name.toUpperCase();
+    }
+
+    public String name() {
+        return name;
     }
 
     private void setId(String id) {
@@ -92,5 +95,20 @@ public class Permission {
 
     public Command command() {
         return command;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Permission that = (Permission) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

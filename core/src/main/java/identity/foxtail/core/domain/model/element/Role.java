@@ -62,12 +62,6 @@ public class Role {
         this.description = description;
     }
 
-/*
-    public Set<Permission> permissions() {
-        return Collections.unmodifiableSet(permissions);
-    }
-*/
-
     /**
      * @return
      */

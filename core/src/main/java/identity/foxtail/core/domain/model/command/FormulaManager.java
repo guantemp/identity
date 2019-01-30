@@ -27,15 +27,32 @@ import java.util.Map;
  */
 public class FormulaManager {
     private static Map<String, FunctionIntf> funcMap = new HashMap<String, FunctionIntf>();
-    public final FunctionIntf OPEN_BOX = context -> new Result(true, "passed");
+    public static final FunctionIntf OPEN_BOX = context -> new Result(true, "passed");
+    public static final FunctionIntf DISCOUNT = context -> {
+        Result result = new Result(false, "不能低于4折,ok?");
+        if (context != null) {
+            int rate = context.getVariant("rate");
+            if (rate >= 40 && rate <= 100)
+                result = new Result(true, "good");
+        }
+        return result;
+    };
+
+    static {
+        registerFunction("open_box", OPEN_BOX);
+        registerFunction("open_box", DISCOUNT);
+    }
+
 
     public static void registerFunction(String funcName, FunctionIntf func) {
+        funcMap.put(funcName, func);
     }
 
     public static void unRegisterFunction(String funcName) {
+        funcMap.remove(funcName);
     }
 
     public static FunctionIntf queryFunction(String funcName) {
-        return null;
+        return funcMap.get(funcName);
     }
 }

@@ -17,10 +17,22 @@
 
 package identity.foxtail.core.domain.model.command;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
  * @version 0.0.1 2019-01-26
  */
 public class VariantContext {
+    private Map<String, Object> variantMap = new HashMap<>();
+
+    public <T> T getVariant(String variName) {
+        return (T) variantMap.get(variName);
+    }
+
+    public <T extends Object> void put(String key, T value) {
+        variantMap.put(key, value);
+    }
 }

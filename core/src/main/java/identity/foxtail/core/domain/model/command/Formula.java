@@ -27,8 +27,15 @@ public class Formula {
             "FOR v,e,p IN 1..2 OUTBOUND @start  act,permission FILTER p.edges[1].job.name == 'open'" +
             "FILTER p.vertices[1]._key == @roleId and p.vertex[2]._key == @resourceId RETURN p.edges[1]";
     private String formula;
+    public static final Formula EMPTY_FORMULA = new Formula("", null);
+    private FunctionIntf function;
 
-    public Formula(String formula) {
+    public Formula(String formula, FunctionIntf function) {
         this.formula = formula;
+        this.function = function;
+    }
+
+    Result execute(VariantContext context) {
+        return function.execute(context);
     }
 }
