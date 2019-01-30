@@ -28,19 +28,22 @@ import java.util.Map;
 public class FormulaManager {
     private static Map<String, FunctionIntf> funcMap = new HashMap<String, FunctionIntf>();
     public static final FunctionIntf OPEN_BOX = context -> new Result(true, "passed");
+
     public static final FunctionIntf DISCOUNT = context -> {
         Result result = new Result(false, "不能低于4折,ok?");
         if (context != null) {
+            String expression = context.getVariant("expression");
+            // process expression
             int rate = context.getVariant("rate");
             if (rate >= 40 && rate <= 100)
-                result = new Result(true, "good");
+                result = new Result(true, "it's good");
         }
         return result;
     };
 
     static {
         registerFunction("open_box", OPEN_BOX);
-        registerFunction("open_box", DISCOUNT);
+        registerFunction("discount", DISCOUNT);
     }
 
 

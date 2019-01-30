@@ -23,19 +23,17 @@ package identity.foxtail.core.domain.model.command;
  * @version 0.0.1 2019-01-27
  */
 public class Formula {
-    private static final String QUERY = "WITH user,act,role,permission,resource\n" +
-            "FOR v,e,p IN 1..2 OUTBOUND @start  act,permission FILTER p.edges[1].job.name == 'open'" +
-            "FILTER p.vertices[1]._key == @roleId and p.vertex[2]._key == @resourceId RETURN p.edges[1]";
-    private String formula;
-    public static final Formula EMPTY_FORMULA = new Formula("", null);
+    public static final Formula EMPTY_FORMULA = new Formula("", context -> new Result(true, "It's passed"));
     private FunctionIntf function;
+    private String expression;
 
-    public Formula(String formula, FunctionIntf function) {
-        this.formula = formula;
+    public Formula(String expression, FunctionIntf function) {
+        this.expression = expression;
         this.function = function;
     }
 
-    Result execute(VariantContext context) {
+    public Result execute(VariantContext context) {
+        context.put("expression", expression);
         return function.execute(context);
     }
 }
