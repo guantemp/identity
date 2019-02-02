@@ -57,7 +57,7 @@ public class PermissionRepositoryTest {
         Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
         Command open = new Command("open", Formula.EMPTY_FORMULA);
-        Permission permission = new Permission("6767", "open_box", casher.toRoleDescriptor(), open, box.toResourceDescriptor());
+        Permission permission = new Permission("6767", new PermissionName("open_box"), casher.toRoleDescriptor(), open, box.toResourceDescriptor());
         repo.save(permission);
 
         Resource catalog = new Resource("catalog", "产品目录", Son_Goku.toCreator());
@@ -73,13 +73,13 @@ public class PermissionRepositoryTest {
         resourceRepository.save(sku);
 
         Command discount = new Command("discount", new Formula("rate>=20", FormulaManager.queryFunction("discount")));
-        Permission discountPermission = new Permission("7878", "discount", casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        Permission discountPermission = new Permission("7878", new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
         discount = new Command("discount", new Formula("rate>=40", FormulaManager.queryFunction("discount")));
-        discountPermission = new Permission("0000", "discount", casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        discountPermission = new Permission("0000", new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
         Command red = new Command("red", new Formula("value<=45.00", FormulaManager.queryFunction("red_catalog")));
-        Permission redPermission = new Permission("8989", "red_catalog", casher.toRoleDescriptor(), red, meat.toResourceDescriptor());
+        Permission redPermission = new Permission("8989", new PermissionName("red_catalog"), casher.toRoleDescriptor(), red, meat.toResourceDescriptor());
         repo.save(redPermission);
     }
 

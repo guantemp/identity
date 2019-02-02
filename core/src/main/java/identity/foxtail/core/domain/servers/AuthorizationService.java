@@ -22,6 +22,7 @@ import identity.foxtail.core.domain.model.element.RoleRepository;
 import identity.foxtail.core.domain.model.id.GroupMemberService;
 import identity.foxtail.core.domain.model.id.User;
 import identity.foxtail.core.domain.model.id.UserRepository;
+import identity.foxtail.core.domain.model.permission.Permission;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBGroupRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBPermissionRepository;
@@ -45,7 +46,7 @@ public class AuthorizationService {
         User user = userRepository.find(userId);
         for (Role role : roles) {
             if (role.isUserInRole(user, groupMemberService)) {
-
+                Permission[] permissions = permissionRepository.findByRoleAndName(role.id(), permission);
             }
         }
         return true;

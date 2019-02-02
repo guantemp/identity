@@ -34,11 +34,13 @@ public interface PermissionRepository {
      */
     Permission find(String id);
 
+
     /**
-     * @param name
+     * @param roleId
+     * @param permissionName
      * @return
      */
-    Permission[] findByName(String name);
+    Permission[] findByRoleAndName(String roleId, String permissionName);
 
     /**
      * @return
@@ -49,5 +51,4 @@ public interface PermissionRepository {
      */
     void remove(String id);
 
-    Permission findByRoleAndCommandAndResource(String roleId, String commandName, String resourceId);
 }

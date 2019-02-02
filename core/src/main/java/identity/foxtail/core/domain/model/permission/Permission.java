@@ -33,14 +33,14 @@ import java.util.Objects;
 public class Permission {
     @DocumentField(DocumentField.Type.KEY)
     private String id;
-    private String name;
+    private PermissionName name;
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
     private Command command;
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
 
-    public Permission(String id, String name, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
+    public Permission(String id, PermissionName name, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
         setId(id);
         setName(name);
         setRoleDescriptor(roleDescriptor);
@@ -48,14 +48,12 @@ public class Permission {
         setResourceDescriptor(resourceDescriptor);
     }
 
-    private void setName(String name) {
-        name = Objects.requireNonNull(name, "name is required").trim();
-        if (name.isEmpty() || name.length() >= 255)
-            throw new IllegalArgumentException("name length is [1-256]");
-        this.name = name.toUpperCase();
+    private void setName(PermissionName name) {
+        name = Objects.requireNonNull(name, "name is required");
+        this.name = name;
     }
 
-    public String name() {
+    public PermissionName name() {
         return name;
     }
 

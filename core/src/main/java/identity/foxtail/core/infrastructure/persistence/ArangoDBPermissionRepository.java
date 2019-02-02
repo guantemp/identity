@@ -24,6 +24,7 @@ import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.VertexUpdateOptions;
 import identity.foxtail.core.domain.model.command.Command;
 import identity.foxtail.core.domain.model.permission.Permission;
+import identity.foxtail.core.domain.model.permission.PermissionName;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,13 +68,8 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
     }
 
     @Override
-    public Permission[] findByName(String name) {
+    public Permission[] findByRoleAndName(String roleId, String permissionName) {
         return new Permission[0];
-    }
-
-    @Override
-    public Permission findByRoleAndCommandAndResource(String roleId, String commandName, String resourceId) {
-        return null;
     }
 
     private static class CommandEdge {
@@ -85,7 +81,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         @DocumentField(DocumentField.Type.TO)
         private String to;
         private Command command;
-        private String name;
+        private PermissionName name;
 
         public CommandEdge(String from, String to, Permission permission) {
             this.from = from;
