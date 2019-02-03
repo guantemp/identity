@@ -40,13 +40,13 @@ public class AuthorizationService {
     private RoleRepository roleRepository = new ArangoDBRoleRepository();
     private GroupMemberService groupMemberService = new GroupMemberService(new ArangoDBGroupRepository());
 
-    public boolean authorization(String userId, String permission) {
+    public boolean authorization(String userId, String permissionName) {
         int count = roleRepository.count();
         Role[] roles = roleRepository.all(0, count - 1);
         User user = userRepository.find(userId);
         for (Role role : roles) {
             if (role.isUserInRole(user, groupMemberService)) {
-                Permission[] permissions = permissionRepository.findByRoleAndName(role.id(), permission);
+                Permission[] permissions = permissionRepository.findByRoleAndName(role.id(), permissionName);
             }
         }
         return true;

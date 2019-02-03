@@ -19,7 +19,7 @@ package identity.foxtail.core.domain.model.permission;
 
 import com.arangodb.entity.DocumentField;
 import com.arangodb.velocypack.annotations.Expose;
-import identity.foxtail.core.domain.model.command.Command;
+import identity.foxtail.core.domain.model.permission.command.Command;
 import identity.foxtail.core.domain.model.element.ResourceDescriptor;
 import identity.foxtail.core.domain.model.element.RoleDescriptor;
 

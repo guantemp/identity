@@ -15,7 +15,7 @@
  *
  */
 
-package identity.foxtail.core.domain.model.command;
+package identity.foxtail.core.domain.model.permission.command;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
@@ -25,17 +25,17 @@ package identity.foxtail.core.domain.model.command;
 public class Command {
     //such as:READ,DISCOUNT,MODIFY,PRINT                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ,REMOVE
     private String name;
-    private Formula formula;
+    private Rule rule;
     private Schedule schedule;
 
-    public Command(String name, Formula formula, Schedule schedule) {
+    public Command(String name, Rule rule, Schedule schedule) {
         this.name = name;
-        this.formula = formula;
+        this.rule = rule;
         this.schedule = schedule;
     }
 
-    public Command(String name, Formula formula) {
+    public Command(String name, Rule rule) {
         this.name = name;
-        this.formula = formula;
+        this.rule = rule;
     }
 }

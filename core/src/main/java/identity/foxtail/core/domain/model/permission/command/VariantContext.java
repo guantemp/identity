@@ -15,25 +15,24 @@
  *
  */
 
-package identity.foxtail.core.domain.model.command;
+package identity.foxtail.core.domain.model.permission.command;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019-01-27
+ * @version 0.0.1 2019-01-26
  */
-public class Formula {
-    public static final Formula EMPTY_FORMULA = new Formula("", context -> new Result(true, "It's passed"));
-    private FunctionIntf function;
-    private String expression;
+public class VariantContext {
+    private Map<String, Object> variantMap = new HashMap<>();
 
-    public Formula(String expression, FunctionIntf function) {
-        this.expression = expression;
-        this.function = function;
+    public <T> T getVariant(String variName) {
+        return (T) variantMap.get(variName);
     }
 
-    public Result execute(VariantContext context) {
-        context.put("expression", expression);
-        return function.execute(context);
+    public <T extends Object> void put(String key, T value) {
+        variantMap.put(key, value);
     }
 }

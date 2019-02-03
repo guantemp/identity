@@ -37,4 +37,8 @@ public class PermissionName {
             throw new IllegalArgumentException("name length is [1-256]");
         this.name = name;
     }
+
+    public String name() {
+        return name.toUpperCase();
+    }
 }

@@ -15,17 +15,25 @@
  *
  */
 
-package identity.foxtail.core.domain.model.command;
+package identity.foxtail.core.domain.model.permission.command;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019-01-24
+ * @version 0.0.1 2019-01-27
  */
-public interface FunctionIntf {
-    /**
-     * @param context
-     * @return
-     */
-    Result execute(VariantContext context);
+public class Rule {
+    public static final Rule EMPTY_RULE = new Rule("", context -> new Result(true, "It's passed"));
+    private Engine function;
+    private String expression;
+
+    public Rule(String expression, Engine function) {
+        this.expression = expression;
+        this.function = function;
+    }
+
+    public Result execute(VariantContext context) {
+        context.put("expression", expression);
+        return function.execute(context);
+    }
 }

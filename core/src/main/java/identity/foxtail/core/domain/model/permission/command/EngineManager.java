@@ -15,7 +15,7 @@
  *
  */
 
-package identity.foxtail.core.domain.model.command;
+package identity.foxtail.core.domain.model.permission.command;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,11 +25,9 @@ import java.util.Map;
  * @since JDK8.0
  * @version 0.0.1 2019-01-27
  */
-public class FormulaManager {
-    private static Map<String, FunctionIntf> funcMap = new HashMap<String, FunctionIntf>();
-    public static final FunctionIntf OPEN_BOX = context -> new Result(true, "passed");
-
-    public static final FunctionIntf DISCOUNT = context -> {
+public class EngineManager {
+    public static final Engine OPEN_BOX = context -> new Result(true, "passed");
+    public static final Engine DISCOUNT = context -> {
         Result result = new Result(false, "不能低于4折,ok?");
         if (context != null) {
             String expression = context.getVariant("expression");
@@ -40,14 +38,14 @@ public class FormulaManager {
         }
         return result;
     };
+    private static Map<String, Engine> funcMap = new HashMap<String, Engine>();
 
     static {
         registerFunction("open_box", OPEN_BOX);
         registerFunction("discount", DISCOUNT);
     }
 
-
-    public static void registerFunction(String funcName, FunctionIntf func) {
+    public static void registerFunction(String funcName, Engine func) {
         funcMap.put(funcName, func);
     }
 
@@ -55,7 +53,7 @@ public class FormulaManager {
         funcMap.remove(funcName);
     }
 
-    public static FunctionIntf queryFunction(String funcName) {
+    public static Engine queryFunction(String funcName) {
         return funcMap.get(funcName);
     }
 }

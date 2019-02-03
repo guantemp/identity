@@ -15,27 +15,28 @@
  *
  */
 
-package identity.foxtail.core.domain.model.command;
+package identity.foxtail.core.domain.model.permission.command;
+
+import java.util.StringJoiner;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019-01-27
+ * @version 0.0.1 2019-01-21
  */
-public class Result {
-    private boolean permit;
-    private String message;
+public class Schedule {
+    private String cron;
+    private boolean isInSchedule;
 
-    public Result(boolean permit, String message) {
-        this.permit = permit;
-        this.message = message;
+    public boolean isInSchedule() {
+        return isInSchedule;
     }
 
-    public String toJson() {
-        return "{\\n}";
-    }
-
-    public boolean isPermit() {
-        return permit;
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Schedule.class.getSimpleName() + "[", "]")
+                .add("cron='" + cron + "'")
+                .add("isInSchedule=" + isInSchedule)
+                .toString();
     }
 }

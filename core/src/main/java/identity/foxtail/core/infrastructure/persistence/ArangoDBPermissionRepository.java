@@ -22,7 +22,7 @@ import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.VertexUpdateOptions;
-import identity.foxtail.core.domain.model.command.Command;
+import identity.foxtail.core.domain.model.permission.command.Command;
 import identity.foxtail.core.domain.model.permission.Permission;
 import identity.foxtail.core.domain.model.permission.PermissionName;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
