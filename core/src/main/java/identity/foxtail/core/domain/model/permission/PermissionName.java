@@ -39,6 +39,6 @@ public class PermissionName {
     }
 
     public String name() {
-        return name.toUpperCase();
+        return name;
     }
 }

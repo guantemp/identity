@@ -25,17 +25,17 @@ package identity.foxtail.core.domain.model.permission.command;
 public class Command {
     //such as:READ,DISCOUNT,MODIFY,PRINT                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ,REMOVE
     private String name;
-    private Rule rule;
+    private Strategy strategy;
     private Schedule schedule;
 
-    public Command(String name, Rule rule, Schedule schedule) {
+    public Command(String name, Strategy strategy, Schedule schedule) {
         this.name = name;
-        this.rule = rule;
+        this.strategy = strategy;
         this.schedule = schedule;
     }
 
-    public Command(String name, Rule rule) {
+    public Command(String name, Strategy strategy) {
         this.name = name;
-        this.rule = rule;
+        this.strategy = strategy;
     }
 }

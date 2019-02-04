@@ -22,18 +22,18 @@ package identity.foxtail.core.domain.model.permission.command;
  * @since JDK8.0
  * @version 0.0.1 2019-01-27
  */
-public class Rule {
-    public static final Rule EMPTY_RULE = new Rule("", context -> new Result(true, "It's passed"));
-    private Engine function;
+public class Strategy {
+    public static final Strategy EMPTY_STRATEGY = new Strategy("", context -> new Result(true, "It's passed"));
+    private Engine engine;
     private String expression;
 
-    public Rule(String expression, Engine function) {
+    public Strategy(String expression, Engine engine) {
         this.expression = expression;
-        this.function = function;
+        this.engine = engine;
     }
 
     public Result execute(VariantContext context) {
         context.put("expression", expression);
-        return function.execute(context);
+        return engine.execute(context);
     }
 }

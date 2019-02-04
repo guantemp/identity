@@ -41,7 +41,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
 
     @Override
     public void save(Permission permission) {
-        boolean exists = identity.collection("command").documentExists(permission.id());
+        boolean exists = false;
         if (exists) {
 
         } else {
@@ -53,28 +53,11 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
     }
 
     @Override
-    public Permission find(String id) {
-        return null;
-    }
-
-    @Override
-    public String nextIdentity() {
-        return null;
-    }
-
-    @Override
     public void remove(String id) {
 
     }
 
-    @Override
-    public Permission[] findByRoleAndName(String roleId, String permissionName) {
-        return new Permission[0];
-    }
-
     private static class CommandEdge {
-        @DocumentField(DocumentField.Type.KEY)
-        private String id;
         @DocumentField(DocumentField.Type.FROM)
         private String from;
 
@@ -86,7 +69,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         public CommandEdge(String from, String to, Permission permission) {
             this.from = from;
             this.to = to;
-            this.id = permission.id();
+            this.name = permission.name();
             this.command = permission.command();
             this.name = permission.name();
         }

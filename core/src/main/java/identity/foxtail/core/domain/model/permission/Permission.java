@@ -17,11 +17,10 @@
 
 package identity.foxtail.core.domain.model.permission;
 
-import com.arangodb.entity.DocumentField;
 import com.arangodb.velocypack.annotations.Expose;
-import identity.foxtail.core.domain.model.permission.command.Command;
 import identity.foxtail.core.domain.model.element.ResourceDescriptor;
 import identity.foxtail.core.domain.model.element.RoleDescriptor;
+import identity.foxtail.core.domain.model.permission.command.Command;
 
 import java.util.Objects;
 
@@ -31,8 +30,6 @@ import java.util.Objects;
  * @version 0.0.2 2019-01-30
  */
 public class Permission {
-    @DocumentField(DocumentField.Type.KEY)
-    private String id;
     private PermissionName name;
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
@@ -40,8 +37,7 @@ public class Permission {
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
 
-    public Permission(String id, PermissionName name, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
-        setId(id);
+    public Permission(PermissionName name, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
         setName(name);
         setRoleDescriptor(roleDescriptor);
         setCommand(command);
@@ -55,13 +51,6 @@ public class Permission {
 
     public PermissionName name() {
         return name;
-    }
-
-    private void setId(String id) {
-        id = Objects.requireNonNull(id, "The id is required").trim();
-        if (id.isEmpty() || id.length() > 64)
-            throw new IllegalArgumentException("The id length is [1-64]");
-        this.id = id;
     }
 
     private void setResourceDescriptor(ResourceDescriptor resourceDescriptor) {
@@ -79,10 +68,6 @@ public class Permission {
         this.roleDescriptor = roleDescriptor;
     }
 
-    public String id() {
-        return id;
-    }
-
     public ResourceDescriptor resourceDescriptor() {
         return resourceDescriptor;
     }
@@ -93,20 +78,5 @@ public class Permission {
 
     public Command command() {
         return command;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Permission that = (Permission) o;
-
-        return id != null ? id.equals(that.id) : that.id == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
     }
 }

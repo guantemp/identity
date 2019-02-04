@@ -81,11 +81,11 @@ public class ArangoDBSetup {
         db.collection("role").ensureHashIndex(index, hashIndexOptions);
         //edge
         CollectionCreateOptions edgeOptions = new CollectionCreateOptions().type(CollectionType.EDGES);
-        for (String s : new String[]{"subordinate", "act", "create"}) {
+        for (String s : new String[]{"subordinate", "act", "create", "command"}) {
             db.createCollection(s, edgeOptions);
         }
-        edgeOptions.keyOptions(true, KeyType.traditional, 1, 1);
-        db.createCollection("command", edgeOptions);
+        //edgeOptions.keyOptions(true, KeyType.traditional, 1, 1);
+        //db.createCollection("command", edgeOptions);
         //graph
         Collection<EdgeDefinition> list = new ArrayList<>();
         list.add(new EdgeDefinition().collection("create").from("user").to("resource"));

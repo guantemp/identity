@@ -18,7 +18,7 @@
 package identity.foxtail.core.domain.model.permission;
 
 import identity.foxtail.core.domain.model.permission.command.Command;
-import identity.foxtail.core.domain.model.permission.command.Rule;
+import identity.foxtail.core.domain.model.permission.command.Strategy;
 import identity.foxtail.core.domain.model.permission.command.EngineManager;
 import identity.foxtail.core.domain.model.element.Resource;
 import identity.foxtail.core.domain.model.element.ResourceRepository;
@@ -56,7 +56,7 @@ public class PermissionRepositoryTest {
 
         Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
-        Command open = new Command("open", Rule.EMPTY_RULE);
+        Command open = new Command("open", Strategy.EMPTY_STRATEGY);
         Permission permission = new Permission("6767", new PermissionName("open_box"), casher.toRoleDescriptor(), open, box.toResourceDescriptor());
         repo.save(permission);
 
@@ -72,13 +72,13 @@ public class PermissionRepositoryTest {
         sku.assignTo(meat);
         resourceRepository.save(sku);
 
-        Command discount = new Command("discount", new Rule("rate>=20", EngineManager.queryFunction("discount")));
+        Command discount = new Command("discount", new Strategy("rate>=20", EngineManager.queryFunction("discount")));
         Permission discountPermission = new Permission("7878", new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
-        discount = new Command("discount", new Rule("rate>=40", EngineManager.queryFunction("discount")));
+        discount = new Command("discount", new Strategy("rate>=40", EngineManager.queryFunction("discount")));
         discountPermission = new Permission("0000", new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
-        Command red = new Command("red", new Rule("value<=45.00", EngineManager.queryFunction("red_catalog")));
+        Command red = new Command("red", new Strategy("value<=45.00", EngineManager.queryFunction("red_catalog")));
         Permission redPermission = new Permission("8989", new PermissionName("red_catalog"), casher.toRoleDescriptor(), red, meat.toResourceDescriptor());
         repo.save(redPermission);
     }
