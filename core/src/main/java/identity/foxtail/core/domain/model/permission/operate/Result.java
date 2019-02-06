@@ -15,7 +15,7 @@
  *
  */
 
-package identity.foxtail.core.domain.model.permission.command;
+package identity.foxtail.core.domain.model.permission.operate;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>

@@ -15,25 +15,24 @@
  *
  */
 
-package identity.foxtail.core.domain.model.permission.command;
+package identity.foxtail.core.domain.model.permission.operate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019-01-27
+ * @version 0.0.1 2019-01-26
  */
-public class Strategy {
-    public static final Strategy EMPTY_STRATEGY = new Strategy("", context -> new Result(true, "It's passed"));
-    private Engine engine;
-    private String expression;
+public class VariantContext {
+    private Map<String, Object> variantMap = new HashMap<>();
 
-    public Strategy(String expression, Engine engine) {
-        this.expression = expression;
-        this.engine = engine;
+    public <T> T getVariant(String variName) {
+        return (T) variantMap.get(variName);
     }
 
-    public Result execute(VariantContext context) {
-        context.put("expression", expression);
-        return engine.execute(context);
+    public <T extends Object> void put(String key, T value) {
+        variantMap.put(key, value);
     }
 }

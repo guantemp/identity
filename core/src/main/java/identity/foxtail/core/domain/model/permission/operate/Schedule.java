@@ -15,9 +15,7 @@
  *
  */
 
-package identity.foxtail.core.domain.model.permission.command;
-
-import java.util.StringJoiner;
+package identity.foxtail.core.domain.model.permission.operate;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
@@ -26,17 +24,28 @@ import java.util.StringJoiner;
  */
 public class Schedule {
     private String cron;
-    private boolean isInSchedule;
+    private boolean inTheSchedule = false;
 
-    public boolean isInSchedule() {
-        return isInSchedule;
+    public Schedule(String cron) {
+        this.cron = cron;
+    }
+
+    public boolean isInTheSchedule() {
+        return inTheSchedule;
     }
 
     @Override
-    public String toString() {
-        return new StringJoiner(", ", Schedule.class.getSimpleName() + "[", "]")
-                .add("cron='" + cron + "'")
-                .add("isInSchedule=" + isInSchedule)
-                .toString();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Schedule schedule = (Schedule) o;
+
+        return cron != null ? cron.equals(schedule.cron) : schedule.cron == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return cron != null ? cron.hashCode() : 0;
     }
 }

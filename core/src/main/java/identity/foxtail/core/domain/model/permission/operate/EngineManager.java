@@ -15,7 +15,7 @@
  *
  */
 
-package identity.foxtail.core.domain.model.permission.command;
+package identity.foxtail.core.domain.model.permission.operate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +53,7 @@ public class EngineManager {
         funcMap.remove(funcName);
     }
 
-    public static Engine queryFunction(String funcName) {
+    public static Engine queryEngine(String funcName) {
         return funcMap.get(funcName);
     }
 }

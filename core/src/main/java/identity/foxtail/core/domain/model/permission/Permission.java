@@ -20,7 +20,7 @@ package identity.foxtail.core.domain.model.permission;
 import com.arangodb.velocypack.annotations.Expose;
 import identity.foxtail.core.domain.model.element.ResourceDescriptor;
 import identity.foxtail.core.domain.model.element.RoleDescriptor;
-import identity.foxtail.core.domain.model.permission.command.Command;
+import identity.foxtail.core.domain.model.permission.operate.Operate;
 
 import java.util.Objects;
 
@@ -33,14 +33,14 @@ public class Permission {
     private PermissionName name;
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
-    private Command command;
+    private Operate operate;
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
 
-    public Permission(PermissionName name, RoleDescriptor roleDescriptor, Command command, ResourceDescriptor resourceDescriptor) {
+    public Permission(PermissionName name, RoleDescriptor roleDescriptor, Operate operate, ResourceDescriptor resourceDescriptor) {
         setName(name);
         setRoleDescriptor(roleDescriptor);
-        setCommand(command);
+        setOperate(operate);
         setResourceDescriptor(resourceDescriptor);
     }
 
@@ -58,9 +58,9 @@ public class Permission {
         this.resourceDescriptor = resourceDescriptor;
     }
 
-    private void setCommand(Command command) {
-        Objects.requireNonNull(command, "The job required");
-        this.command = command;
+    private void setOperate(Operate operate) {
+        Objects.requireNonNull(operate, "The job required");
+        this.operate = operate;
     }
 
     private void setRoleDescriptor(RoleDescriptor roleDescriptor) {
@@ -76,7 +76,7 @@ public class Permission {
         return roleDescriptor;
     }
 
-    public Command command() {
-        return command;
+    public Operate operate() {
+        return operate;
     }
 }

@@ -15,26 +15,26 @@
  *
  */
 
-package identity.foxtail.core.domain.model.permission.command;
+package identity.foxtail.core.domain.model.permission.operate;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
  * @version 0.0.1 2019-01-19
  */
-public class Command {
+public class Operate {
     //such as:READ,DISCOUNT,MODIFY,PRINT                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ,REMOVE
     private String name;
     private Strategy strategy;
     private Schedule schedule;
 
-    public Command(String name, Strategy strategy, Schedule schedule) {
+    public Operate(String name, Strategy strategy, Schedule schedule) {
         this.name = name;
         this.strategy = strategy;
         this.schedule = schedule;
     }
 
-    public Command(String name, Strategy strategy) {
+    public Operate(String name, Strategy strategy) {
         this.name = name;
         this.strategy = strategy;
     }

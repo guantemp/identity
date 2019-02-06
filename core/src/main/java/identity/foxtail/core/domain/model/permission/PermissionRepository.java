@@ -29,21 +29,21 @@ public interface PermissionRepository {
     void save(Permission permission);
 
     /**
-     * @param id
+     * @param roleId
      * @return
      */
-    Permission find(String id);
-
+    Permission[] findPermissionForRoleWithPermissionName(String roleId, String permissionName);
 
     /**
+     * @param resourceId
      * @param permissionName
      * @return
      */
-    Permission[] findByPermisionName(String permissionName);
+    Permission[] findPermissionForResourceWithPermissionName(String resourceId, String permissionName);
+
 
     /**
-     * @param id
+     * @param permission
      */
-    void remove(String id);
-
+    void remove(Permission permission);
 }

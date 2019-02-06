@@ -46,7 +46,7 @@ public class AuthorizationService {
         User user = userRepository.find(userId);
         for (Role role : roles) {
             if (role.isUserInRole(user, groupMemberService)) {
-                Permission[] permissions = permissionRepository.findByRoleAndName(role.id(), permissionName);
+                Permission[] permissions = permissionRepository.findPermissionForRoleWithPermissionName(role.id(), "");
             }
         }
         return true;

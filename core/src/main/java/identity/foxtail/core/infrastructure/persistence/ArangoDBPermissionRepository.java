@@ -22,10 +22,10 @@ import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.VertexUpdateOptions;
-import identity.foxtail.core.domain.model.permission.command.Command;
 import identity.foxtail.core.domain.model.permission.Permission;
 import identity.foxtail.core.domain.model.permission.PermissionName;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
+import identity.foxtail.core.domain.model.permission.operate.Operate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +41,8 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
 
     @Override
     public void save(Permission permission) {
+        final String query = "WITH role,operate,resource\\n" +
+                "FOR v,e,p OUTBOUND 1..2 @start RETURN e";
         boolean exists = false;
         if (exists) {
 
@@ -48,30 +50,39 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
             ArangoGraph graph = identity.graph("identity");
             VertexEntity role = graph.vertexCollection("role").getVertex(permission.roleDescriptor().id(), VertexEntity.class);
             VertexEntity resource = graph.vertexCollection("resource").getVertex(permission.resourceDescriptor().id(), VertexEntity.class);
-            graph.edgeCollection("command").insertEdge(new CommandEdge(role.getId(), resource.getId(), permission));
+            graph.edgeCollection("operate").insertEdge(new CommandEdge(role.getId(), resource.getId(), permission));
         }
     }
 
     @Override
-    public void remove(String id) {
+    public Permission[] findPermissionForRoleWithPermissionName(String roleId, String permissionName) {
+        return new Permission[0];
+    }
+
+    @Override
+    public Permission[] findPermissionForResourceWithPermissionName(String resourceId, String permissionName) {
+        return new Permission[0];
+    }
+
+    @Override
+    public void remove(Permission permission) {
 
     }
 
     private static class CommandEdge {
         @DocumentField(DocumentField.Type.FROM)
         private String from;
-
         @DocumentField(DocumentField.Type.TO)
         private String to;
-        private Command command;
-        private PermissionName name;
+        private Operate operate;
+        private PermissionName permissionName;
 
         public CommandEdge(String from, String to, Permission permission) {
             this.from = from;
             this.to = to;
-            this.name = permission.name();
-            this.command = permission.command();
-            this.name = permission.name();
+            this.permissionName = permission.name();
+            this.operate = permission.operate();
+            this.permissionName = permission.name();
         }
     }
 }

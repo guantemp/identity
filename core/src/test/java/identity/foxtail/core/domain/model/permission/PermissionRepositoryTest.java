@@ -17,9 +17,9 @@
 
 package identity.foxtail.core.domain.model.permission;
 
-import identity.foxtail.core.domain.model.permission.command.Command;
-import identity.foxtail.core.domain.model.permission.command.Strategy;
-import identity.foxtail.core.domain.model.permission.command.EngineManager;
+import identity.foxtail.core.domain.model.permission.operate.Operate;
+import identity.foxtail.core.domain.model.permission.operate.Strategy;
+import identity.foxtail.core.domain.model.permission.operate.EngineManager;
 import identity.foxtail.core.domain.model.element.Resource;
 import identity.foxtail.core.domain.model.element.ResourceRepository;
 import identity.foxtail.core.domain.model.element.Role;
@@ -56,8 +56,8 @@ public class PermissionRepositoryTest {
 
         Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
-        Command open = new Command("open", Strategy.EMPTY_STRATEGY);
-        Permission permission = new Permission("6767", new PermissionName("open_box"), casher.toRoleDescriptor(), open, box.toResourceDescriptor());
+        Operate open = new Operate("open", Strategy.NO_STRATEGY);
+        Permission permission = new Permission(new PermissionName("open_box"), casher.toRoleDescriptor(), open, box.toResourceDescriptor());
         repo.save(permission);
 
         Resource catalog = new Resource("catalog", "产品目录", Son_Goku.toCreator());
@@ -72,14 +72,14 @@ public class PermissionRepositoryTest {
         sku.assignTo(meat);
         resourceRepository.save(sku);
 
-        Command discount = new Command("discount", new Strategy("rate>=20", EngineManager.queryFunction("discount")));
-        Permission discountPermission = new Permission("7878", new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        Operate discount = new Operate("discount", new Strategy("rate>=20", EngineManager.queryEngine("discount")));
+        Permission discountPermission = new Permission(new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
-        discount = new Command("discount", new Strategy("rate>=40", EngineManager.queryFunction("discount")));
-        discountPermission = new Permission("0000", new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        discount = new Operate("discount", new Strategy("rate>=40", EngineManager.queryEngine("discount")));
+        discountPermission = new Permission(new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
-        Command red = new Command("red", new Strategy("value<=45.00", EngineManager.queryFunction("red_catalog")));
-        Permission redPermission = new Permission("8989", new PermissionName("red_catalog"), casher.toRoleDescriptor(), red, meat.toResourceDescriptor());
+        Operate red = new Operate("red", new Strategy("value<=45.00", EngineManager.queryEngine("red_catalog")));
+        Permission redPermission = new Permission(new PermissionName("red_catalog"), casher.toRoleDescriptor(), red, meat.toResourceDescriptor());
         repo.save(redPermission);
     }
 
