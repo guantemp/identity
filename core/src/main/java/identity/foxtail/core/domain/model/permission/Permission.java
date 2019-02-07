@@ -30,26 +30,28 @@ import java.util.Objects;
  * @version 0.0.2 2019-01-30
  */
 public class Permission {
-    private PermissionName name;
+    private String id;
+    private String name;
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
     private Operate operate;
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
 
-    public Permission(PermissionName name, RoleDescriptor roleDescriptor, Operate operate, ResourceDescriptor resourceDescriptor) {
+    public Permission(String id, String name, RoleDescriptor roleDescriptor, Operate operate, ResourceDescriptor resourceDescriptor) {
+        setId(id);
         setName(name);
         setRoleDescriptor(roleDescriptor);
         setOperate(operate);
         setResourceDescriptor(resourceDescriptor);
     }
 
-    private void setName(PermissionName name) {
+    private void setName(String name) {
         name = Objects.requireNonNull(name, "name is required");
         this.name = name;
     }
 
-    public PermissionName name() {
+    public String name() {
         return name;
     }
 
@@ -78,5 +80,16 @@ public class Permission {
 
     public Operate operate() {
         return operate;
+    }
+
+    public String id() {
+        return id;
+    }
+
+    private void setId(String id) {
+        id = Objects.requireNonNull(id, "id required").trim();
+        if (id.isEmpty() || id.length() >= 128)
+            throw new IllegalArgumentException("id length is 1-128");
+        this.id = id;
     }
 }

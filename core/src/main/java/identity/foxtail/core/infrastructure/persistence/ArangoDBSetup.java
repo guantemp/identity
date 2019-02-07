@@ -25,6 +25,7 @@ import com.arangodb.entity.KeyType;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.HashIndexOptions;
+import com.arangodb.model.UserCreateOptions;
 import com.arangodb.velocypack.VPackSlice;
 import identity.foxtail.core.domain.model.id.Enablement;
 import identity.foxtail.core.domain.model.id.Group;
@@ -81,11 +82,11 @@ public class ArangoDBSetup {
         db.collection("role").ensureHashIndex(index, hashIndexOptions);
         //edge
         CollectionCreateOptions edgeOptions = new CollectionCreateOptions().type(CollectionType.EDGES);
-        for (String s : new String[]{"subordinate", "act", "create", "operate"}) {
+        for (String s : new String[]{"subordinate", "act", "create"}) {
             db.createCollection(s, edgeOptions);
         }
-        //edgeOptions.keyOptions(true, KeyType.traditional, 1, 1);
-        //db.createCollection("operate", edgeOptions);
+        edgeOptions.keyOptions(true, KeyType.traditional, 1, 1);
+        db.createCollection("operate", edgeOptions);
         //graph
         Collection<EdgeDefinition> list = new ArrayList<>();
         list.add(new EdgeDefinition().collection("create").from("user").to("resource"));

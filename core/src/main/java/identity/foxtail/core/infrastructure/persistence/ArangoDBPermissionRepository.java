@@ -17,17 +17,13 @@
 
 package identity.foxtail.core.infrastructure.persistence;
 
-import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentField;
-import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.DocumentUpdateOptions;
-import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import identity.foxtail.core.domain.model.permission.Permission;
-import identity.foxtail.core.domain.model.permission.PermissionName;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
 import identity.foxtail.core.domain.model.permission.operate.Operate;
 import identity.foxtail.core.domain.model.permission.operate.Schedule;
@@ -43,18 +39,19 @@ import org.slf4j.LoggerFactory;
 public class ArangoDBPermissionRepository implements PermissionRepository {
     private static final Logger logger = LoggerFactory.getLogger(ArangoDBPermissionRepository.class);
     private static final DocumentUpdateOptions UPDATE_OPTIONS = new DocumentUpdateOptions().keepNull(false);
-    private static final String QUERY_PREFF = " WITH role,resource\n" +
-            "FOR v,e,p IN 1..2 OUTBOUND @start operate FILTER p.vertices[1]._key == @resourceId " +
-            "FILTER p.edges[0].permissionName.name == @permissionName AND p.edges[0].operate.name== @operateName " +
-            "AND p.edges[0].operate.strategy.expression == @expression";
     private ArangoDatabase identity = ArangoDBUtil.getDatabase();
 
     @Override
     public void save(Permission permission) {
+       /*
+        final String QUERY_PREFF = " WITH role,resource\n" +
+            "FOR v,e,p IN 1..2 OUTBOUND @start operate FILTER p.vertices[1]._key == @resourceId " +
+            "FILTER p.edges[0].permissionName.name == @permissionName AND p.edges[0].operate.name== @operateName " +
+            "AND p.edges[0].operate.strategy.expression == @expression";
         StringBuilder builder = new StringBuilder(QUERY_PREFF);
         MapBuilder mapBuilder = new MapBuilder().put("start", "role/" + permission.roleDescriptor().id())
                 .put("resourceId", permission.resourceDescriptor().id())
-                .put("permissionName", permission.name().name())
+                .put("permissionName", permission.name())
                 .put("operateName", permission.operate().name())
                 .put("expression", permission.operate().strategy().expression());
         if (permission.operate().schedule() != null) {
@@ -66,6 +63,11 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         if (slices.hasNext()) {
             EdgeEntity edge = slices.next();
             identity.collection("operate").updateDocument(edge.getKey(), permission, UPDATE_OPTIONS);
+        }
+        */
+        boolean exist = identity.collection("operate").documentExists(permission.id());
+        if (exist) {
+            identity.collection("operate").updateDocument(permission.id(), permission, UPDATE_OPTIONS);
         } else {
             ArangoGraph graph = identity.graph("identity");
             VertexEntity role = graph.vertexCollection("role").getVertex(permission.roleDescriptor().id(), VertexEntity.class);
@@ -106,16 +108,19 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
     }
 
     private static class CommandEdge {
+        @DocumentField(DocumentField.Type.KEY)
+        private String id;
         @DocumentField(DocumentField.Type.FROM)
         private String from;
         @DocumentField(DocumentField.Type.TO)
         private String to;
         private Operate operate;
-        private PermissionName permissionName;
+        private String permissionName;
 
         public CommandEdge(String from, String to, Permission permission) {
             this.from = from;
             this.to = to;
+            this.id = permission.id();
             this.permissionName = permission.name();
             this.operate = permission.operate();
             this.permissionName = permission.name();
