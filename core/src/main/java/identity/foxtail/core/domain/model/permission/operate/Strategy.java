@@ -51,4 +51,16 @@ public class Strategy {
     public int hashCode() {
         return expression != null ? expression.hashCode() : 0;
     }
+
+    public String expression() {
+        return expression;
+    }
+
+    @Override
+    public String toString() {
+        return "Strategy{" +
+                "engine=" + engine +
+                ", expression='" + expression + '\'' +
+                '}';
+    }
 }

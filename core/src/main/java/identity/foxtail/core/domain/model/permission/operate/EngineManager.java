@@ -27,6 +27,7 @@ import java.util.Map;
  */
 public class EngineManager {
     public static final Engine OPEN_BOX = context -> new Result(true, "passed");
+
     public static final Engine DISCOUNT = context -> {
         Result result = new Result(false, "不能低于4折,ok?");
         if (context != null) {
@@ -45,8 +46,8 @@ public class EngineManager {
         registerFunction("discount", DISCOUNT);
     }
 
-    public static void registerFunction(String funcName, Engine func) {
-        funcMap.put(funcName, func);
+    public static void registerFunction(String funcName, Engine engine) {
+        funcMap.put(funcName, engine);
     }
 
     public static void unRegisterFunction(String funcName) {

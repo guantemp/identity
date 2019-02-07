@@ -38,4 +38,25 @@ public class Operate {
         this.name = name;
         this.strategy = strategy;
     }
+
+    public String name() {
+        return name;
+    }
+
+    public Strategy strategy() {
+        return strategy;
+    }
+
+    public Schedule schedule() {
+        return schedule;
+    }
+
+    @Override
+    public String toString() {
+        return "Operate{" +
+                "name='" + name + '\'' +
+                ", strategy=" + strategy +
+                ", schedule=" + schedule +
+                '}';
+    }
 }

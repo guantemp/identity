@@ -133,7 +133,7 @@ public class ArangoDBRoleRepository implements RoleRepository {
         Role role = new Role(roleId, name, description);
         //rebuild group member
         Set<GroupMember> members = new HashSet<>();
-        final String groupQuery = "WITH role,act " +
+        final String groupQuery = "WITH role\n" +
                 "FOR v,e IN 1..1 INBOUND @startVertex act FILTER e.groupMemberType == @groupMemberType RETURN v";
         final Map<String, Object> gBindVars = new MapBuilder().put("startVertex", "role/" + roleId).put("groupMemberType", "GROUP").get();
         ArangoCursor<VPackSlice> g = db.query(groupQuery, gBindVars, null, VPackSlice.class);

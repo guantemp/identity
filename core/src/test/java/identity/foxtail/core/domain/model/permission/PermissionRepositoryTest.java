@@ -18,6 +18,7 @@
 package identity.foxtail.core.domain.model.permission;
 
 import identity.foxtail.core.domain.model.permission.operate.Operate;
+import identity.foxtail.core.domain.model.permission.operate.Schedule;
 import identity.foxtail.core.domain.model.permission.operate.Strategy;
 import identity.foxtail.core.domain.model.permission.operate.EngineManager;
 import identity.foxtail.core.domain.model.element.Resource;
@@ -43,7 +44,7 @@ public class PermissionRepositoryTest {
     private static final PermissionRepository repo = new ArangoDBPermissionRepository();
 
     @BeforeClass
-    public static void setUpBeforeClass() {
+    public static void setUpBeforeClass() { 
         Role casher = new Role("casher", "收銀員", "就是收钱的");
         User Son_Goku = new User("Son_Goku", "孫悟空", "中文密碼也是可以的", "0830-2135679", Enablement.FOREVER);
         userRepository.save(Son_Goku);
@@ -75,7 +76,12 @@ public class PermissionRepositoryTest {
         Operate discount = new Operate("discount", new Strategy("rate>=20", EngineManager.queryEngine("discount")));
         Permission discountPermission = new Permission(new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
-        discount = new Operate("discount", new Strategy("rate>=40", EngineManager.queryEngine("discount")));
+        discount = new Operate("discount", new Strategy("rate>=40", EngineManager.queryEngine("discount")),
+                new Schedule("* 15 12 33"));
+        discountPermission = new Permission(new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        repo.save(discountPermission);
+        discount = new Operate("discount", new Strategy("rate>=40", EngineManager.queryEngine("discount")),
+                new Schedule("* 18 12 33"));
         discountPermission = new Permission(new PermissionName("discount"), casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
         Operate red = new Operate("red", new Strategy("value<=45.00", EngineManager.queryEngine("red_catalog")));

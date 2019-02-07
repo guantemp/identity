@@ -17,15 +17,21 @@
 
 package identity.foxtail.core.infrastructure.persistence;
 
+import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentField;
+import com.arangodb.entity.EdgeEntity;
 import com.arangodb.entity.VertexEntity;
-import com.arangodb.model.VertexUpdateOptions;
+import com.arangodb.model.DocumentUpdateOptions;
+import com.arangodb.util.MapBuilder;
+import com.arangodb.velocypack.VPackSlice;
 import identity.foxtail.core.domain.model.permission.Permission;
 import identity.foxtail.core.domain.model.permission.PermissionName;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
 import identity.foxtail.core.domain.model.permission.operate.Operate;
+import identity.foxtail.core.domain.model.permission.operate.Schedule;
+import identity.foxtail.core.domain.model.permission.operate.Strategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,22 +42,52 @@ import org.slf4j.LoggerFactory;
  */
 public class ArangoDBPermissionRepository implements PermissionRepository {
     private static final Logger logger = LoggerFactory.getLogger(ArangoDBPermissionRepository.class);
-    private static final VertexUpdateOptions UPDATE_OPTIONS = new VertexUpdateOptions().keepNull(false);
+    private static final DocumentUpdateOptions UPDATE_OPTIONS = new DocumentUpdateOptions().keepNull(false);
+    private static final String QUERY_PREFF = " WITH role,resource\n" +
+            "FOR v,e,p IN 1..2 OUTBOUND @start operate FILTER p.vertices[1]._key == @resourceId " +
+            "FILTER p.edges[0].permissionName.name == @permissionName AND p.edges[0].operate.name== @operateName " +
+            "AND p.edges[0].operate.strategy.expression == @expression";
     private ArangoDatabase identity = ArangoDBUtil.getDatabase();
 
     @Override
     public void save(Permission permission) {
-        final String query = "WITH role,operate,resource\\n" +
-                "FOR v,e,p OUTBOUND 1..2 @start RETURN e";
-        boolean exists = false;
-        if (exists) {
-
+        StringBuilder builder = new StringBuilder(QUERY_PREFF);
+        MapBuilder mapBuilder = new MapBuilder().put("start", "role/" + permission.roleDescriptor().id())
+                .put("resourceId", permission.resourceDescriptor().id())
+                .put("permissionName", permission.name().name())
+                .put("operateName", permission.operate().name())
+                .put("expression", permission.operate().strategy().expression());
+        if (permission.operate().schedule() != null) {
+            builder.append(" AND (p.edges[0].operate.schedule != null ? p.edges[0].operate.schedule.cron == @cron:true)");
+            mapBuilder.put("cron", permission.operate().schedule().cron());
+        }
+        builder.append(" RETURN e");
+        ArangoCursor<EdgeEntity> slices = identity.query(builder.toString(), mapBuilder.get(), null, EdgeEntity.class);
+        if (slices.hasNext()) {
+            EdgeEntity edge = slices.next();
+            identity.collection("operate").updateDocument(edge.getKey(), permission, UPDATE_OPTIONS);
         } else {
             ArangoGraph graph = identity.graph("identity");
             VertexEntity role = graph.vertexCollection("role").getVertex(permission.roleDescriptor().id(), VertexEntity.class);
             VertexEntity resource = graph.vertexCollection("resource").getVertex(permission.resourceDescriptor().id(), VertexEntity.class);
             graph.edgeCollection("operate").insertEdge(new CommandEdge(role.getId(), resource.getId(), permission));
         }
+    }
+
+    public Operate rebuildOperate(VPackSlice slice) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        String name = slice.get("name").getAsString();
+        //rebulid strategy
+        VPackSlice strategySlice = slice.get("strategy");
+        String expression = strategySlice.get("expression").getAsString();
+        //Engine engine = (Engine) Class.forName(strategySlice.get("engine").get("_class").getAsString()).newInstance();
+        Strategy strategy = new Strategy(expression, null);
+        //rebuld schedule
+        Schedule schedule = null;
+        if (!slice.get("schedule").isNone()) {
+            VPackSlice scheduleSlice = slice.get("schedule");
+            schedule = new Schedule(scheduleSlice.get("cron").getAsString());
+        }
+        return new Operate(name, strategy, schedule);
     }
 
     @Override

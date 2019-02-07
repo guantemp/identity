@@ -32,7 +32,8 @@ public class VariantContext {
         return (T) variantMap.get(variName);
     }
 
-    public <T extends Object> void put(String key, T value) {
+    public VariantContext put(String key, Object value) {
         variantMap.put(key, value);
+        return this;
     }
 }

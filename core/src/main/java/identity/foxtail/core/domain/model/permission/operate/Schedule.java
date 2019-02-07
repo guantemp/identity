@@ -44,8 +44,20 @@ public class Schedule {
         return cron != null ? cron.equals(schedule.cron) : schedule.cron == null;
     }
 
+    public String cron() {
+        return cron;
+    }
+
     @Override
     public int hashCode() {
         return cron != null ? cron.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "cron='" + cron + '\'' +
+                ", inTheSchedule=" + inTheSchedule +
+                '}';
     }
 }
