@@ -17,6 +17,8 @@
 
 package identity.foxtail.core.domain.model.permission.operate;
 
+import com.arangodb.velocypack.annotations.Expose;
+
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
@@ -24,16 +26,17 @@ package identity.foxtail.core.domain.model.permission.operate;
  */
 public class Strategy {
     public static final Strategy NO_STRATEGY = new Strategy("", context -> new Result(true, "It's passed"));
+    @Expose(serialize = false, deserialize = false)
     private Engine engine;
-    private String expression;
+    private String formula;
 
-    public Strategy(String expression, Engine engine) {
-        this.expression = expression;
+    public Strategy(String formula, Engine engine) {
+        this.formula = formula;
         this.engine = engine;
     }
 
     public Result execute(VariantContext context) {
-        context.put("expression", expression);
+        context.put("formula", formula);
         return engine.execute(context);
     }
 
@@ -44,23 +47,23 @@ public class Strategy {
 
         Strategy strategy = (Strategy) o;
 
-        return expression != null ? expression.equals(strategy.expression) : strategy.expression == null;
+        return formula != null ? formula.equals(strategy.formula) : strategy.formula == null;
     }
 
     @Override
     public int hashCode() {
-        return expression != null ? expression.hashCode() : 0;
+        return formula != null ? formula.hashCode() : 0;
     }
 
     public String expression() {
-        return expression;
+        return formula;
     }
 
     @Override
     public String toString() {
         return "Strategy{" +
                 "engine=" + engine +
-                ", expression='" + expression + '\'' +
+                ", formula='" + formula + '\'' +
                 '}';
     }
 }

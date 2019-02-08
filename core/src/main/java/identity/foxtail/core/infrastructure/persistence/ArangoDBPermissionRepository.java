@@ -80,9 +80,9 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         String name = slice.get("name").getAsString();
         //rebulid strategy
         VPackSlice strategySlice = slice.get("strategy");
-        String expression = strategySlice.get("expression").getAsString();
+        String formula = strategySlice.get("formula").getAsString();
         //Engine engine = (Engine) Class.forName(strategySlice.get("engine").get("_class").getAsString()).newInstance();
-        Strategy strategy = new Strategy(expression, null);
+        Strategy strategy = new Strategy(formula, null);
         //rebuld schedule
         Schedule schedule = null;
         if (!slice.get("schedule").isNone()) {

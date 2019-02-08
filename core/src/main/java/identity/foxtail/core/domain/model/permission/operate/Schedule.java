@@ -24,14 +24,13 @@ package identity.foxtail.core.domain.model.permission.operate;
  */
 public class Schedule {
     private String cron;
-    private boolean inTheSchedule = false;
 
     public Schedule(String cron) {
         this.cron = cron;
     }
 
-    public boolean isInTheSchedule() {
-        return inTheSchedule;
+    public boolean isInSchedule() {
+        return true;
     }
 
     @Override
@@ -53,11 +52,4 @@ public class Schedule {
         return cron != null ? cron.hashCode() : 0;
     }
 
-    @Override
-    public String toString() {
-        return "Schedule{" +
-                "cron='" + cron + '\'' +
-                ", inTheSchedule=" + inTheSchedule +
-                '}';
-    }
 }
