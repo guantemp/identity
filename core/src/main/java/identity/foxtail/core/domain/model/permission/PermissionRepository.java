@@ -43,7 +43,7 @@ public interface PermissionRepository {
 
 
     /**
-     * @param permission
+     * @param id
      */
-    void remove(Permission permission);
+    void remove(String id);
 }

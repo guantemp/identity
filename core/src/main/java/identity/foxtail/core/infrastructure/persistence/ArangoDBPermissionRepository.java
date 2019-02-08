@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ArangoDBPermissionRepository implements PermissionRepository {
     private static final Logger logger = LoggerFactory.getLogger(ArangoDBPermissionRepository.class);
-    private static final DocumentUpdateOptions UPDATE_OPTIONS = new DocumentUpdateOptions().keepNull(false);
+    private static final DocumentUpdateOptions UPDATE_OPTIONS = new DocumentUpdateOptions().keepNull(false).mergeObjects(true);
     private ArangoDatabase identity = ArangoDBUtil.getDatabase();
 
     @Override
@@ -94,6 +94,8 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
 
     @Override
     public Permission[] findPermissionForRoleWithPermissionName(String roleId, String permissionName) {
+        final String query = " WITH role,resource\n" +
+                "FOR v,e,p IN 1..2 OUTBOUND @role operate FILTER p.edges[0].name == @permissionName SORT p.edges[0].operate.schedule DESC RETURN e";
         return new Permission[0];
     }
 
@@ -103,7 +105,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
     }
 
     @Override
-    public void remove(Permission permission) {
+    public void remove(String id) {
 
     }
 
@@ -115,15 +117,14 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         @DocumentField(DocumentField.Type.TO)
         private String to;
         private Operate operate;
-        private String permissionName;
+        private String name;
 
         public CommandEdge(String from, String to, Permission permission) {
             this.from = from;
             this.to = to;
             this.id = permission.id();
-            this.permissionName = permission.name();
             this.operate = permission.operate();
-            this.permissionName = permission.name();
+            this.name = permission.name();
         }
     }
 }

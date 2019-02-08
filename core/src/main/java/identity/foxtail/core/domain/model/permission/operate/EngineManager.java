@@ -17,6 +17,8 @@
 
 package identity.foxtail.core.domain.model.permission.operate;
 
+import identity.foxtail.core.domain.model.permission.Result;
+
 import java.util.HashMap;
 import java.util.Map;
 

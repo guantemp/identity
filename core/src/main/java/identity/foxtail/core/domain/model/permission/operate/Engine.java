@@ -17,6 +17,8 @@
 
 package identity.foxtail.core.domain.model.permission.operate;
 
+import identity.foxtail.core.domain.model.permission.Result;
+
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0

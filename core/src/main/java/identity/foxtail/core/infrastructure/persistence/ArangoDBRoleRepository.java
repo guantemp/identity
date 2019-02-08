@@ -184,7 +184,7 @@ public class ArangoDBRoleRepository implements RoleRepository {
             sb.append("] REMOVE e IN act");
             System.out.println(sb);
             */
-            final String query = "WITH role,act " +
+            final String query = "WITH role\n" +
                     "FOR v,e IN 1..1 INBOUND @startVertex act REMOVE e IN act";
             final Map<String, Object> bindVars = new MapBuilder().put("startVertex", "role/" + role.id()).get();
             identity.query(query, bindVars, null, VPackSlice.class);

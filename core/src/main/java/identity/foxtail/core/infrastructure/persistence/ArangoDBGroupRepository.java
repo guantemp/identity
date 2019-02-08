@@ -118,7 +118,7 @@ public class ArangoDBGroupRepository implements GroupRepository {
 
     @Override
     public void remove(String id) {
-        final String query = "WITH group,subordinate FOR v,e IN 1..1 OUTBOUND @startVertex subordinate RETURN v";
+        final String query = "WITH group\n FOR v,e IN 1..1 OUTBOUND @startVertex subordinate RETURN v";
         final Map<String, Object> bindVars = new MapBuilder().put("startVertex", "group/" + id).get();
         ArangoCursor<VPackSlice> parent = identity.query(query, bindVars, null, VPackSlice.class);
         if (!parent.hasNext())

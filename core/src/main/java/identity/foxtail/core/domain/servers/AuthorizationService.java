@@ -24,6 +24,7 @@ import identity.foxtail.core.domain.model.id.User;
 import identity.foxtail.core.domain.model.id.UserRepository;
 import identity.foxtail.core.domain.model.permission.Permission;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
+import identity.foxtail.core.domain.model.permission.Result;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBGroupRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBPermissionRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBRoleRepository;
@@ -40,15 +41,35 @@ public class AuthorizationService {
     private RoleRepository roleRepository = new ArangoDBRoleRepository();
     private GroupMemberService groupMemberService = new GroupMemberService(new ArangoDBGroupRepository());
 
-    public boolean authorization(String userId, String permissionName) {
+    public Result authorization(String userId, String permissionName, String respurceId) {
         int count = roleRepository.count();
         Role[] roles = roleRepository.all(0, count - 1);
         User user = userRepository.find(userId);
         for (Role role : roles) {
             if (role.isUserInRole(user, groupMemberService)) {
-                Permission[] permissions = permissionRepository.findPermissionForRoleWithPermissionName(role.id(), "");
+                Permission[] permissions = permissionRepository.findPermissionForRoleWithPermissionName(role.id(), permissionName);
+                for (Permission permission : permissions) {
+                    if (!permission.operate().schedule().isInSchedule())
+                        continue;
+                }
             }
         }
-        return true;
+        return new Result(false, "not allow");
+    }
+
+    public Result authorizationWithretrospect(String userId, String permissionName, String resourceId) {
+        int count = roleRepository.count();
+        Role[] roles = roleRepository.all(0, count - 1);
+        User user = userRepository.find(userId);
+        for (Role role : roles) {
+            if (role.isUserInRole(user, groupMemberService)) {
+                Permission[] permissions = permissionRepository.findPermissionForRoleWithPermissionName(role.id(), permissionName);
+                for (Permission permission : permissions) {
+                    if (!permission.operate().schedule().isInSchedule())
+                        continue;
+                }
+            }
+        }
+        return new Result(false, "not allow");
     }
 }

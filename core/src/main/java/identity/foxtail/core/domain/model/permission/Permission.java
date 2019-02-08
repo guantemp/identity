@@ -17,6 +17,7 @@
 
 package identity.foxtail.core.domain.model.permission;
 
+import com.arangodb.entity.DocumentField;
 import com.arangodb.velocypack.annotations.Expose;
 import identity.foxtail.core.domain.model.element.ResourceDescriptor;
 import identity.foxtail.core.domain.model.element.RoleDescriptor;
@@ -30,6 +31,7 @@ import java.util.Objects;
  * @version 0.0.2 2019-01-30
  */
 public class Permission {
+    @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String name;
     @Expose(serialize = false, deserialize = false)
@@ -48,7 +50,7 @@ public class Permission {
 
     private void setName(String name) {
         name = Objects.requireNonNull(name, "name is required");
-        this.name = name;
+        this.name = name.toUpperCase();
     }
 
     public String name() {

@@ -74,15 +74,15 @@ public class PermissionRepositoryTest {
         resourceRepository.save(sku);
 
         Operate discount = new Operate("discount", new Strategy("rate>=20", EngineManager.queryEngine("discount")));
-        Permission discountPermission = new Permission("6767", "discount", casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        Permission discountPermission = new Permission("6767", "DISCOUNT", casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
         discount = new Operate("discount", new Strategy("rate>=40", EngineManager.queryEngine("discount")),
                 new Schedule("* 15 12 33"));
-        discountPermission = new Permission("6868", "discount", casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        discountPermission = new Permission("6868", "DISCOUNT", casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
         discount = new Operate("discount", new Strategy("rate>=40", EngineManager.queryEngine("discount")),
-                new Schedule("* 18 12 33"));
-        discountPermission = new Permission("6969", "discount", casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+                new Schedule("* 12 12 33"));
+        discountPermission = new Permission("6969", "DISCOUNT", casher.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
         Operate red = new Operate("red", new Strategy("value<=45.00", EngineManager.queryEngine("red_catalog")));
         Permission redPermission = new Permission("7777", "red_catalog", casher.toRoleDescriptor(), red, meat.toResourceDescriptor());

@@ -18,6 +18,7 @@
 package identity.foxtail.core.domain.model.permission.operate;
 
 import com.arangodb.velocypack.annotations.Expose;
+import identity.foxtail.core.domain.model.permission.Result;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
