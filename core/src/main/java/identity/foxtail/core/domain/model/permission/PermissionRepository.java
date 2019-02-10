@@ -34,6 +34,8 @@ public interface PermissionRepository {
      */
     Permission[] findPermissionWithRoleAndPermissionNameAndResource(String roleId, String permissionName, String resourceId);
 
+    Permission[] findPermissionFromRoleWithPermissionName(String roleId, String permissionName);
+
     /**
      * @param id
      */
