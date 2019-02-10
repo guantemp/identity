@@ -131,10 +131,7 @@ public class Resource {
      * @return
      */
     public ResourceDescriptor toResourceDescriptor() {
-        if (treePath != null)
-            return new ResourceDescriptor(id, name, treePath.getLast());
-        else
-            return new ResourceDescriptor(id, name, id);
+        return new ResourceDescriptor(id, name, creator);
     }
 
     /**

@@ -17,19 +17,31 @@
 
 package identity.foxtail.core.infrastructure.persistence;
 
+import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.DocumentUpdateOptions;
+import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
+import identity.foxtail.core.domain.model.element.ResourceDescriptor;
+import identity.foxtail.core.domain.model.element.RoleDescriptor;
+import identity.foxtail.core.domain.model.id.Creator;
 import identity.foxtail.core.domain.model.permission.Permission;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
+import identity.foxtail.core.domain.model.permission.operate.EngineManager;
 import identity.foxtail.core.domain.model.permission.operate.Operate;
 import identity.foxtail.core.domain.model.permission.operate.Schedule;
 import identity.foxtail.core.domain.model.permission.operate.Strategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /***
  * @author <job href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</job>
@@ -37,8 +49,27 @@ import org.slf4j.LoggerFactory;
  * @version 0.0.1 2019-01-20
  */
 public class ArangoDBPermissionRepository implements PermissionRepository {
-    private static final Logger logger = LoggerFactory.getLogger(ArangoDBPermissionRepository.class);
-    private static final DocumentUpdateOptions UPDATE_OPTIONS = new DocumentUpdateOptions().keepNull(false).mergeObjects(true);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBPermissionRepository.class);
+    private static final DocumentUpdateOptions UPDATE_OPTIONS = new DocumentUpdateOptions().keepNull(false);
+    private static Constructor<RoleDescriptor> ROLEDESCRIPTOR_CONSTRUCTOR;
+    private static Constructor<ResourceDescriptor> RESOURCEDESCRIPTOR_CONSTRUCTOR;
+    private static Constructor<Creator> CREATOR_CONSTRUCTOR;
+
+    static {
+        try {
+            ROLEDESCRIPTOR_CONSTRUCTOR = RoleDescriptor.class.getDeclaredConstructor(String.class, String.class);
+            ROLEDESCRIPTOR_CONSTRUCTOR.setAccessible(true);
+            RESOURCEDESCRIPTOR_CONSTRUCTOR = ResourceDescriptor.class.getDeclaredConstructor(String.class, String.class, Creator.class);
+            RESOURCEDESCRIPTOR_CONSTRUCTOR.setAccessible(true);
+            CREATOR_CONSTRUCTOR = Creator.class.getDeclaredConstructor(String.class, String.class);
+            CREATOR_CONSTRUCTOR.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Not find matching constructor", e);
+            }
+        }
+    }
+
     private ArangoDatabase identity = ArangoDBUtil.getDatabase();
 
     @Override
@@ -76,32 +107,54 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         }
     }
 
-    public Operate rebuildOperate(VPackSlice slice) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        String name = slice.get("name").getAsString();
-        //rebulid strategy
-        VPackSlice strategySlice = slice.get("strategy");
-        String formula = strategySlice.get("formula").getAsString();
-        //Engine engine = (Engine) Class.forName(strategySlice.get("engine").get("_class").getAsString()).newInstance();
-        Strategy strategy = new Strategy(formula, null);
-        //rebuld schedule
-        Schedule schedule = null;
-        if (!slice.get("schedule").isNone()) {
-            VPackSlice scheduleSlice = slice.get("schedule");
-            schedule = new Schedule(scheduleSlice.get("cron").getAsString());
+    private Permission rebuild(VPackSlice slice) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        if (slice != null) {
+            //role
+            VPackSlice roleSlice = slice.get("role");
+            RoleDescriptor roleDescriptor = ROLEDESCRIPTOR_CONSTRUCTOR.newInstance(roleSlice.get(DocumentField.Type.KEY.getSerializeName()).getAsString(), roleSlice.get("name").getAsString());
+            //resource
+            VPackSlice resourceSlice = slice.get("resource");
+            VPackSlice creatorSlice = resourceSlice.get("creator");
+            Creator creator = CREATOR_CONSTRUCTOR.newInstance(creatorSlice.get("id").getAsString(), creatorSlice.get("username").getAsString());
+            ResourceDescriptor resourceDescriptor = RESOURCEDESCRIPTOR_CONSTRUCTOR.newInstance(resourceSlice.get(DocumentField.Type.KEY.getSerializeName()).getAsString(), resourceSlice.get("name").getAsString(), creator);
+            //operate
+            VPackSlice operateSlice = slice.get("operate");
+            String id = operateSlice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
+            String name = operateSlice.get("name").getAsString();
+            VPackSlice strategySlice = slice.get("operate").get("operate").get("strategy");
+            String formula = strategySlice.get("formula").getAsString();
+            Strategy strategy = new Strategy(formula, EngineManager.queryEngine(name));
+            Schedule schedule = null;
+            if (!slice.get("operate").get("operate").get("schedule").isNone()) {
+                VPackSlice scheduleSlice = slice.get("operate").get("operate").get("schedule");
+                schedule = new Schedule(scheduleSlice.get("cron").getAsString());
+            }
+            Operate operate = new Operate(name, strategy, schedule);
+            return new Permission(id, name, roleDescriptor, operate, resourceDescriptor);
         }
-        return new Operate(name, strategy, schedule);
+        return null;
     }
 
-    @Override
-    public Permission[] findPermissionForRoleWithPermissionName(String roleId, String permissionName) {
-        final String query = " WITH role,resource\n" +
-                "FOR v,e,p IN 1..2 OUTBOUND @role operate FILTER p.edges[0].name == @permissionName SORT p.edges[0].operate.schedule DESC RETURN e";
-        return new Permission[0];
-    }
 
     @Override
-    public Permission[] findPermissionForResourceWithPermissionName(String resourceId, String permissionName) {
-        return new Permission[0];
+    public Permission[] findPermissionWithRoleAndPermissionNameAndResource(String roleId, String permissionName, String resourceId) {
+        final String query = " WITH role,resource\n " +
+                "FOR v,e,p IN 1..2 OUTBOUND @role operate FILTER p.vertices[1]._key == @resourceId FILTER p.edges[0].name == @permissionName " +
+                "SORT p.edges[0].operate.schedule DESC RETURN {role:p.vertices[0],operate:e,resource:p.vertices[1]}";
+        Map<String, Object> bindVars = new MapBuilder().put("role", "role/" + roleId).put("resourceId", resourceId).
+                put("permissionName", permissionName).get();
+        ArangoCursor<VPackSlice> slices = identity.query(query, bindVars, null, VPackSlice.class);
+        List<Permission> permissionList = new ArrayList<>();
+        try {
+            while (slices.hasNext()) {
+                permissionList.add(rebuild(slices.next()));
+            }
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("permission create fail", e);
+            }
+        }
+        return permissionList.toArray(new Permission[permissionList.size()]);
     }
 
     @Override

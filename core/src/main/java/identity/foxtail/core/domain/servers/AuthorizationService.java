@@ -41,13 +41,13 @@ public class AuthorizationService {
     private RoleRepository roleRepository = new ArangoDBRoleRepository();
     private GroupMemberService groupMemberService = new GroupMemberService(new ArangoDBGroupRepository());
 
-    public Result authorization(String userId, String permissionName, String respurceId) {
+    public Result authorization(String userId, String permissionName, String resourceId) {
         int count = roleRepository.count();
         Role[] roles = roleRepository.all(0, count - 1);
         User user = userRepository.find(userId);
         for (Role role : roles) {
             if (role.isUserInRole(user, groupMemberService)) {
-                Permission[] permissions = permissionRepository.findPermissionForRoleWithPermissionName(role.id(), permissionName);
+                Permission[] permissions = permissionRepository.findPermissionWithRoleAndPermissionNameAndResource(role.id(), permissionName, resourceId);
                 for (Permission permission : permissions) {
                     if (!permission.operate().schedule().isInSchedule())
                         continue;
@@ -58,18 +58,6 @@ public class AuthorizationService {
     }
 
     public Result authorizationWithretrospect(String userId, String permissionName, String resourceId) {
-        int count = roleRepository.count();
-        Role[] roles = roleRepository.all(0, count - 1);
-        User user = userRepository.find(userId);
-        for (Role role : roles) {
-            if (role.isUserInRole(user, groupMemberService)) {
-                Permission[] permissions = permissionRepository.findPermissionForRoleWithPermissionName(role.id(), permissionName);
-                for (Permission permission : permissions) {
-                    if (!permission.operate().schedule().isInSchedule())
-                        continue;
-                }
-            }
-        }
-        return new Result(false, "not allow");
+        return null;
     }
 }

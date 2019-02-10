@@ -52,4 +52,10 @@ public class Schedule {
         return cron != null ? cron.hashCode() : 0;
     }
 
+    @Override
+    public String toString() {
+        return "Schedule{" +
+                "cron='" + cron + '\'' +
+                '}';
+    }
 }

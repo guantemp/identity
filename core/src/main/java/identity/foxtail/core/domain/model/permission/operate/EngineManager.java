@@ -44,8 +44,8 @@ public class EngineManager {
     private static Map<String, Engine> funcMap = new HashMap<String, Engine>();
 
     static {
-        registerFunction("open_box", OPEN_BOX);
-        registerFunction("discount", DISCOUNT);
+        registerFunction("OPEN_BOX", OPEN_BOX);
+        registerFunction("DISCOUNT", DISCOUNT);
     }
 
     public static void registerFunction(String funcName, Engine engine) {

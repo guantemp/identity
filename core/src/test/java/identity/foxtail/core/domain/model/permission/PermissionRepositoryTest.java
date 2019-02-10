@@ -90,6 +90,10 @@ public class PermissionRepositoryTest {
     }
 
     @Test
-    public void isPermited() {
+    public void findPermissionWithRoleAndPermissionNameAndResource() {
+        Permission[] permissions = repo.findPermissionWithRoleAndPermissionNameAndResource("casher", "DISCOUNT", "sku");
+        for (Permission permission : permissions) {
+            System.out.println(permission);
+        }
     }
 }

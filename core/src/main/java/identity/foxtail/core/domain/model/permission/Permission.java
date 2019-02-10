@@ -57,6 +57,10 @@ public class Permission {
         return name;
     }
 
+    public boolean isInSchedule() {
+        return operate.schedule() == null ? true : operate.schedule().isInSchedule();
+    }
+
     private void setResourceDescriptor(ResourceDescriptor resourceDescriptor) {
         Objects.requireNonNull(resourceDescriptor, "The resourceDescriptor required");
         this.resourceDescriptor = resourceDescriptor;
@@ -93,5 +97,16 @@ public class Permission {
         if (id.isEmpty() || id.length() >= 128)
             throw new IllegalArgumentException("id length is 1-128");
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Permission{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", resourceDescriptor=" + resourceDescriptor +
+                ", operate=" + operate +
+                ", roleDescriptor=" + roleDescriptor +
+                '}';
     }
 }

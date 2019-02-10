@@ -16,7 +16,7 @@
  */
 package identity.foxtail.core.domain.model.element;
 
-import java.util.StringJoiner;
+import identity.foxtail.core.domain.model.id.Creator;
 
 /***
  * @author <a href="www.foxtail.cc/author/guan xianghuang">guan xiangHuan</a>
@@ -26,12 +26,12 @@ import java.util.StringJoiner;
 public class ResourceDescriptor {
     private String id;
     private String name;
-    private String parentId;
+    private Creator creator;
 
-    protected ResourceDescriptor(String id, String name, String parentId) {
+    protected ResourceDescriptor(String id, String name, Creator creator) {
         this.id = id;
         this.name = name;
-        this.parentId = parentId;
+        this.creator = creator;
     }
 
     public String id() {
@@ -42,6 +42,10 @@ public class ResourceDescriptor {
         return name;
     }
 
+    public Creator creator() {
+        return creator;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,29 +53,20 @@ public class ResourceDescriptor {
 
         ResourceDescriptor that = (ResourceDescriptor) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return parentId != null ? parentId.equals(that.parentId) : that.parentId == null;
+        return id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (parentId != null ? parentId.hashCode() : 0);
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", ResourceDescriptor.class.getSimpleName() + "[", "]")
-                .add("id='" + id + "'")
-                .add("name='" + name + "'")
-                .add("parentId='" + parentId + "'")
-                .toString();
-    }
-
-    public String parentId() {
-        return parentId;
+        return "ResourceDescriptor{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", creator=" + creator +
+                '}';
     }
 }
