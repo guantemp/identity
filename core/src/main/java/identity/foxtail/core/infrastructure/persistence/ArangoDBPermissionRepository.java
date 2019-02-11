@@ -75,34 +75,33 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
             ArangoGraph graph = identity.graph("identity");
             VertexEntity role = graph.vertexCollection("role").getVertex(permission.roleDescriptor().id(), VertexEntity.class);
             VertexEntity resource = graph.vertexCollection("resource").getVertex(permission.resourceDescriptor().id(), VertexEntity.class);
-            graph.edgeCollection("processor").insertEdge(new CommandEdge(role.getId(), resource.getId(), permission));
+            graph.edgeCollection("processor").insertEdge(new ProcessorEdge(role.getId(), resource.getId(), permission));
         }
     }
 
     private Permission rebuild(VPackSlice slice) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        if (slice != null) {
-            String id = slice.get("id").getAsString();
-            String name = slice.get("name").getAsString();
-            //role
-            VPackSlice roleSlice = slice.get("role");
-            RoleDescriptor roleDescriptor = ROLEDESCRIPTOR_CONSTRUCTOR.newInstance(roleSlice.get("id").getAsString(), roleSlice.get("name").getAsString());
-            //processor
-            VPackSlice processorSlice = slice.get("processor");
-            Fuel fuel = new Fuel(processorSlice.get("fuel").get("formula").getAsString());
-            Processor processor = new Processor(EngineManager.queryEngine(name), fuel);
-            //schedule
-            Schedule schedule = null;
-            if (!slice.get("schedule").isNull()) {
-                schedule = new Schedule(slice.get("schedule").get("cron").getAsString());
-            }
-            //resource
-            VPackSlice resourceSlice = slice.get("resource");
-            VPackSlice creatorSlice = resourceSlice.get("creator");
-            Creator creator = CREATOR_CONSTRUCTOR.newInstance(creatorSlice.get("id").getAsString(), creatorSlice.get("username").getAsString());
-            ResourceDescriptor resourceDescriptor = RESOURCEDESCRIPTOR_CONSTRUCTOR.newInstance(resourceSlice.get("id").getAsString(), resourceSlice.get("name").getAsString(), creator);
-            return new Permission(id, name, roleDescriptor, schedule, processor, resourceDescriptor);
+        if (slice == null)
+            return null;
+        String id = slice.get("id").getAsString();
+        String name = slice.get("name").getAsString();
+        //role
+        VPackSlice roleSlice = slice.get("role");
+        RoleDescriptor roleDescriptor = ROLEDESCRIPTOR_CONSTRUCTOR.newInstance(roleSlice.get("id").getAsString(), roleSlice.get("name").getAsString());
+        //processor
+        VPackSlice processorSlice = slice.get("processor");
+        Fuel fuel = new Fuel(processorSlice.get("fuel").get("formula").getAsString());
+        Processor processor = new Processor(EngineManager.queryEngine(name), fuel);
+        //schedule
+        Schedule schedule = null;
+        if (!slice.get("schedule").isNull()) {
+            schedule = new Schedule(slice.get("schedule").get("cron").getAsString());
         }
-        return null;
+        //resource
+        VPackSlice resourceSlice = slice.get("resource");
+        VPackSlice creatorSlice = resourceSlice.get("creator");
+        Creator creator = CREATOR_CONSTRUCTOR.newInstance(creatorSlice.get("id").getAsString(), creatorSlice.get("username").getAsString());
+        ResourceDescriptor resourceDescriptor = RESOURCEDESCRIPTOR_CONSTRUCTOR.newInstance(resourceSlice.get("id").getAsString(), resourceSlice.get("name").getAsString(), creator);
+        return new Permission(id, name, roleDescriptor, schedule, processor, resourceDescriptor);
     }
 
     @Override
@@ -111,7 +110,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         ArangoCursor<VPackSlice> slices = identity.query(query, VPackSlice.class);
         Set<String> set = new HashSet<>();
         while (slices.hasNext()) {
-            set.add(slices.next().get(0).getAsString());
+            set.add(slices.next().getAsString());
         }
         return set;
     }
@@ -169,7 +168,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         return new ObjectId().id();
     }
 
-    private static class CommandEdge {
+    private static class ProcessorEdge {
         @DocumentField(DocumentField.Type.KEY)
         private String id;
         @DocumentField(DocumentField.Type.FROM)
@@ -179,7 +178,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         private Processor processor;
         private String name;
 
-        public CommandEdge(String from, String to, Permission permission) {
+        public ProcessorEdge(String from, String to, Permission permission) {
             this.from = from;
             this.to = to;
             this.id = permission.id();

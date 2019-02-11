@@ -49,6 +49,7 @@ public class EngineManager {
     }
 
     public static void registerFunction(String funcName, Engine engine) {
+
         funcMap.put(funcName, engine);
     }
 

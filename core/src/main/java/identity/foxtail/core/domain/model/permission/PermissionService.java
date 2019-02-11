@@ -17,13 +17,23 @@
 
 package identity.foxtail.core.domain.model.permission;
 
+import java.util.Collection;
+import java.util.Objects;
+
 /***
  * @author <job href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</job>
  * @since JDK8.0
  * @version 0.0.1 2019/2/11
  */
 public class PermissionService {
+    private PermissionRepository repo;
+
+    public PermissionService(PermissionRepository repo) {
+        this.repo = Objects.requireNonNull(repo, "repo is required");
+    }
+
     public boolean isSuitableEngineName(String engineName) {
-        return false;
+        Collection<String> collection = repo.getNonRepetitivePermissionName();
+        return collection.contains(engineName);
     }
 }

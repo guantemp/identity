@@ -28,6 +28,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Collection;
+
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
@@ -103,5 +105,8 @@ public class PermissionRepositoryTest {
         }
         permissions = repo.findPermissionsFromRoleWithPermissionName("cashier", "打开钱箱");
         Assert.assertEquals(permissions.length, 1);
+        Collection<String> collection = repo.getNonRepetitivePermissionName();
+        for (String name : collection)
+            System.out.println(name);
     }
 }
