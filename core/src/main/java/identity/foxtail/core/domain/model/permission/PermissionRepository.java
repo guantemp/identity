@@ -32,19 +32,21 @@ public interface PermissionRepository {
 
     /**
      * @param roleId
+     * @param permissionName
+     * @param resourceId
      * @return
      */
-    Permission[] findPermissionWithRoleAndPermissionNameAndResource(String roleId, String permissionName, String resourceId);
+    Permission[] findPermissionsWithRoleAndPermissionNameAndResource(String roleId, String permissionName, String resourceId);
 
     /**
      * @param roleId
      * @param permissionName
      * @return
      */
-    Permission[] findPermissionFromRoleWithPermissionName(String roleId, String permissionName);
+    Permission[] findPermissionsFromRoleWithPermissionName(String roleId, String permissionName);
 
     /**
-     * @return
+     * @return permission name non repetitive collection
      */
     Collection<String> getNonRepetitivePermissionName();
 
@@ -52,4 +54,6 @@ public interface PermissionRepository {
      * @param id
      */
     void remove(String id);
+
+    String nextIdentity();
 }

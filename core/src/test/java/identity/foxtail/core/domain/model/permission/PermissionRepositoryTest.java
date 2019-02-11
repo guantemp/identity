@@ -60,7 +60,7 @@ public class PermissionRepositoryTest {
         Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
         Operate open = new Operate("open", Strategy.NO_STRATEGY);
-        Permission permission = new Permission("6666", "open_box", cashier.toRoleDescriptor(), open, box.toResourceDescriptor());
+        Permission permission = new Permission("6666", "打开钱箱", cashier.toRoleDescriptor(), open, box.toResourceDescriptor());
         repo.save(permission);
 
         Resource catalog = new Resource("catalog", "产品目录", Son_Goku.toCreator());
@@ -76,18 +76,18 @@ public class PermissionRepositoryTest {
         resourceRepository.save(sku);
 
         Operate discount = new Operate("discount", new Strategy("rate>=20", EngineManager.queryEngine("discount")));
-        Permission discountPermission = new Permission("6767", "DISCOUNT", cashier.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        Permission discountPermission = new Permission("6767", "discount", cashier.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
         discount = new Operate("discount", new Strategy("rate>=40", EngineManager.queryEngine("discount")),
                 new Schedule("* 15 12 33"));
-        discountPermission = new Permission("6868", "DISCOUNT", cashier.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        discountPermission = new Permission("6868", "discount", cashier.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
         discount = new Operate("discount", new Strategy("rate>=40", EngineManager.queryEngine("discount")),
                 new Schedule("* 12 12 33"));
-        discountPermission = new Permission("6969", "DISCOUNT", cashier.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        discountPermission = new Permission("6969", "discount", cashier.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
         discount = new Operate("discount", new Strategy("rate>=60", EngineManager.queryEngine("discount")));
-        discountPermission = new Permission("696969", "DISCOUNT", cashier.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
+        discountPermission = new Permission("696969", "discount", cashier.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
         repo.save(discountPermission);
         Operate red = new Operate("red", new Strategy("value<=45.00", EngineManager.queryEngine("red_catalog")));
         Permission redPermission = new Permission("7777", "red_catalog", cashier.toRoleDescriptor(), red, meat.toResourceDescriptor());
@@ -101,12 +101,14 @@ public class PermissionRepositoryTest {
 
     @Test
     public void findPermissions() {
-        Permission[] permissions = repo.findPermissionWithRoleAndPermissionNameAndResource("cashier", "DISCOUNT", "sku");
+        Permission[] permissions = repo.findPermissionsWithRoleAndPermissionNameAndResource("cashier", "discount", "sku");
         Assert.assertEquals(permissions.length, 3);
-        permissions = repo.findPermissionFromRoleWithPermissionName("cashier", "DISCOUNT");
+        permissions = repo.findPermissionsFromRoleWithPermissionName("cashier", "discount");
         Assert.assertEquals(permissions.length, 4);
         for (Permission permission : permissions) {
             System.out.println(permission);
         }
+        permissions = repo.findPermissionsFromRoleWithPermissionName("cashier", "打开钱箱");
+        Assert.assertEquals(permissions.length, 1);
     }
 }

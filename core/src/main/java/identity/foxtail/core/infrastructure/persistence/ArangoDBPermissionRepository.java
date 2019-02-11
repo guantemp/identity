@@ -34,6 +34,7 @@ import identity.foxtail.core.domain.model.permission.operate.EngineManager;
 import identity.foxtail.core.domain.model.permission.operate.Operate;
 import identity.foxtail.core.domain.model.permission.operate.Schedule;
 import identity.foxtail.core.domain.model.permission.operate.Strategy;
+import mi.foxtail.id.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +146,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
     }
 
     @Override
-    public Permission[] findPermissionWithRoleAndPermissionNameAndResource(String roleId, String permissionName, String resourceId) {
+    public Permission[] findPermissionsWithRoleAndPermissionNameAndResource(String roleId, String permissionName, String resourceId) {
         final String query = " WITH role,resource\n " +
                 "FOR v,e,p IN 1..2 OUTBOUND @role operate FILTER p.vertices[1]._key == @resourceId FILTER p.edges[0].name == @permissionName " +
                 "SORT p.edges[0].operate.schedule DESC RETURN {role:p.vertices[0],operate:e,resource:p.vertices[1]}";
@@ -155,7 +156,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
     }
 
     @Override
-    public Permission[] findPermissionFromRoleWithPermissionName(String roleId, String permissionName) {
+    public Permission[] findPermissionsFromRoleWithPermissionName(String roleId, String permissionName) {
         final String query = " WITH role,resource\n " +
                 "FOR v,e,p IN 1..2 OUTBOUND @role operate FILTER p.edges[0].name == @permissionName " +
                 "SORT p.edges[0].operate.schedule DESC RETURN {role:p.vertices[0],operate:e,resource:p.vertices[1]}";
@@ -180,7 +181,13 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
 
     @Override
     public void remove(String id) {
+        ArangoGraph graph = identity.graph("identity");
+        graph.edgeCollection("operate").deleteEdge(id);
+    }
 
+    @Override
+    public String nextIdentity() {
+        return new ObjectId().id();
     }
 
     private static class CommandEdge {
