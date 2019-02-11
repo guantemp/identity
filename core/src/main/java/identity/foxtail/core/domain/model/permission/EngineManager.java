@@ -43,6 +43,7 @@ public class EngineManager {
 
     static {
         registerFunction("open_box", OPEN_BOX);
+        registerFunction("打开钱箱", OPEN_BOX);
         registerFunction("discount", DISCOUNT);
         registerFunction("red_catalog", DISCOUNT);
     }

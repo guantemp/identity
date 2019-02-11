@@ -77,7 +77,7 @@ public class PermissionRepositoryTest {
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=40"));
         discountPermission = new Permission("6868", "discount", cashier.toRoleDescriptor(), new Schedule("* 15 12 33"), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
-        discountPermission = new Permission("6969", "discount", cashier.toRoleDescriptor(), new Schedule("* 12 12 33"), discount, sku.toResourceDescriptor());
+        discountPermission = new Permission("6969", "discount", cashier.toRoleDescriptor(), new Schedule("* 18 12 33"), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=60"));
         discountPermission = new Permission("696969", "discount", cashier.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
