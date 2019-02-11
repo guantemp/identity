@@ -15,9 +15,7 @@
  *
  */
 
-package identity.foxtail.core.domain.model.permission.operate;
-
-import identity.foxtail.core.domain.model.permission.Result;
+package identity.foxtail.core.domain.model.permission;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,8 +42,9 @@ public class EngineManager {
     private static Map<String, Engine> funcMap = new HashMap<String, Engine>();
 
     static {
-        registerFunction("OPEN_BOX", OPEN_BOX);
-        registerFunction("DISCOUNT", DISCOUNT);
+        registerFunction("open_box", OPEN_BOX);
+        registerFunction("discount", DISCOUNT);
+        registerFunction("red_catalog", DISCOUNT);
     }
 
     public static void registerFunction(String funcName, Engine engine) {

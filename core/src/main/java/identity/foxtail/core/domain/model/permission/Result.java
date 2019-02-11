@@ -32,20 +32,43 @@ public class Result {
         this.message = message;
     }
 
-    public String toJson() {
-        return "{\\n}";
+    public Result(boolean permit, int code, String message) {
+        this.permit = permit;
+        this.code = code;
+        this.message = message;
     }
 
+    /**
+     * Gets the value of permit.
+     *
+     * @return the value of permit
+     */
     public boolean isPermit() {
         return permit;
     }
 
-    public void setPermit(boolean permit) {
-        this.permit = permit;
-    }
-
+    /**
+     * Gets the value of code.
+     *
+     * @return the value of code
+     */
     public int code() {
         return code;
     }
 
+    /**
+     * Gets the value of message.
+     *
+     * @return the value of message
+     */
+    public String message() {
+        return message;
+    }
+
+    /**
+     * Sets the value of code.
+     */
+    private void setMessage(String message) {
+        this.message = message;
+    }
 }

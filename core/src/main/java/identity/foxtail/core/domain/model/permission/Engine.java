@@ -15,9 +15,7 @@
  *
  */
 
-package identity.foxtail.core.domain.model.permission.operate;
-
-import identity.foxtail.core.domain.model.permission.Result;
+package identity.foxtail.core.domain.model.permission;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
@@ -30,4 +28,12 @@ public interface Engine {
      * @return
      */
     Result execute(VariantContext context);
+
+    /**
+     * @param fuel
+     * @return
+     */
+    default boolean isQualifiedFuel(Fuel fuel) {
+        return false;
+    }
 }

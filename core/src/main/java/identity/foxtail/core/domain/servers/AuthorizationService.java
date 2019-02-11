@@ -47,9 +47,9 @@ public class AuthorizationService {
         User user = userRepository.find(userId);
         for (Role role : roles) {
             if (role.isUserInRole(user, groupMemberService)) {
-                Permission[] permissions = permissionRepository.findPermissionWithRoleAndPermissionNameAndResource(role.id(), permissionName, resourceId);
+                Permission[] permissions = permissionRepository.findPermissionsWithRoleAndPermissionNameAndResource(role.id(), permissionName, resourceId);
                 for (Permission permission : permissions) {
-                    if (!permission.operate().schedule().isInSchedule())
+                    if (!permission.isInSchedule())
                         continue;
                 }
             }

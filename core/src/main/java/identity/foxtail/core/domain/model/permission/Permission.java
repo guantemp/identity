@@ -21,7 +21,6 @@ import com.arangodb.entity.DocumentField;
 import com.arangodb.velocypack.annotations.Expose;
 import identity.foxtail.core.domain.model.element.ResourceDescriptor;
 import identity.foxtail.core.domain.model.element.RoleDescriptor;
-import identity.foxtail.core.domain.model.permission.operate.Operate;
 
 import java.util.Objects;
 
@@ -36,15 +35,21 @@ public class Permission {
     private String name;
     @Expose(serialize = false, deserialize = false)
     private ResourceDescriptor resourceDescriptor;
-    private Operate operate;
+    private Processor processor;
+    private Schedule schedule;
     @Expose(serialize = false, deserialize = false)
     private RoleDescriptor roleDescriptor;
 
-    public Permission(String id, String name, RoleDescriptor roleDescriptor, Operate operate, ResourceDescriptor resourceDescriptor) {
+    public Permission(String id, String name, RoleDescriptor roleDescriptor, Processor processor, ResourceDescriptor resourceDescriptor) {
+        this(id, name, roleDescriptor, null, processor, resourceDescriptor);
+    }
+
+    public Permission(String id, String name, RoleDescriptor roleDescriptor, Schedule schedule, Processor processor, ResourceDescriptor resourceDescriptor) {
         setId(id);
         setName(name);
         setRoleDescriptor(roleDescriptor);
-        setOperate(operate);
+        this.schedule = schedule;
+        setProcessor(processor);
         setResourceDescriptor(resourceDescriptor);
     }
 
@@ -58,7 +63,7 @@ public class Permission {
     }
 
     public boolean isInSchedule() {
-        return operate.schedule() == null ? true : operate.schedule().isInSchedule();
+        return schedule == null ? true : schedule.isInSchedule();
     }
 
     private void setResourceDescriptor(ResourceDescriptor resourceDescriptor) {
@@ -66,9 +71,9 @@ public class Permission {
         this.resourceDescriptor = resourceDescriptor;
     }
 
-    private void setOperate(Operate operate) {
-        Objects.requireNonNull(operate, "The job required");
-        this.operate = operate;
+    private void setProcessor(Processor processor) {
+        Objects.requireNonNull(processor, "The job required");
+        this.processor = processor;
     }
 
     private void setRoleDescriptor(RoleDescriptor roleDescriptor) {
@@ -84,8 +89,8 @@ public class Permission {
         return roleDescriptor;
     }
 
-    public Operate operate() {
-        return operate;
+    public Processor operate() {
+        return processor;
     }
 
     public String id() {
@@ -105,8 +110,24 @@ public class Permission {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", resourceDescriptor=" + resourceDescriptor +
-                ", operate=" + operate +
+                ", processor=" + processor +
+                ", schedule=" + schedule +
                 ", roleDescriptor=" + roleDescriptor +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Permission that = (Permission) o;
+
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

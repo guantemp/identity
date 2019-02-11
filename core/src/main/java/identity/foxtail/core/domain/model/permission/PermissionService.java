@@ -15,25 +15,15 @@
  *
  */
 
-package identity.foxtail.core.domain.model.permission.operate;
-
-import java.util.HashMap;
-import java.util.Map;
+package identity.foxtail.core.domain.model.permission;
 
 /***
- * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
+ * @author <job href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</job>
  * @since JDK8.0
- * @version 0.0.1 2019-01-26
+ * @version 0.0.1 2019/2/11
  */
-public class VariantContext {
-    private Map<String, Object> variantMap = new HashMap<>();
-
-    public <T> T getVariant(String variName) {
-        return (T) variantMap.get(variName);
-    }
-
-    public VariantContext put(String key, Object value) {
-        variantMap.put(key, value);
-        return this;
+public class PermissionService {
+    public boolean isSuitableEngineName(String engineName) {
+        return false;
     }
 }

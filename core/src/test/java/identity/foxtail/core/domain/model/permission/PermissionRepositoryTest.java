@@ -22,10 +22,6 @@ import identity.foxtail.core.domain.model.element.ResourceRepository;
 import identity.foxtail.core.domain.model.element.Role;
 import identity.foxtail.core.domain.model.element.RoleRepository;
 import identity.foxtail.core.domain.model.id.*;
-import identity.foxtail.core.domain.model.permission.operate.EngineManager;
-import identity.foxtail.core.domain.model.permission.operate.Operate;
-import identity.foxtail.core.domain.model.permission.operate.Schedule;
-import identity.foxtail.core.domain.model.permission.operate.Strategy;
 import identity.foxtail.core.infrastructure.persistence.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -48,7 +44,7 @@ public class PermissionRepositoryTest {
     @BeforeClass
     public static void setUpBeforeClass() {
         Role cashier = new Role("cashier", "收银员", "就是收钱的");
-        User Son_Goku = new User("Son_Goku", "孫悟空", "中文密碼也是可以的", "0830-2135679", Enablement.FOREVER);
+        User Son_Goku = new User("Sun_WuKong", "孫悟空", "中文密碼也是可以的", "0830-2135679", Enablement.FOREVER);
         userRepository.save(Son_Goku);
         cashier.assignUser(Son_Goku);
         roleRepository.save(cashier);
@@ -59,7 +55,7 @@ public class PermissionRepositoryTest {
 
         Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
-        Operate open = new Operate("open", Strategy.NO_STRATEGY);
+        Processor open = new Processor(EngineManager.queryEngine("open_box"), new Fuel(""));
         Permission permission = new Permission("6666", "打开钱箱", cashier.toRoleDescriptor(), open, box.toResourceDescriptor());
         repo.save(permission);
 
@@ -75,21 +71,18 @@ public class PermissionRepositoryTest {
         sku.assignTo(meat);
         resourceRepository.save(sku);
 
-        Operate discount = new Operate("discount", new Strategy("rate>=20", EngineManager.queryEngine("discount")));
+        Processor discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=20"));
         Permission discountPermission = new Permission("6767", "discount", cashier.toRoleDescriptor(), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
-        discount = new Operate("discount", new Strategy("rate>=40", EngineManager.queryEngine("discount")),
-                new Schedule("* 15 12 33"));
-        discountPermission = new Permission("6868", "discount", cashier.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=40"));
+        discountPermission = new Permission("6868", "discount", cashier.toRoleDescriptor(), new Schedule("* 15 12 33"), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
-        discount = new Operate("discount", new Strategy("rate>=40", EngineManager.queryEngine("discount")),
-                new Schedule("* 12 12 33"));
-        discountPermission = new Permission("6969", "discount", cashier.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        discountPermission = new Permission("6969", "discount", cashier.toRoleDescriptor(), new Schedule("* 12 12 33"), discount, sku.toResourceDescriptor());
         repo.save(discountPermission);
-        discount = new Operate("discount", new Strategy("rate>=60", EngineManager.queryEngine("discount")));
+        discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=60"));
         discountPermission = new Permission("696969", "discount", cashier.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
         repo.save(discountPermission);
-        Operate red = new Operate("red", new Strategy("value<=45.00", EngineManager.queryEngine("red_catalog")));
+        Processor red = new Processor(EngineManager.queryEngine("red_catalog"), new Fuel("value<=45.00"));
         Permission redPermission = new Permission("7777", "red_catalog", cashier.toRoleDescriptor(), red, meat.toResourceDescriptor());
         repo.save(redPermission);
     }

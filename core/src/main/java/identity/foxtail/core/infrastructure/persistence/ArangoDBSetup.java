@@ -1,17 +1,17 @@
 /*
- *  Copyright 2018 www.foxtail.cc All rights Reserved.
+ * Copyright (c) 2019 www.foxtail.cc All rights Reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
  */
 package identity.foxtail.core.infrastructure.persistence;
@@ -25,7 +25,6 @@ import com.arangodb.entity.KeyType;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.CollectionCreateOptions;
 import com.arangodb.model.HashIndexOptions;
-import com.arangodb.model.UserCreateOptions;
 import com.arangodb.velocypack.VPackSlice;
 import identity.foxtail.core.domain.model.id.Enablement;
 import identity.foxtail.core.domain.model.id.Group;
@@ -86,13 +85,13 @@ public class ArangoDBSetup {
             db.createCollection(s, edgeOptions);
         }
         edgeOptions.keyOptions(true, KeyType.traditional, 1, 1);
-        db.createCollection("operate", edgeOptions);
+        db.createCollection("processor", edgeOptions);
         //graph
         Collection<EdgeDefinition> list = new ArrayList<>();
         list.add(new EdgeDefinition().collection("create").from("user").to("resource"));
         list.add(new EdgeDefinition().collection("act").from("group", "user").to("role"));
         list.add(new EdgeDefinition().collection("subordinate").from("group", "resource").to("group", "user", "resource"));
-        list.add(new EdgeDefinition().collection("operate").from("role").to("resource"));
+        list.add(new EdgeDefinition().collection("processor").from("role").to("resource"));
         db.createGraph("identity", list);
         arangoDB.shutdown();
         logger.info("{} be created", databaseName);
@@ -132,7 +131,6 @@ public class ArangoDBSetup {
         System.out.println(arangoDB.db("identity").collection("user").documentExists(User.ANONYMOUS.username()));
 
         arangoDB.shutdown();
-        arangoDB = null;
         System.out.println("Excute:" + (System.currentTimeMillis() - start));
     }
 }
