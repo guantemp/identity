@@ -24,6 +24,7 @@ package identity.foxtail.core.domain.model.permission;
  */
 public class Result {
     private boolean permit;
+    private int code;
     private String message;
 
     public Result(boolean permit, String message) {
@@ -38,4 +39,13 @@ public class Result {
     public boolean isPermit() {
         return permit;
     }
+
+    public void setPermit(boolean permit) {
+        this.permit = permit;
+    }
+
+    public int code() {
+        return code;
+    }
+
 }
