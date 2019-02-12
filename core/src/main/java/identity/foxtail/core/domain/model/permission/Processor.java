@@ -57,7 +57,7 @@ public class Processor {
      *
      * @return the value of engine
      */
-    public Engine Engine() {
+    public Engine engine() {
         return engine;
     }
 

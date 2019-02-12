@@ -66,6 +66,10 @@ public class Permission {
         return schedule == null ? true : schedule.isInSchedule();
     }
 
+    public Result execute(VariantContext vc) {
+        return processor.engine().execute(vc);
+    }
+
     private void setResourceDescriptor(ResourceDescriptor resourceDescriptor) {
         Objects.requireNonNull(resourceDescriptor, "The resourceDescriptor required");
         this.resourceDescriptor = resourceDescriptor;

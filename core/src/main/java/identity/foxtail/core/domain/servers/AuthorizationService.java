@@ -25,6 +25,7 @@ import identity.foxtail.core.domain.model.id.UserRepository;
 import identity.foxtail.core.domain.model.permission.Permission;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
 import identity.foxtail.core.domain.model.permission.Result;
+import identity.foxtail.core.domain.model.permission.VariantContext;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBGroupRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBPermissionRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBRoleRepository;
@@ -41,7 +42,7 @@ public class AuthorizationService {
     private RoleRepository roleRepository = new ArangoDBRoleRepository();
     private GroupMemberService groupMemberService = new GroupMemberService(new ArangoDBGroupRepository());
 
-    public Result authorization(String userId, String permissionName, String resourceId) {
+    public Result authorization(String userId, String permissionName, String resourceId, VariantContext context) {
         int count = roleRepository.count();
         Role[] roles = roleRepository.all(0, count - 1);
         User user = userRepository.find(userId);
@@ -51,6 +52,7 @@ public class AuthorizationService {
                 for (Permission permission : permissions) {
                     if (!permission.isInSchedule())
                         continue;
+                    return permission.execute(context);
                 }
             }
         }
