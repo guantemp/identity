@@ -18,13 +18,10 @@
 package identity.foxtail.core.domain.model.permission;
 
 /***
- * @author <job href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</job>
+ * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2019/2/11
+ * @version 0.0.1 2019-02-25
  */
-public class EmptyShellEngine implements Engine {
-    @Override
-    public Result execute(VariantContext context) {
-        return new Result(true, ResultStatusCode.AQL_A, "Don't do anything?");
-    }
+public enum ResultStatusCode {
+    AQL_A,
 }

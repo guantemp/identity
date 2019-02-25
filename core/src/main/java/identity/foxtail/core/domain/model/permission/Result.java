@@ -24,18 +24,27 @@ package identity.foxtail.core.domain.model.permission;
  */
 public class Result {
     private boolean permit;
-    private int code;
+    private ResultStatusCode code;
     private String message;
 
+    /**
+     * @param permit
+     * @param message
+     */
     public Result(boolean permit, String message) {
         this.permit = permit;
         this.message = message;
     }
 
-    public Result(boolean permit, int code, String message) {
+    /**
+     * @param permit
+     * @param code
+     * @param message
+     */
+    public Result(boolean permit, ResultStatusCode code, String message) {
         this.permit = permit;
         this.code = code;
-        this.message = message;
+        setMessage(message);
     }
 
     /**
@@ -52,7 +61,7 @@ public class Result {
      *
      * @return the value of code
      */
-    public int code() {
+    public ResultStatusCode code() {
         return code;
     }
 

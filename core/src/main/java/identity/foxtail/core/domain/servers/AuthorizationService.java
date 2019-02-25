@@ -22,10 +22,7 @@ import identity.foxtail.core.domain.model.element.RoleRepository;
 import identity.foxtail.core.domain.model.id.GroupMemberService;
 import identity.foxtail.core.domain.model.id.User;
 import identity.foxtail.core.domain.model.id.UserRepository;
-import identity.foxtail.core.domain.model.permission.Permission;
-import identity.foxtail.core.domain.model.permission.PermissionRepository;
-import identity.foxtail.core.domain.model.permission.Result;
-import identity.foxtail.core.domain.model.permission.VariantContext;
+import identity.foxtail.core.domain.model.permission.*;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBGroupRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBPermissionRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBRoleRepository;
@@ -42,6 +39,13 @@ public class AuthorizationService {
     private RoleRepository roleRepository = new ArangoDBRoleRepository();
     private GroupMemberService groupMemberService = new GroupMemberService(new ArangoDBGroupRepository());
 
+    public AuthorizationService(UserRepository userRepository, PermissionRepository permissionRepository, RoleRepository roleRepository, GroupMemberService groupMemberService) {
+        this.userRepository = userRepository;
+        this.permissionRepository = permissionRepository;
+        this.roleRepository = roleRepository;
+        this.groupMemberService = groupMemberService;
+    }
+
     public Result authorization(String userId, String permissionName, String resourceId, VariantContext context) {
         int count = roleRepository.count();
         Role[] roles = roleRepository.all(0, count - 1);
@@ -56,9 +60,12 @@ public class AuthorizationService {
                 }
             }
         }
-        return new Result(false, "not allow");
+        return new Result(false, ResultStatusCode.AQL_A, "It's de");
     }
 
+    public Result authorization(String userId, String permissionName, String resourceId) {
+        return authorization(userId, permissionName, resourceId, null);
+    }
     public Result authorizationWithretrospect(String userId, String permissionName, String resourceId) {
         return null;
     }
