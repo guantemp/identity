@@ -26,7 +26,7 @@ import java.util.Map;
  * @version 0.0.1 2019-01-27
  */
 public class EngineManager {
-    public static final Engine OPEN_BOX = context -> new Result(true, "passed");
+    public static final Engine OPEN_BOX = context -> new Result(true, "it's passed");
 
     public static final Engine DISCOUNT = context -> {
         Result result = new Result(false, "不能低于4折,ok?");

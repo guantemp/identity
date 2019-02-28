@@ -23,7 +23,7 @@ import identity.foxtail.core.domain.model.id.UserRepository;
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 20180106
+ * @version 0.0.1 2018-01-06
  */
 public class AuthenticationService {
     private UserRepository repository;

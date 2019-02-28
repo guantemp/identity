@@ -22,6 +22,7 @@ import identity.foxtail.core.domain.model.element.ResourceRepository;
 import identity.foxtail.core.domain.model.element.Role;
 import identity.foxtail.core.domain.model.element.RoleRepository;
 import identity.foxtail.core.domain.model.id.*;
+import identity.foxtail.core.domain.servers.AuthorizationService;
 import identity.foxtail.core.infrastructure.persistence.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -42,18 +43,36 @@ public class PermissionRepositoryTest {
     private static final GroupMemberService service = new GroupMemberService(groupRepository);
     private static final ResourceRepository resourceRepository = new ArangoDBResourceRepository();
     private static final PermissionRepository repo = new ArangoDBPermissionRepository();
+    private static final AuthorizationService authorizationService = new AuthorizationService(userRepository, repo, roleRepository, service);
 
     @BeforeClass
     public static void setUpBeforeClass() {
         Role cashier = new Role("cashier", "收银员", "就是收钱的");
-        User Son_Goku = new User("Sun_WuKong", "孫悟空", "中文密碼也是可以的", "0830-2135679", Enablement.FOREVER);
-        userRepository.save(Son_Goku);
-        cashier.assignUser(Son_Goku);
+
+        User Bailong = new User("Bailong", "白龙马", "悲催@被iughjk骑的a", "18982455058", Enablement.FOREVER);
+        userRepository.save(Bailong);
+
+        User Sand_Monk = new User("Sand_Monk", "沙僧", "we挑担子的9knkj没办法a", "18982455057", Enablement.FOREVER);
+        userRepository.save(Sand_Monk);
+        cashier.assignUser(Sand_Monk);
         roleRepository.save(cashier);
+
         User Zhu_Bajie = new User("Zhu_Bajie", "猪八戒", "可以的，好幸福et", "13679692301", Enablement.FOREVER);
         cashier.assignUser(Zhu_Bajie);
         userRepository.save(Zhu_Bajie);
         roleRepository.save(cashier);
+
+        Role cashierSupr = new Role("cashierSupr", "收银主管", "收银员的老大");
+        User Son_Goku = new User("Sun_WuKong", "孫悟空", "中文密碼也是可以的", "0830-2135679", Enablement.FOREVER);
+        cashierSupr.assignUser(Son_Goku);
+        userRepository.save(Son_Goku);
+        roleRepository.save(cashierSupr);
+
+        Role CFO = new Role("CFO", "财务总监", "所有财政权力管理，对董事会负责");
+        User tang = new User("tang", "唐僧", "我是老hvytryt大", "18982455056", Enablement.FOREVER);
+        CFO.assignUser(tang);
+        userRepository.save(tang);
+        roleRepository.save(CFO);
 
         Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
@@ -87,6 +106,7 @@ public class PermissionRepositoryTest {
         Processor red = new Processor(EngineManager.queryEngine("red_catalog"), new Fuel("value<=45.00"));
         Permission redPermission = new Permission("7777", "red_catalog", cashier.toRoleDescriptor(), red, meat.toResourceDescriptor());
         repo.save(redPermission);
+
     }
 
     @AfterClass
@@ -100,13 +120,27 @@ public class PermissionRepositoryTest {
         Assert.assertEquals(permissions.length, 3);
         permissions = repo.findPermissionsFromRoleWithPermissionName("cashier", "discount");
         Assert.assertEquals(permissions.length, 4);
-        for (Permission permission : permissions) {
-            System.out.println(permission);
-        }
+        // for (Permission permission : permissions) {
+        //   System.out.println(permission);
+        //  }
         permissions = repo.findPermissionsFromRoleWithPermissionName("cashier", "打开钱箱");
         Assert.assertEquals(permissions.length, 1);
         Collection<String> collection = repo.getNonRepetitivePermissionName();
-        for (String name : collection)
+        // for (String name : collection)
+        //    System.out.println(name);
+
+        Result result = authorizationService.authorization("Sun_WuKong", "打开钱箱", "box");
+        System.out.println(result);
+        result = authorizationService.authorization("Bailong", "打开钱箱", "box");
+        System.out.println(result);
+        result = authorizationService.authorization("Zhu_Bajie", "打开钱箱", "box");
+        System.out.println(result);
+    }
+
+    @Test
+    public void getNonRepetitivePermissionName() {
+        Collection<String> names = repo.getNonRepetitivePermissionName();
+        for (String name : names)
             System.out.println(name);
     }
 }

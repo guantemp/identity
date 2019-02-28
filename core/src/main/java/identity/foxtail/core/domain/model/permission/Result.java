@@ -17,6 +17,8 @@
 
 package identity.foxtail.core.domain.model.permission;
 
+import java.util.StringJoiner;
+
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
@@ -32,8 +34,7 @@ public class Result {
      * @param message
      */
     public Result(boolean permit, String message) {
-        this.permit = permit;
-        this.message = message;
+        this(permit, ResultStatusCode.OK, message);
     }
 
     /**
@@ -79,5 +80,14 @@ public class Result {
      */
     private void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Result.class.getSimpleName() + "[", "]")
+                .add("permit=" + permit)
+                .add("code=" + code)
+                .add("message='" + message + "'")
+                .toString();
     }
 }

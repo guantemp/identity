@@ -48,7 +48,7 @@ public class AuthorizationService {
 
     public Result authorization(String userId, String permissionName, String resourceId, VariantContext context) {
         int count = roleRepository.count();
-        Role[] roles = roleRepository.all(0, count - 1);
+        Role[] roles = roleRepository.all(0, count);
         User user = userRepository.find(userId);
         for (Role role : roles) {
             if (role.isUserInRole(user, groupMemberService)) {
