@@ -23,5 +23,5 @@ package identity.foxtail.core.domain.model.permission;
  * @version 0.0.1 2019-02-25
  */
 public enum ResultStatusCode {
-    AQL_A, OK
+    No_Content, OK, Forbidden
 }

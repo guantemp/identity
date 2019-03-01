@@ -23,10 +23,8 @@ import identity.foxtail.core.domain.model.id.GroupMemberService;
 import identity.foxtail.core.domain.model.id.User;
 import identity.foxtail.core.domain.model.id.UserRepository;
 import identity.foxtail.core.domain.model.permission.*;
-import identity.foxtail.core.infrastructure.persistence.ArangoDBGroupRepository;
-import identity.foxtail.core.infrastructure.persistence.ArangoDBPermissionRepository;
-import identity.foxtail.core.infrastructure.persistence.ArangoDBRoleRepository;
-import identity.foxtail.core.infrastructure.persistence.ArangoDBUserRepository;
+
+import java.util.Objects;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
@@ -34,16 +32,16 @@ import identity.foxtail.core.infrastructure.persistence.ArangoDBUserRepository;
  * @version 0.0.1 2019-01-28
  */
 public class AuthorizationService {
-    private UserRepository userRepository = new ArangoDBUserRepository();
-    private PermissionRepository permissionRepository = new ArangoDBPermissionRepository();
-    private RoleRepository roleRepository = new ArangoDBRoleRepository();
-    private GroupMemberService groupMemberService = new GroupMemberService(new ArangoDBGroupRepository());
+    private UserRepository userRepository;
+    private PermissionRepository permissionRepository;
+    private RoleRepository roleRepository;
+    private GroupMemberService groupMemberService;
 
     public AuthorizationService(UserRepository userRepository, PermissionRepository permissionRepository, RoleRepository roleRepository, GroupMemberService groupMemberService) {
-        this.userRepository = userRepository;
-        this.permissionRepository = permissionRepository;
-        this.roleRepository = roleRepository;
-        this.groupMemberService = groupMemberService;
+        this.userRepository = Objects.requireNonNull(userRepository, "userRepository is required");
+        this.permissionRepository = Objects.requireNonNull(permissionRepository, "permissionRepository is required");
+        this.roleRepository = Objects.requireNonNull(roleRepository, "roleRepository is required");
+        this.groupMemberService = Objects.requireNonNull(groupMemberService, "groupMemberService is required");
     }
 
     public Result authorization(String userId, String permissionName, String resourceId, VariantContext context) {
@@ -60,7 +58,7 @@ public class AuthorizationService {
                 }
             }
         }
-        return new Result(false, ResultStatusCode.AQL_A, "It's de");
+        return new Result(false, ResultStatusCode.No_Content, "It's de");
     }
 
     public Result authorization(String userId, String permissionName, String resourceId) {

@@ -25,6 +25,8 @@ import java.util.StringJoiner;
  * @version 0.0.1 2019-01-27
  */
 public class Result {
+    public static final Result FORBIDDEN = new Result(false, ResultStatusCode.Forbidden, "Request denied");
+    public static final Result ALLOWED = new Result(true, ResultStatusCode.OK, "Request allowed");
     private boolean permit;
     private ResultStatusCode code;
     private String message;

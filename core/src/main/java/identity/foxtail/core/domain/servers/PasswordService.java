@@ -18,6 +18,8 @@ package identity.foxtail.core.domain.servers;
 
 import java.util.Objects;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.foxtail.cc/author/guan xiangHuan">guan xiangHuan</a>
@@ -30,13 +32,24 @@ public final class PasswordService {
     private static final int STRONG_THRESHOLD = 20;
     private static final String SYMBOLS = "\"`!?$?%^&*()_-+={[}]:;@'~#|\\<,>.?/";
     private static final int VERY_STRONG_THRESHOLD = 40;
+    private static final Pattern CHINESE_PATTERN = Pattern.compile("[\u4e00-\u9fa5]");
 
     public PasswordService() {
         super();
     }
 
+    private boolean isContainChinese(String str) {
+        Matcher m = CHINESE_PATTERN.matcher(str);
+        if (m.find()) {
+            return true;
+        }
+        return false;
+    }
+
     private int calculatePasswordStrength(String plainTextPassword) {
         plainTextPassword = Objects.requireNonNull(plainTextPassword, "Plain text password is required");
+        if (isContainChinese(plainTextPassword))
+            throw new IllegalArgumentException("Cannot contain Chinese characters");
         int strength = 0;
         int length = plainTextPassword.length();
         if (length > 6) {

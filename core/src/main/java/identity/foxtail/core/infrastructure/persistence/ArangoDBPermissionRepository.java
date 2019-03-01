@@ -124,8 +124,8 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
                 "processor:{fuel:e.processor.fuel}," +
                 "schedule:e.schedule," +
                 "resource:{id:p.vertices[1]._key,name:p.vertices[1].name,creator:p.vertices[1].creator}}";
-        Map<String, Object> bindVars = new MapBuilder().put("role", "role/" + roleId).put("resourceId", resourceId).
-                put("permissionName", permissionName).get();
+        Map<String, Object> bindVars = new MapBuilder().put("role", "role/" + roleId).put("permissionName", permissionName).
+                put("resourceId", resourceId).get();
         return findPermissions(query, bindVars);
     }
 

@@ -17,6 +17,7 @@
 
 package identity.foxtail.core.domain.servers;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 /***
@@ -29,20 +30,14 @@ public class PasswordServiceTest {
     @Test
     public void generateStrongPassword() {
         PasswordService ps = new PasswordService();
-        System.out.println(ps.generateStrongPassword());
+        Assert.assertTrue(ps.isStrong(ps.generateStrongPassword()));
     }
 
     @Test
-    public void isStrong() {
+    public void strong() {
         PasswordService ps = new PasswordService();
-        System.out.println(ps.isStrong("上海市"));
-    }
-
-    @Test
-    public void isVeryStrong() {
-    }
-
-    @Test
-    public void isWeak() {
+        Assert.assertTrue(ps.isStrong("32534sdgd12"));
+        Assert.assertTrue(ps.isWeak("wqrewr"));
+        Assert.assertTrue(ps.isVeryStrong("#fcsd2yd54nb65"));
     }
 }
