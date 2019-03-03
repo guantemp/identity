@@ -22,7 +22,10 @@ import identity.foxtail.core.domain.model.element.RoleRepository;
 import identity.foxtail.core.domain.model.id.GroupMemberService;
 import identity.foxtail.core.domain.model.id.User;
 import identity.foxtail.core.domain.model.id.UserRepository;
-import identity.foxtail.core.domain.model.permission.*;
+import identity.foxtail.core.domain.model.permission.Permission;
+import identity.foxtail.core.domain.model.permission.PermissionRepository;
+import identity.foxtail.core.domain.model.permission.Result;
+import identity.foxtail.core.domain.model.permission.VariantContext;
 
 import java.util.Objects;
 
@@ -58,7 +61,7 @@ public class AuthorizationService {
                 }
             }
         }
-        return new Result(false, ResultStatusCode.No_Content, "It's de");
+        return Result.FORBIDDEN;
     }
 
     public Result authorization(String userId, String permissionName, String resourceId) {

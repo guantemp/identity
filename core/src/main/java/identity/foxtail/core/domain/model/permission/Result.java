@@ -25,38 +25,25 @@ import java.util.StringJoiner;
  * @version 0.0.1 2019-01-27
  */
 public class Result {
-    public static final Result FORBIDDEN = new Result(false, ResultStatusCode.Forbidden, "Request denied");
-    public static final Result ALLOWED = new Result(true, ResultStatusCode.OK, "Request allowed");
-    private boolean permit;
+    public static final Result FORBIDDEN = new Result(ResultStatusCode.Forbidden, "Request denied");
+    public static final Result OK = new Result(ResultStatusCode.OK, "Request allowed");
     private ResultStatusCode code;
     private String message;
 
     /**
-     * @param permit
      * @param message
      */
-    public Result(boolean permit, String message) {
-        this(permit, ResultStatusCode.OK, message);
+    public Result(String message) {
+        this(ResultStatusCode.OK, message);
     }
 
     /**
-     * @param permit
      * @param code
      * @param message
      */
-    public Result(boolean permit, ResultStatusCode code, String message) {
-        this.permit = permit;
+    public Result(ResultStatusCode code, String message) {
         this.code = code;
         setMessage(message);
-    }
-
-    /**
-     * Gets the value of permit.
-     *
-     * @return the value of permit
-     */
-    public boolean isPermit() {
-        return permit;
     }
 
     /**
@@ -87,7 +74,6 @@ public class Result {
     @Override
     public String toString() {
         return new StringJoiner(", ", Result.class.getSimpleName() + "[", "]")
-                .add("permit=" + permit)
                 .add("code=" + code)
                 .add("message='" + message + "'")
                 .toString();

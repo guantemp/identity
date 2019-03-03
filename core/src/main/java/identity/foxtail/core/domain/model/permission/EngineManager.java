@@ -26,16 +26,16 @@ import java.util.Map;
  * @version 0.0.1 2019-01-27
  */
 public class EngineManager {
-    public static final Engine OPEN_BOX = context -> new Result(true, "it's passed");
+    public static final Engine OPEN_BOX = context -> new Result("it's passed");
 
     public static final Engine DISCOUNT = context -> {
-        Result result = new Result(false, "不能低于4折,ok?");
+        Result result = new Result("不能低于4折,ok?");
         if (context != null) {
             String expression = context.getVariant("expression");
             // process expression
             int rate = context.getVariant("rate");
             if (rate >= 40 && rate <= 100)
-                result = new Result(true, "it's good");
+                result = new Result("it's good");
         }
         return result;
     };
