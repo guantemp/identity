@@ -173,9 +173,9 @@ public class ArangoDBUserRepository implements UserRepository {
         if (id.equals(User.ANONYMOUS.id()))
             return User.ANONYMOUS;
         boolean enable = slice.get("enablement").get("enable").getAsBoolean();
-        LocalDateTime expiryDateTime = LocalDateTime.parse(slice.get("enablement").get("expiryDateTime").getAsString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
-        // System.out.println(expiryDateTime);
-        Enablement enablement = new Enablement(enable, expiryDateTime);
+        LocalDateTime expirationDate = LocalDateTime.parse(slice.get("enablement").get("expirationDate").getAsString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
+        // System.out.println(expirationDate);
+        Enablement enablement = new Enablement(enable, expirationDate);
         String username = slice.get("username").getAsString();
         String telephoneNumber = slice.get("telephoneNumber").getAsString();
         String password = slice.get("password").getAsString();
@@ -194,7 +194,7 @@ public class ArangoDBUserRepository implements UserRepository {
     }
 
     private User checkPassword(String password, ArangoCursor<VPackSlice> slices) {
-        if (slices.hasNext()) {
+        if (slices != null && slices.hasNext()) {
             try {
                 User user = rebuild(slices.next());
                 if (DomainRegistry.encryption().check(password, (String) passwordField.get(user)))

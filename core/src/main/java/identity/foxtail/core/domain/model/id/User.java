@@ -177,7 +177,7 @@ public class User {
     }
 
     public UserDescriptor toUserDescriptor() {
-        return new UserDescriptor(id, username, enablement.expiryDateTime());
+        return new UserDescriptor(id, username, enablement.expirationDate());
     }
 
     public GroupMember toGroupMember() {

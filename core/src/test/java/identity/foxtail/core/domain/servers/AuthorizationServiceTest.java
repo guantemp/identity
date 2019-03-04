@@ -75,7 +75,7 @@ public class AuthorizationServiceTest {
         Processor open = new Processor(EngineManager.queryEngine("open_box"), Fuel.LUBRICANTS);
         Permission permission = new Permission("6666", "打开钱箱", cashier.toRoleDescriptor(), open, box.toResourceDescriptor());
         repo.save(permission);
-        permission = new Permission("6667", "打开钱箱", cashierSupr.toRoleDescriptor(), open, box.toResourceDescriptor());
+        permission = new Permission("6665", "打开钱箱", cashierSupr.toRoleDescriptor(), open, box.toResourceDescriptor());
         repo.save(permission);
         //refund
         Resource catalog = new Resource("catalog", "产品目录", Son_Goku.toCreator());
@@ -91,30 +91,69 @@ public class AuthorizationServiceTest {
         Resource meat = new Resource("meat", "鲜肉", Zhu_Bajie.toCreator());
         meat.assignTo(fresh);
         resourceRepository.save(meat);
-        Resource sku = new Resource("sku", "二刀肉", Zhu_Bajie.toCreator());
-        sku.assignTo(meat);
-        resourceRepository.save(sku);
+        Resource Two_knife_meat = new Resource("Two_knife_meat", "二刀肉", Sand_Monk.toCreator());
+        Two_knife_meat.assignTo(meat);
+        resourceRepository.save(Two_knife_meat);
 
+        Resource fruit = new Resource("fruit", "水果", Zhu_Bajie.toCreator());
+        fruit.assignTo(fresh);
+        resourceRepository.save(fruit);
+        Resource apple = new Resource("apple", "苹果", Bailong.toCreator());
+        apple.assignTo(fruit);
+        resourceRepository.save(apple);
+        Resource orange = new Resource("orange", "橘子", Bailong.toCreator());
+        orange.assignTo(fruit);
+        resourceRepository.save(orange);
+
+        //discount
         Processor discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=20"));
-        Permission discountPermission = new Permission("6767", "discount", cashier.toRoleDescriptor(), discount, sku.toResourceDescriptor());
+        Permission discountPermission = new Permission("7770", "discount", CFO.toRoleDescriptor(), discount, catalog.toResourceDescriptor());
+        repo.save(discountPermission);
+
+        discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=30"));
+        discountPermission = new Permission("7771", "discount", cashierSupr.toRoleDescriptor(), new Schedule("* 15 12 33"), discount, apple.toResourceDescriptor());
+        repo.save(discountPermission);
+        discountPermission = new Permission("7772", "discount", cashierSupr.toRoleDescriptor(), new Schedule("* 18 12 33"), discount, apple.toResourceDescriptor());
         repo.save(discountPermission);
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=40"));
-        discountPermission = new Permission("6868", "discount", cashier.toRoleDescriptor(), new Schedule("* 15 12 33"), discount, sku.toResourceDescriptor());
+        discountPermission = new Permission("7773", "discount", cashierSupr.toRoleDescriptor(), discount, meat.toResourceDescriptor());
         repo.save(discountPermission);
-        discountPermission = new Permission("6969", "discount", cashier.toRoleDescriptor(), new Schedule("* 18 12 33"), discount, sku.toResourceDescriptor());
+        discountPermission = new Permission("7774", "discount", cashierSupr.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
         repo.save(discountPermission);
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=60"));
-        discountPermission = new Permission("696969", "discount", cashier.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
+        discountPermission = new Permission("7775", "discount", cashier.toRoleDescriptor(), discount, Two_knife_meat.toResourceDescriptor());
+        repo.save(discountPermission);
+        discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=50"));
+        discountPermission = new Permission("7776", "discount", cashier.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
         repo.save(discountPermission);
 
         Processor red = new Processor(EngineManager.queryEngine("red_catalog"), new Fuel("value<=45.00"));
-        Permission redPermission = new Permission("7777", "red_catalog", cashier.toRoleDescriptor(), red, meat.toResourceDescriptor());
+        Permission redPermission = new Permission("8888", "red_catalog", cashier.toRoleDescriptor(), red, meat.toResourceDescriptor());
         repo.save(redPermission);
     }
 
     @AfterClass
     public static void teardown() {
+        /*
+        userRepository.remove("Bailong");
+        userRepository.remove("Zhu_Bajie");
+        userRepository.remove("Sand_Monk");
+        userRepository.remove("Sun_WuKong");
+        userRepository.remove("tang");
 
+         resourceRepository.remove("box");
+        resourceRepository.remove("orange");
+        resourceRepository.remove("apple");
+        resourceRepository.remove("fruit");
+        resourceRepository.remove("Two_knife_meat");
+        resourceRepository.remove("meat");
+        resourceRepository.remove("fresh");
+        resourceRepository.remove("catalog");
+
+        roleRepository.remove("cashier");
+        roleRepository.remove("cashierSupr");
+        roleRepository.remove("CFO");
+           */
     }
 
     @Test
@@ -127,6 +166,12 @@ public class AuthorizationServiceTest {
         Assert.assertEquals(result, Result.FORBIDDEN);
         result = authorizationService.authorization("tang", "打开钱箱", "box");
         Assert.assertEquals(result, Result.FORBIDDEN);
+
+        result = authorizationService.authorization("Zhu_Bajie", "退货", "catalog");
+        Assert.assertEquals(result, Result.FORBIDDEN);
+        result = authorizationService.authorization("Sun_WuKong", "退货", "catalog");
+        Assert.assertEquals(result, Result.PERMIT);
+
     }
 
     @Test

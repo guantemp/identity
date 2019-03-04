@@ -47,6 +47,7 @@ public class EngineManager {
         registerFunction("open_box", OPEN_BOX);
         registerFunction("打开钱箱", OPEN_BOX);
         registerFunction("refund", REFUND);
+        registerFunction("退货", REFUND);
         registerFunction("discount", DISCOUNT);
         registerFunction("red_catalog", DISCOUNT);
     }

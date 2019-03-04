@@ -31,35 +31,39 @@ public class Enablement {
         }
     };
     private boolean enable;
-    private LocalDateTime expiryDateTime;
+    private LocalDateTime expirationDate;
 
     /**
      * @param enable
-     * @param expiryDateTime
-     * @throws IllegalArgumentException if expiryDateTime is past time
+     * @param expirationDate
+     * @throws IllegalArgumentException if expirationDate is past time
      */
-    public Enablement(boolean enable, LocalDateTime expiryDateTime) {
+    public Enablement(boolean enable, LocalDateTime expirationDate) {
         this.enable = enable;
-        this.expiryDateTime = expiryDateTime;
-        //setExpiryDateTime(expiryDateTime);
+        this.expirationDate = expirationDate;
+        //setExpirationDate(expirationDate);
     }
 
-    private void setExpiryDateTime(LocalDateTime expiryDateTime) {
-        if (expiryDateTime.isBefore(LocalDateTime.now().minusMinutes(15)))
+    public Enablement(boolean enable) {
+        this(enable, LocalDateTime.now().plusMinutes(30));
+    }
+
+    private void setExpirationDate(LocalDateTime expirationDate) {
+        if (expirationDate.isBefore(LocalDateTime.now().minusMinutes(1)))
             throw new IllegalArgumentException("The expiry date must be some time in the future.");
-        this.expiryDateTime = expiryDateTime;
+        this.expirationDate = expirationDate;
     }
 
     public boolean isEnable() {
         return enable;
     }
 
-    public LocalDateTime expiryDateTime() {
-        return expiryDateTime;
+    public LocalDateTime expirationDate() {
+        return expirationDate;
     }
 
     public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiryDateTime);
+        return LocalDateTime.now().isAfter(expirationDate);
     }
 
     @Override
@@ -70,13 +74,13 @@ public class Enablement {
         Enablement that = (Enablement) o;
 
         if (enable != that.enable) return false;
-        return expiryDateTime != null ? expiryDateTime.equals(that.expiryDateTime) : that.expiryDateTime == null;
+        return expirationDate != null ? expirationDate.equals(that.expirationDate) : that.expirationDate == null;
     }
 
     @Override
     public int hashCode() {
         int result = (enable ? 1 : 0);
-        result = 31 * result + (expiryDateTime != null ? expiryDateTime.hashCode() : 0);
+        result = 31 * result + (expirationDate != null ? expirationDate.hashCode() : 0);
         return result;
     }
 
@@ -84,7 +88,7 @@ public class Enablement {
     public String toString() {
         return "Enablement{" +
                 "enable=" + enable +
-                ", expiryDateTime=" + expiryDateTime +
+                ", expirationDate=" + expirationDate +
                 '}';
     }
 }
