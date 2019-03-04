@@ -118,7 +118,8 @@ public class AuthorizationServiceTest {
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=40"));
         discountPermission = new Permission("7773", "discount", cashierSupr.toRoleDescriptor(), discount, meat.toResourceDescriptor());
         repo.save(discountPermission);
-        discountPermission = new Permission("7774", "discount", cashierSupr.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
+        discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=45"));
+        discountPermission = new Permission("7774", "discount", cashierSupr.toRoleDescriptor(), discount, fruit.toResourceDescriptor());
         repo.save(discountPermission);
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=60"));
         discountPermission = new Permission("7775", "discount", cashier.toRoleDescriptor(), discount, Two_knife_meat.toResourceDescriptor());
@@ -175,10 +176,15 @@ public class AuthorizationServiceTest {
         VariantContext context = new VariantContext();
         context.put("rate", 20);
         result = authorizationService.backtrackingCategoryauthorization("tang", "discount", "catalog", "catalog", context);
-        System.out.println(result);
+        Assert.assertEquals(result, Result.PERMIT);
         context.clear();
         context.put("rate", 19);
         result = authorizationService.backtrackingCategoryauthorization("tang", "discount", "catalog", "catalog", context);
+        System.out.println(result);
+
+        result = authorizationService.backtrackingCategoryauthorization("Sun_WuKong", "discount", "apple", "catalog", context);
+        System.out.println(result);
+        result = authorizationService.backtrackingCategoryauthorization("Sun_WuKong", "discount", "orange", "catalog", context);
         System.out.println(result);
     }
 

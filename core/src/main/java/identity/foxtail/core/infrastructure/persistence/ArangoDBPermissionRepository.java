@@ -19,10 +19,11 @@ package identity.foxtail.core.infrastructure.persistence;
 
 import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDatabase;
+import com.arangodb.ArangoEdgeCollection;
 import com.arangodb.ArangoGraph;
 import com.arangodb.entity.DocumentField;
 import com.arangodb.entity.VertexEntity;
-import com.arangodb.model.DocumentUpdateOptions;
+import com.arangodb.model.EdgeUpdateOptions;
 import com.arangodb.util.MapBuilder;
 import com.arangodb.velocypack.VPackSlice;
 import identity.foxtail.core.domain.model.element.ResourceDescriptor;
@@ -44,7 +45,7 @@ import java.util.*;
  */
 public class ArangoDBPermissionRepository implements PermissionRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDBPermissionRepository.class);
-    private static final DocumentUpdateOptions UPDATE_OPTIONS = new DocumentUpdateOptions().keepNull(false);
+    private static final EdgeUpdateOptions UPDATE_OPTIONS = new EdgeUpdateOptions().keepNull(false);
     private static Constructor<RoleDescriptor> ROLEDESCRIPTOR_CONSTRUCTOR;
     private static Constructor<ResourceDescriptor> RESOURCEDESCRIPTOR_CONSTRUCTOR;
     private static Constructor<Creator> CREATOR_CONSTRUCTOR;
@@ -69,13 +70,22 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
     @Override
     public void save(Permission permission) {
         boolean exist = identity.collection("processor").documentExists(permission.id());
+        ArangoGraph graph = identity.graph("identity");
+        ArangoEdgeCollection edge = graph.edgeCollection("processor");
         if (exist) {
-            identity.collection("processor").updateDocument(permission.id(), permission, UPDATE_OPTIONS);
-        } else {
-            ArangoGraph graph = identity.graph("identity");
             VertexEntity role = graph.vertexCollection("role").getVertex(permission.roleDescriptor().id(), VertexEntity.class);
             VertexEntity resource = graph.vertexCollection("resource").getVertex(permission.resourceDescriptor().id(), VertexEntity.class);
-            graph.edgeCollection("processor").insertEdge(new ProcessorEdge(role.getId(), resource.getId(), permission));
+            if (!permission.roleDescriptor().id().equals(role.getKey()) || !permission.resourceDescriptor().id().equals(resource.getKey())) {
+                edge.deleteEdge(permission.id());
+                edge.insertEdge(new ProcessorEdge(role.getId(), resource.getId(), permission));
+            } else {
+                edge.updateEdge(permission.id(), permission, UPDATE_OPTIONS);
+                //identity.collection("processor").updateDocument(permission.id(), permission, UPDATE_OPTIONS);
+            }
+        } else {
+            VertexEntity role = graph.vertexCollection("role").getVertex(permission.roleDescriptor().id(), VertexEntity.class);
+            VertexEntity resource = graph.vertexCollection("resource").getVertex(permission.resourceDescriptor().id(), VertexEntity.class);
+            edge.insertEdge(new ProcessorEdge(role.getId(), resource.getId(), permission));
         }
     }
 
@@ -88,8 +98,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         VPackSlice roleSlice = slice.get("role");
         RoleDescriptor roleDescriptor = ROLEDESCRIPTOR_CONSTRUCTOR.newInstance(roleSlice.get("id").getAsString(), roleSlice.get("name").getAsString());
         //processor
-        VPackSlice processorSlice = slice.get("processor");
-        Fuel fuel = Fuel.newFuel(processorSlice.get("fuel").get("formula").getAsString());
+        Fuel fuel = Fuel.newFuel(slice.get("processor").get("fuel").get("formula").getAsString());
         Processor processor = new Processor(EngineManager.queryEngine(name), fuel);
         //schedule
         Schedule schedule = null;

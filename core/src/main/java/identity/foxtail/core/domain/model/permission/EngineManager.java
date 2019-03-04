@@ -37,7 +37,7 @@ public class EngineManager {
 
             int rate = context.<Integer>getVariant("rate");
             if (rate >= preset)
-                return new Result(ResultStatusCode.Permit, "It's good");
+                return Result.PERMIT;
             else
                 return new Result(ResultStatusCode.Forbidden, "Discount rate is too low:" + preset);
         }
