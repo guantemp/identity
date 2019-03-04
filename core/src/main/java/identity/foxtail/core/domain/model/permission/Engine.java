@@ -34,6 +34,8 @@ public interface Engine {
      * @return
      */
     default boolean isQualifiedFuel(Fuel fuel) {
+        if (fuel == Fuel.LUBRICANT)
+            return true;
         return false;
     }
 }

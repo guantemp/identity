@@ -25,8 +25,14 @@ import java.util.Objects;
  * @version 0.0.1 2019/2/11
  */
 public class Fuel {
-    public static final Fuel LUBRICANTS = new Fuel("");
+    public static final Fuel LUBRICANT = new Fuel("lubricant");
     private String formula;
+
+    public static Fuel newFuel(String formula) {
+        if (formula.equals("lubricant"))
+            return LUBRICANT;
+        return new Fuel(formula);
+    }
 
     public Fuel(String formula) {
         setFormula(formula);

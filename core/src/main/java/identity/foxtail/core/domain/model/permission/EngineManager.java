@@ -29,17 +29,23 @@ public class EngineManager {
     public static final Engine OPEN_BOX = context -> Result.PERMIT;
     public static final Engine REFUND = context -> Result.PERMIT;
 
-    public static final Engine DISCOUNT = context -> {
-        System.out.println(context.<String>getVariant("fuel"));
-        Result result = new Result("不能低于4折,ok?");
-        if (context != null) {
-            String expression = context.getVariant("expression");
-            // process expression
-            int rate = context.getVariant("rate");
-            if (rate >= 40 && rate <= 100)
-                result = new Result("it's good");
+    public static final Engine DISCOUNT = new Engine() {
+        @Override
+        public Result execute(VariantContext context) {
+            Fuel fuel = context.<Fuel>getVariant("fuel");
+            int preset = Integer.parseInt(fuel.formula().substring(6, 8));
+
+            int rate = context.<Integer>getVariant("rate");
+            if (rate >= preset)
+                return new Result(ResultStatusCode.Permit, "It's good");
+            else
+                return new Result(ResultStatusCode.Forbidden, "Discount rate is too low:" + preset);
         }
-        return Result.FORBIDDEN;
+
+        @Override
+        public boolean isQualifiedFuel(Fuel fuel) {
+            return true;
+        }
     };
     private static Map<String, Engine> funcMap = new HashMap<String, Engine>();
 

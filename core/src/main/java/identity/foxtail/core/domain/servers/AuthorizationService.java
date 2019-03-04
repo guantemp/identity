@@ -83,7 +83,33 @@ public class AuthorizationService {
     }
 
 
-    public Result backtrackingCategoryauthorization(String userId, String permissionName, String resourceId, String categoryId) {
-        return null;
+    /**
+     * @param userId
+     * @param permissionName
+     * @param resourceId
+     * @param categoryId
+     * @param context
+     * @return
+     */
+    public Result backtrackingCategoryauthorization(String userId, String permissionName, String resourceId, String categoryId, VariantContext context) {
+        int count = roleRepository.count();
+        Role[] roles = roleRepository.all(0, count);
+        User user = userRepository.find(userId);
+        for (Role role : roles) {
+            if (role.isUserInRole(user, groupMemberService)) {
+                Permission[] permissions = permissionRepository.findPermissionsWithRoleAndPermissionNameAndResource(role.id(), permissionName, resourceId);
+                if (permissions.length != 0) {
+                    for (Permission permission : permissions) {
+                        if (!permission.isInSchedule())
+                            continue;
+                        context.put("fuel", permission.processor().fuel());
+                        return permission.execute(context);
+                    }
+                } else {
+                    return Result.NO_CONTENT;
+                }
+            }
+        }
+        return Result.FORBIDDEN;
     }
 }

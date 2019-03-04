@@ -76,7 +76,7 @@ public class PermissionRepositoryTest {
         //open box
         Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
-        Processor open = new Processor(EngineManager.queryEngine("open_box"), Fuel.LUBRICANTS);
+        Processor open = new Processor(EngineManager.queryEngine("open_box"), Fuel.LUBRICANT);
         Permission permission = new Permission("6666", "打开钱箱", cashier.toRoleDescriptor(), open, box.toResourceDescriptor());
         repo.save(permission);
         permission = new Permission("6667", "打开钱箱", cashierSupr.toRoleDescriptor(), open, box.toResourceDescriptor());
@@ -85,7 +85,7 @@ public class PermissionRepositoryTest {
         Resource catalog = new Resource("catalog", "产品目录", Son_Goku.toCreator());
         resourceRepository.save(catalog);
 
-        Processor refund = new Processor(EngineManager.queryEngine("refund"), Fuel.LUBRICANTS);
+        Processor refund = new Processor(EngineManager.queryEngine("refund"), Fuel.LUBRICANT);
         permission = new Permission("6668", "退货", cashierSupr.toRoleDescriptor(), refund, catalog.toResourceDescriptor());
         repo.save(permission);
 

@@ -72,7 +72,7 @@ public class AuthorizationServiceTest {
         //open box
         Resource box = new Resource("box", "錢箱", Zhu_Bajie.toCreator());
         resourceRepository.save(box);
-        Processor open = new Processor(EngineManager.queryEngine("open_box"), Fuel.LUBRICANTS);
+        Processor open = new Processor(EngineManager.queryEngine("open_box"), Fuel.LUBRICANT);
         Permission permission = new Permission("6666", "打开钱箱", cashier.toRoleDescriptor(), open, box.toResourceDescriptor());
         repo.save(permission);
         permission = new Permission("6665", "打开钱箱", cashierSupr.toRoleDescriptor(), open, box.toResourceDescriptor());
@@ -81,7 +81,7 @@ public class AuthorizationServiceTest {
         Resource catalog = new Resource("catalog", "产品目录", Son_Goku.toCreator());
         resourceRepository.save(catalog);
 
-        Processor refund = new Processor(EngineManager.queryEngine("refund"), Fuel.LUBRICANTS);
+        Processor refund = new Processor(EngineManager.queryEngine("refund"), Fuel.LUBRICANT);
         permission = new Permission("5555", "退货", cashierSupr.toRoleDescriptor(), refund, catalog.toResourceDescriptor());
         repo.save(permission);
 
@@ -172,9 +172,17 @@ public class AuthorizationServiceTest {
         result = authorizationService.authorization("Sun_WuKong", "退货", "catalog");
         Assert.assertEquals(result, Result.PERMIT);
 
+        VariantContext context = new VariantContext();
+        context.put("rate", 20);
+        result = authorizationService.backtrackingCategoryauthorization("tang", "discount", "catalog", "catalog", context);
+        System.out.println(result);
+        context.clear();
+        context.put("rate", 19);
+        result = authorizationService.backtrackingCategoryauthorization("tang", "discount", "catalog", "catalog", context);
+        System.out.println(result);
     }
 
     @Test
-    public void authorizationWithretrospect() {
+    public void backtrackingCategoryauthorization() {
     }
 }

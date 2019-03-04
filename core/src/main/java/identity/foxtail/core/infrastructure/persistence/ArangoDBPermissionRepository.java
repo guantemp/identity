@@ -89,7 +89,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         RoleDescriptor roleDescriptor = ROLEDESCRIPTOR_CONSTRUCTOR.newInstance(roleSlice.get("id").getAsString(), roleSlice.get("name").getAsString());
         //processor
         VPackSlice processorSlice = slice.get("processor");
-        Fuel fuel = new Fuel(processorSlice.get("fuel").get("formula").getAsString());
+        Fuel fuel = Fuel.newFuel(processorSlice.get("fuel").get("formula").getAsString());
         Processor processor = new Processor(EngineManager.queryEngine(name), fuel);
         //schedule
         Schedule schedule = null;

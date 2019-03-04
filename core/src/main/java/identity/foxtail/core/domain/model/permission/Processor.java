@@ -47,7 +47,7 @@ public class Processor {
      */
     private void setFuel(Fuel fuel) {
         Objects.requireNonNull(fuel, "fuel is required");
-        if (engine.isQualifiedFuel(fuel))
+        if (!engine.isQualifiedFuel(fuel))
             throw new IllegalArgumentException("Not qualified fuel");
         this.fuel = fuel;
     }
