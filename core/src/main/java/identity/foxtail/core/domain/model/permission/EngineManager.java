@@ -26,9 +26,11 @@ import java.util.Map;
  * @version 0.0.1 2019-01-27
  */
 public class EngineManager {
-    public static final Engine OPEN_BOX = context -> new Result("it's passed");
+    public static final Engine OPEN_BOX = context -> Result.PERMIT;
+    public static final Engine REFUND = context -> Result.PERMIT;
 
     public static final Engine DISCOUNT = context -> {
+        System.out.println(context.<String>getVariant("fuel"));
         Result result = new Result("不能低于4折,ok?");
         if (context != null) {
             String expression = context.getVariant("expression");
@@ -37,19 +39,19 @@ public class EngineManager {
             if (rate >= 40 && rate <= 100)
                 result = new Result("it's good");
         }
-        return result;
+        return Result.FORBIDDEN;
     };
     private static Map<String, Engine> funcMap = new HashMap<String, Engine>();
 
     static {
         registerFunction("open_box", OPEN_BOX);
         registerFunction("打开钱箱", OPEN_BOX);
+        registerFunction("refund", REFUND);
         registerFunction("discount", DISCOUNT);
         registerFunction("red_catalog", DISCOUNT);
     }
 
     public static void registerFunction(String funcName, Engine engine) {
-
         funcMap.put(funcName, engine);
     }
 

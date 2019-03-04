@@ -47,6 +47,13 @@ public class AuthorizationService {
         this.groupMemberService = Objects.requireNonNull(groupMemberService, "groupMemberService is required");
     }
 
+    /**
+     * @param userId
+     * @param permissionName
+     * @param resourceId
+     * @param context
+     * @return
+     */
     public Result authorization(String userId, String permissionName, String resourceId, VariantContext context) {
         int count = roleRepository.count();
         Role[] roles = roleRepository.all(0, count);
@@ -57,6 +64,7 @@ public class AuthorizationService {
                 for (Permission permission : permissions) {
                     if (!permission.isInSchedule())
                         continue;
+                    context.put("fuel", permission.processor().fuel());
                     return permission.execute(context);
                 }
             }
@@ -64,10 +72,18 @@ public class AuthorizationService {
         return Result.FORBIDDEN;
     }
 
+    /**
+     * @param userId
+     * @param permissionName
+     * @param resourceId
+     * @return
+     */
     public Result authorization(String userId, String permissionName, String resourceId) {
-        return authorization(userId, permissionName, resourceId, null);
+        return authorization(userId, permissionName, resourceId, new VariantContext());
     }
-    public Result authorizationWithretrospect(String userId, String permissionName, String resourceId) {
+
+
+    public Result backtrackingCategoryauthorization(String userId, String permissionName, String resourceId, String categoryId) {
         return null;
     }
 }

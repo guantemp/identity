@@ -26,7 +26,9 @@ import java.util.StringJoiner;
  */
 public class Result {
     public static final Result FORBIDDEN = new Result(ResultStatusCode.Forbidden, "Request denied");
-    public static final Result OK = new Result(ResultStatusCode.OK, "Request allowed");
+    public static final Result PERMIT = new Result(ResultStatusCode.Permit, "Request allowed");
+    public static final Result EMPTY = new Result(ResultStatusCode.No_Content, "Don't do anything.");
+    ;
     private ResultStatusCode code;
     private String message;
 
@@ -34,7 +36,7 @@ public class Result {
      * @param message
      */
     public Result(String message) {
-        this(ResultStatusCode.OK, message);
+        this(ResultStatusCode.Permit, message);
     }
 
     /**

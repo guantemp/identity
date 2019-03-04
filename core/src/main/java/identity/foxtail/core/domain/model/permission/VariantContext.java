@@ -28,8 +28,8 @@ import java.util.Map;
 public class VariantContext {
     private Map<String, Object> variantMap = new HashMap<>();
 
-    public <T> T getVariant(String variName) {
-        return (T) variantMap.get(variName);
+    public <T> T getVariant(String key) {
+        return (T) variantMap.get(key);
     }
 
     public VariantContext put(String key, Object value) {

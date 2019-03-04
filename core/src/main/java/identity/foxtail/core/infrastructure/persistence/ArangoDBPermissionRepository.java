@@ -182,7 +182,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
             this.from = from;
             this.to = to;
             this.id = permission.id();
-            this.processor = permission.operate();
+            this.processor = permission.processor();
             this.name = permission.name();
         }
     }

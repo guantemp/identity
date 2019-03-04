@@ -25,6 +25,6 @@ package identity.foxtail.core.domain.model.permission;
 public class EmptyShellEngine implements Engine {
     @Override
     public Result execute(VariantContext context) {
-        return new Result(true, ResultStatusCode.No_Content, "Don't do anything.");
+        return Result.EMPTY;
     }
 }

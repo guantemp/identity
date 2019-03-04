@@ -93,7 +93,7 @@ public class Permission {
         return roleDescriptor;
     }
 
-    public Processor operate() {
+    public Processor processor() {
         return processor;
     }
 

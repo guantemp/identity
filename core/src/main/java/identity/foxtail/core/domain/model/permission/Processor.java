@@ -38,7 +38,7 @@ public class Processor {
      *
      * @return the value of fuel
      */
-    public Fuel Fuel() {
+    public Fuel fuel() {
         return fuel;
     }
 
