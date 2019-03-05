@@ -55,19 +55,12 @@ public class AuthorizationService {
      * @return
      */
     public Result authorization(String userId, String permissionName, String resourceId, VariantContext context) {
-        int count = roleRepository.count();
-        Role[] roles = roleRepository.all(0, count);
-        User user = userRepository.find(userId);
-        for (Role role : roles) {
-            if (role.isUserInRole(user, groupMemberService)) {
-                Permission[] permissions = permissionRepository.findPermissionsWithRoleAndPermissionNameAndResource(role.id(), permissionName, resourceId);
-                for (Permission permission : permissions) {
-                    if (!permission.isInSchedule())
-                        continue;
-                    context.put("fuel", permission.processor().fuel());
-                    return permission.execute(context);
-                }
-            }
+        Permission[] permissions = permissionRepository.findPermissionsFromUserAndPermissionNameAndResource(userId, permissionName, resourceId);
+        for (Permission permission : permissions) {
+            if (!permission.isInSchedule())
+                continue;
+            context.put("fuel", permission.processor().fuel());
+            return permission.execute(context);
         }
         return Result.FORBIDDEN;
     }

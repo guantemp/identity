@@ -51,6 +51,14 @@ public interface PermissionRepository {
     Collection<String> getNonRepetitivePermissionName();
 
     /**
+     * @param userId
+     * @param permissionName
+     * @param resourceId
+     * @return
+     */
+    Permission[] findPermissionsFromUserAndPermissionNameAndResource(String userId, String permissionName, String resourceId);
+
+    /**
      * @param id
      */
     void remove(String id);

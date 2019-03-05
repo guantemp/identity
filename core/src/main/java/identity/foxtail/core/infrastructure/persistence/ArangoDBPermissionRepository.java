@@ -151,6 +151,19 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         return findPermissions(query, bindVars);
     }
 
+    @Override
+    public Permission[] findPermissionsFromUserAndPermissionNameAndResource(String userId, String permissionName, String resourceId) {
+        final String query = " WITH user,role,resource\n " +
+                "FOR v,e,p IN 1..2 OUTBOUND @user act,processor FILTER p.edges[1].name == @permissionName SORT p.edges[1].schedule DESC FILTER p.vertices[2]._key == @resourceId " +
+                "RETURN {id:p.edges[1]._key,name:p.edges[1].name," +
+                "role:{id:p.vertices[1]._key,name:p.vertices[1].name}," +
+                "processor:{fuel:p.edges[1].processor.fuel}," +
+                "schedule:p.edges[1].schedule," +
+                "resource:{id:p.vertices[2]._key,name:p.vertices[2].name,creator:p.vertices[2].creator}}";
+        Map<String, Object> bindVars = new MapBuilder().put("user", "user/" + userId).put("permissionName", permissionName).put("resourceId", resourceId).get();
+        return findPermissions(query, bindVars);
+    }
+
     private Permission[] findPermissions(String query, Map<String, Object> bindVars) {
         ArangoCursor<VPackSlice> slices = identity.query(query, bindVars, null, VPackSlice.class);
         List<Permission> permissionList = new ArrayList<>();

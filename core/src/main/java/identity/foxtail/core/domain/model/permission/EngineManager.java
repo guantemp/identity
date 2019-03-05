@@ -34,12 +34,11 @@ public class EngineManager {
         public Result execute(VariantContext context) {
             Fuel fuel = context.<Fuel>getVariant("fuel");
             int preset = Integer.parseInt(fuel.formula().substring(6, 8));
-
             int rate = context.<Integer>getVariant("rate");
-            if (rate >= preset)
+            if (rate >= preset && rate <= 100)
                 return Result.PERMIT;
             else
-                return new Result(ResultStatusCode.Forbidden, "Discount rate is too low:" + preset);
+                return new Result(ResultStatusCode.Forbidden, "Discount rate is [" + preset + "-100]");
         }
 
         @Override
