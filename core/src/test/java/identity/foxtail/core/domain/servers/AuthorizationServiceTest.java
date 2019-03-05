@@ -111,7 +111,7 @@ public class AuthorizationServiceTest {
         repo.save(discountPermission);
 
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=30"));
-        discountPermission = new Permission("7771", "discount", cashierSupr.toRoleDescriptor(), new Schedule("* 15 12 33"), discount, apple.toResourceDescriptor());
+        discountPermission = new Permission("7771", "discount", cashierSupr.toRoleDescriptor(), new Schedule("* 20 12 33"), discount, apple.toResourceDescriptor());
         repo.save(discountPermission);
         discountPermission = new Permission("7772", "discount", cashierSupr.toRoleDescriptor(), new Schedule("* 18 12 33"), discount, apple.toResourceDescriptor());
         repo.save(discountPermission);
@@ -181,16 +181,16 @@ public class AuthorizationServiceTest {
     public void backtrackingCategoryauthorization() {
         VariantContext context = new VariantContext();
         context.put("rate", 20);
-        Result result = authorizationService.backtrackingCategoryauthorization("tang", "discount", "catalog", "catalog", context);
+        Result result = authorizationService.backtrackingCategoryauthorization("tang", "discount", "catalog", context);
         Assert.assertEquals(result, Result.PERMIT);
         context.clear();
         context.put("rate", 19);
-        result = authorizationService.backtrackingCategoryauthorization("tang", "discount", "catalog", "catalog", context);
+        result = authorizationService.backtrackingCategoryauthorization("tang", "discount", "catalog", context);
         Assert.assertEquals(result.code(), ResultStatusCode.Forbidden);
 
-        result = authorizationService.backtrackingCategoryauthorization("Sun_WuKong", "discount", "orange", "catalog", context);
+        result = authorizationService.backtrackingCategoryauthorization("Sun_WuKong", "discount", "orange", context);
         System.out.println(result);
-        result = authorizationService.backtrackingCategoryauthorization("Sun_WuKong", "discount", "banana", "catalog", context);
+        result = authorizationService.backtrackingCategoryauthorization("Sun_WuKong", "discount", "banana", context);
         System.out.println(result);
     }
 }

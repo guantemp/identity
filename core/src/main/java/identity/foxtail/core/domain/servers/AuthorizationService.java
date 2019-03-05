@@ -17,10 +17,8 @@
 
 package identity.foxtail.core.domain.servers;
 
-import identity.foxtail.core.domain.model.element.Role;
 import identity.foxtail.core.domain.model.element.RoleRepository;
 import identity.foxtail.core.domain.model.id.GroupMemberService;
-import identity.foxtail.core.domain.model.id.User;
 import identity.foxtail.core.domain.model.id.UserRepository;
 import identity.foxtail.core.domain.model.permission.Permission;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
@@ -80,17 +78,11 @@ public class AuthorizationService {
      * @param userId
      * @param permissionName
      * @param resourceId
-     * @param categoryId
      * @param context
      * @return
      */
-    public Result backtrackingCategoryauthorization(String userId, String permissionName, String resourceId, String categoryId, VariantContext context) {
-        int count = roleRepository.count();
-        Role[] roles = roleRepository.all(0, count);
-        User user = userRepository.find(userId);
-        for (Role role : roles) {
-            if (role.isUserInRole(user, groupMemberService)) {
-                Permission[] permissions = permissionRepository.findPermissionsWithRoleAndPermissionNameAndResource(role.id(), permissionName, resourceId);
+    public Result backtrackingCategoryauthorization(String userId, String permissionName, String resourceId, VariantContext context) {
+        Permission[] permissions = permissionRepository.findPermissionsFromUserAndPermissionNameAndResource(userId, permissionName, resourceId);
                 if (permissions.length != 0) {
                     for (Permission permission : permissions) {
                         if (!permission.isInSchedule())
@@ -101,8 +93,6 @@ public class AuthorizationService {
                 } else {
                     return Result.NO_CONTENT;
                 }
-            }
-        }
         return Result.FORBIDDEN;
     }
 }
