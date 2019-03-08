@@ -21,9 +21,14 @@ import identity.foxtail.core.domain.model.element.Resource;
 import identity.foxtail.core.domain.model.element.ResourceRepository;
 import identity.foxtail.core.domain.model.element.Role;
 import identity.foxtail.core.domain.model.element.RoleRepository;
-import identity.foxtail.core.domain.model.id.*;
+import identity.foxtail.core.domain.model.id.Enablement;
+import identity.foxtail.core.domain.model.id.User;
+import identity.foxtail.core.domain.model.id.UserRepository;
 import identity.foxtail.core.domain.servers.AuthorizationService;
-import identity.foxtail.core.infrastructure.persistence.*;
+import identity.foxtail.core.infrastructure.persistence.ArangoDBPermissionRepository;
+import identity.foxtail.core.infrastructure.persistence.ArangoDBResourceRepository;
+import identity.foxtail.core.infrastructure.persistence.ArangoDBRoleRepository;
+import identity.foxtail.core.infrastructure.persistence.ArangoDBUserRepository;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -38,12 +43,10 @@ import java.util.Collection;
  */
 public class PermissionRepositoryTest {
     private static final RoleRepository roleRepository = new ArangoDBRoleRepository();
-    private static final GroupRepository groupRepository = new ArangoDBGroupRepository();
     private static final UserRepository userRepository = new ArangoDBUserRepository();
-    private static final GroupMemberService service = new GroupMemberService(groupRepository);
     private static final ResourceRepository resourceRepository = new ArangoDBResourceRepository();
     private static final PermissionRepository repo = new ArangoDBPermissionRepository();
-    private static final AuthorizationService authorizationService = new AuthorizationService(userRepository, repo, roleRepository, service);
+    private static final AuthorizationService authorizationService = new AuthorizationService(userRepository, repo, roleRepository, resourceRepository);
 
     @BeforeClass
     public static void setUpBeforeClass() {

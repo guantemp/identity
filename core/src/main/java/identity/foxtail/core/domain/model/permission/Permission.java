@@ -53,6 +53,10 @@ public class Permission {
         setResourceDescriptor(resourceDescriptor);
     }
 
+    public Schedule schedule() {
+        return schedule;
+    }
+
     private void setName(String name) {
         name = Objects.requireNonNull(name, "name is required").trim();
         this.name = name;

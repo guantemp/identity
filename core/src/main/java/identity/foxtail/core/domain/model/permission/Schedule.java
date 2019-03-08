@@ -39,7 +39,6 @@ public class Schedule {
         if (o == null || getClass() != o.getClass()) return false;
 
         Schedule schedule = (Schedule) o;
-
         return cron != null ? cron.equals(schedule.cron) : schedule.cron == null;
     }
 

@@ -17,6 +17,7 @@
 package identity.foxtail.core.domain.model.id;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /***
  * @author <a href="www.foxtail.cc/authors/guan xiangHuan">guan xiangHuan</a>
@@ -24,7 +25,7 @@ import java.time.LocalDateTime;
  * @version 0.0.2 2018-11-13
  */
 public class Enablement {
-    public static final Enablement FOREVER = new Enablement(true, LocalDateTime.of(9999, 12, 31, 23, 59, 59, 999999999)) {
+    public static final Enablement FOREVER = new Enablement(true, LocalDateTime.parse("9999-12-31T23:59:59.999Z", DateTimeFormatter.ISO_ZONED_DATE_TIME)) {
         @Override
         public boolean isExpired() {
             return false;

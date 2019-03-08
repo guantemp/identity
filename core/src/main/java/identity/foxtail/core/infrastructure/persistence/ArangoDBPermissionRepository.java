@@ -199,6 +199,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         private String to;
         private Processor processor;
         private String name;
+        private Schedule schedule;
 
         public ProcessorEdge(String from, String to, Permission permission) {
             this.from = from;
@@ -206,6 +207,7 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
             this.id = permission.id();
             this.processor = permission.processor();
             this.name = permission.name();
+            this.schedule = permission.schedule();
         }
     }
 }

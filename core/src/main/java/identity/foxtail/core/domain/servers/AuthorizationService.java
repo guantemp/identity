@@ -17,8 +17,9 @@
 
 package identity.foxtail.core.domain.servers;
 
+import identity.foxtail.core.domain.model.element.Resource;
+import identity.foxtail.core.domain.model.element.ResourceRepository;
 import identity.foxtail.core.domain.model.element.RoleRepository;
-import identity.foxtail.core.domain.model.id.GroupMemberService;
 import identity.foxtail.core.domain.model.id.UserRepository;
 import identity.foxtail.core.domain.model.permission.Permission;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
@@ -36,13 +37,13 @@ public class AuthorizationService {
     private UserRepository userRepository;
     private PermissionRepository permissionRepository;
     private RoleRepository roleRepository;
-    private GroupMemberService groupMemberService;
+    private ResourceRepository resourceRepository;
 
-    public AuthorizationService(UserRepository userRepository, PermissionRepository permissionRepository, RoleRepository roleRepository, GroupMemberService groupMemberService) {
+    public AuthorizationService(UserRepository userRepository, PermissionRepository permissionRepository, RoleRepository roleRepository, ResourceRepository resourceRepository) {
         this.userRepository = Objects.requireNonNull(userRepository, "userRepository is required");
         this.permissionRepository = Objects.requireNonNull(permissionRepository, "permissionRepository is required");
         this.roleRepository = Objects.requireNonNull(roleRepository, "roleRepository is required");
-        this.groupMemberService = Objects.requireNonNull(groupMemberService, "groupMemberService is required");
+        this.resourceRepository = Objects.requireNonNull(resourceRepository, "resourceRepository is required");
     }
 
     /**
@@ -82,6 +83,8 @@ public class AuthorizationService {
      * @return
      */
     public Result backtrackingCategoryauthorization(String userId, String permissionName, String resourceId, VariantContext context) {
+        if (context.getVariant("categoryId") == null)
+            throw new IllegalArgumentException("context must have a category id value");
         Permission[] permissions = permissionRepository.findPermissionsFromUserAndPermissionNameAndResource(userId, permissionName, resourceId);
                 if (permissions.length != 0) {
                     for (Permission permission : permissions) {
@@ -91,8 +94,21 @@ public class AuthorizationService {
                         return permission.execute(context);
                     }
                 } else {
-                    return Result.NO_CONTENT;
+                    return backtracking(userId, permissionName, context.<String>getVariant("categoryId"), context);
                 }
         return Result.FORBIDDEN;
+    }
+
+    private Result backtracking(String userId, String permissionName, String resourceId, VariantContext context) {
+        Permission[] permissions = permissionRepository.findPermissionsFromUserAndPermissionNameAndResource(userId, permissionName, resourceId);
+        for (Permission permission : permissions) {
+            if (!permission.isInSchedule())
+                continue;
+            context.put("fuel", permission.processor().fuel());
+            return permission.execute(context);
+        }
+        Resource resource = resourceRepository.parent(resourceId);
+        //System.out.println(resource);
+        return backtracking(userId, permissionName, resource.id(), context.put("categoryId", resource.id()));
     }
 }
