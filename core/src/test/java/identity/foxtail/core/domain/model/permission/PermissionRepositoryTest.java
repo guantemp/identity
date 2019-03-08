@@ -65,7 +65,7 @@ public class PermissionRepositoryTest {
         roleRepository.save(cashier);
 
         Role cashierSupr = new Role("cashierSupr", "收银主管", "收银员的老大");
-        User Son_Goku = new User("Sun_WuKong", "孫悟空", "%dfhdfs2", "0830-2135679", Enablement.FOREVER);
+        User Son_Goku = new User("Sun_WuKong", "孫悟空", "%dfhdfs82", "0830-2135679", Enablement.FOREVER);
         cashierSupr.assignUser(Son_Goku);
         userRepository.save(Son_Goku);
         roleRepository.save(cashierSupr);

@@ -51,7 +51,7 @@ public class AuthorizationServiceTest {
         User Bailong = new User("Bailong", "白龙马", "@ewt56gh", "18982455058", Enablement.FOREVER);
         userRepository.save(Bailong);
 
-        Role cashier = new Role("cashier", "收银员", "就是收钱的");
+        Role cashier = new Role("cashier", "收银员", "收钱的");
         User Sand_Monk = new User("Sand_Monk", "沙僧", ")dgdf324", "18982455057", Enablement.FOREVER);
         userRepository.save(Sand_Monk);
         cashier.assignUser(Sand_Monk);
