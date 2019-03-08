@@ -79,4 +79,14 @@ public class Result {
                 .add("message='" + message + "'")
                 .toString();
     }
+
+    /**
+     * @param result
+     * @return
+     */
+    public Result or(Result result) {
+        if (result.code == ResultStatusCode.Permit || (this.code == ResultStatusCode.Forbidden && result.code == ResultStatusCode.Forbidden))
+            return result;
+        return this;
+    }
 }

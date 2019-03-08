@@ -55,13 +55,14 @@ public class AuthorizationService {
      */
     public Result authorization(String userId, String permissionName, String resourceId, VariantContext context) {
         Permission[] permissions = permissionRepository.findPermissionsFromUserAndPermissionNameAndResource(userId, permissionName, resourceId);
+        Result result = Result.FORBIDDEN;
         for (Permission permission : permissions) {
             if (!permission.isInSchedule())
                 continue;
             context.put("fuel", permission.processor().fuel());
-            return permission.execute(context);
+            result = result.or(permission.execute(context));
         }
-        return Result.FORBIDDEN;
+        return result;
     }
 
     /**
@@ -85,6 +86,8 @@ public class AuthorizationService {
     public Result backtrackingCategoryauthorization(String userId, String permissionName, String resourceId, VariantContext context) {
         if (context.getVariant("categoryId") == null)
             throw new IllegalArgumentException("context must have a category id value");
+        return backtracking(userId, permissionName, resourceId, context);
+        /*
         Permission[] permissions = permissionRepository.findPermissionsFromUserAndPermissionNameAndResource(userId, permissionName, resourceId);
                 if (permissions.length != 0) {
                     for (Permission permission : permissions) {
@@ -97,18 +100,26 @@ public class AuthorizationService {
                     return backtracking(userId, permissionName, context.<String>getVariant("categoryId"), context);
                 }
         return Result.FORBIDDEN;
+        */
     }
 
     private Result backtracking(String userId, String permissionName, String resourceId, VariantContext context) {
+        Result result = Result.FORBIDDEN;
         Permission[] permissions = permissionRepository.findPermissionsFromUserAndPermissionNameAndResource(userId, permissionName, resourceId);
-        for (Permission permission : permissions) {
-            if (!permission.isInSchedule())
-                continue;
-            context.put("fuel", permission.processor().fuel());
-            return permission.execute(context);
+        if (permissions.length != 0) {
+            for (Permission permission : permissions) {
+                if (!permission.isInSchedule())
+                    continue;
+                context.put("fuel", permission.processor().fuel());
+                result = result.or(permission.execute(context));
+            }
+            return result;
+        } else {
+            Resource resource = resourceRepository.parent(resourceId);
+            if (resource == null)
+                resource = resourceRepository.parent(context.<String>getVariant("categoryId"));
+            //System.out.println(resource);
+            return result.or(backtracking(userId, permissionName, resource.id(), context.put("categoryId", resource.id())));
         }
-        Resource resource = resourceRepository.parent(resourceId);
-        //System.out.println(resource);
-        return backtracking(userId, permissionName, resource.id(), context.put("categoryId", resource.id()));
     }
 }

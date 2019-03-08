@@ -175,6 +175,8 @@ public class ArangoDBResourceRepository implements ResourceRepository {
     @Override
     public Resource parent(String id) {
         VPackSlice slice = identity.collection("resource").getDocument(id, VPackSlice.class);
+        if (slice == null)
+            return null;
         VPackSlice treePathSlice = slice.get("treePath");
         Deque<String> treePath = rebuildTreePath(treePathSlice);
         String parentId = treePath.peekLast();

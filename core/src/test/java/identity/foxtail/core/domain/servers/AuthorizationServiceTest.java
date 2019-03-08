@@ -30,6 +30,7 @@ import identity.foxtail.core.infrastructure.persistence.ArangoDBResourceReposito
 import identity.foxtail.core.infrastructure.persistence.ArangoDBRoleRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBUserRepository;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -166,7 +167,7 @@ public class AuthorizationServiceTest {
 
     @Test
     public void authorization() {
- /*       Result result = authorizationService.authorization("Sun_WuKong", "打开钱箱", "box");
+        Result result = authorizationService.authorization("Sun_WuKong", "打开钱箱", "box");
         Assert.assertEquals(result, Result.PERMIT);
         result = authorizationService.authorization("Sand_Monk", "打开钱箱", "box");
         Assert.assertEquals(result, Result.PERMIT);
@@ -179,34 +180,30 @@ public class AuthorizationServiceTest {
         Assert.assertEquals(result, Result.FORBIDDEN);
         result = authorizationService.authorization("Sun_WuKong", "退货", "catalog");
         Assert.assertEquals(result, Result.PERMIT);
-        */
     }
 
     @Test
     public void backtrackingCategoryauthorization() {
         VariantContext context = new VariantContext();
-       /* context.put("rate", 20);
+        context.put("rate", 20);
         context.put("categoryId","catalog");
         Result result = authorizationService.backtrackingCategoryauthorization("tang", "discount", "catalog", context);
         Assert.assertEquals(result, Result.PERMIT);
-        context.clear();
         context.put("rate", 19);
         context.put("categoryId","catalog");
         result = authorizationService.backtrackingCategoryauthorization("tang", "discount", "catalog", context);
         Assert.assertEquals(result.code(), ResultStatusCode.Forbidden);
 
-        context.clear();
-        context.put("rate", 19);
+        context.put("rate", 40);
         context.put("categoryId","fruit");
         result = authorizationService.backtrackingCategoryauthorization("Sun_WuKong", "discount", "orange", context);
         System.out.println(result);
-        context.clear();
-        */
+
         context.put("rate", 48);
         context.put("categoryId", "fruit");
-        Result result = authorizationService.backtrackingCategoryauthorization("Sun_WuKong", "discount", "orange", context);
+        result = authorizationService.backtrackingCategoryauthorization("Sun_WuKong", "discount", "orange", context);
         System.out.println(result);
         result = authorizationService.backtrackingCategoryauthorization("Sun_WuKong", "discount", "banana", context);
-        //System.out.println(result);
+        System.out.println(result);
     }
 }
