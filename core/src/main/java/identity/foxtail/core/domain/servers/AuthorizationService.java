@@ -19,8 +19,6 @@ package identity.foxtail.core.domain.servers;
 
 import identity.foxtail.core.domain.model.element.Resource;
 import identity.foxtail.core.domain.model.element.ResourceRepository;
-import identity.foxtail.core.domain.model.element.RoleRepository;
-import identity.foxtail.core.domain.model.id.UserRepository;
 import identity.foxtail.core.domain.model.permission.Permission;
 import identity.foxtail.core.domain.model.permission.PermissionRepository;
 import identity.foxtail.core.domain.model.permission.Result;
@@ -34,15 +32,11 @@ import java.util.Objects;
  * @version 0.0.1 2019-01-28
  */
 public class AuthorizationService {
-    private UserRepository userRepository;
     private PermissionRepository permissionRepository;
-    private RoleRepository roleRepository;
     private ResourceRepository resourceRepository;
 
-    public AuthorizationService(UserRepository userRepository, PermissionRepository permissionRepository, RoleRepository roleRepository, ResourceRepository resourceRepository) {
-        this.userRepository = Objects.requireNonNull(userRepository, "userRepository is required");
+    public AuthorizationService(PermissionRepository permissionRepository, ResourceRepository resourceRepository) {
         this.permissionRepository = Objects.requireNonNull(permissionRepository, "permissionRepository is required");
-        this.roleRepository = Objects.requireNonNull(roleRepository, "roleRepository is required");
         this.resourceRepository = Objects.requireNonNull(resourceRepository, "resourceRepository is required");
     }
 
@@ -87,20 +81,6 @@ public class AuthorizationService {
         if (context.getVariant("categoryId") == null)
             throw new IllegalArgumentException("context must have a category id value");
         return backtracking(userId, permissionName, resourceId, context);
-        /*
-        Permission[] permissions = permissionRepository.findPermissionsFromUserAndPermissionNameAndResource(userId, permissionName, resourceId);
-                if (permissions.length != 0) {
-                    for (Permission permission : permissions) {
-                        if (!permission.isInSchedule())
-                            continue;
-                        context.put("fuel", permission.processor().fuel());
-                        return permission.execute(context);
-                    }
-                } else {
-                    return backtracking(userId, permissionName, context.<String>getVariant("categoryId"), context);
-                }
-        return Result.FORBIDDEN;
-        */
     }
 
     private Result backtracking(String userId, String permissionName, String resourceId, VariantContext context) {

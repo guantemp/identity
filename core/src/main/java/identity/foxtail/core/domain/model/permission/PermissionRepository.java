@@ -31,21 +31,6 @@ public interface PermissionRepository {
     void save(Permission permission);
 
     /**
-     * @param roleId
-     * @param permissionName
-     * @param resourceId
-     * @return
-     */
-    Permission[] findPermissionsWithRoleAndPermissionNameAndResource(String roleId, String permissionName, String resourceId);
-
-    /**
-     * @param roleId
-     * @param permissionName
-     * @return
-     */
-    Permission[] findPermissionsFromRoleWithPermissionName(String roleId, String permissionName);
-
-    /**
      * @return permission name non repetitive collection
      */
     Collection<String> getNonRepetitivePermissionName();

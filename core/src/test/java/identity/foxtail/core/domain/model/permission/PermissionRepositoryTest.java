@@ -30,7 +30,6 @@ import identity.foxtail.core.infrastructure.persistence.ArangoDBResourceReposito
 import identity.foxtail.core.infrastructure.persistence.ArangoDBRoleRepository;
 import identity.foxtail.core.infrastructure.persistence.ArangoDBUserRepository;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -46,7 +45,7 @@ public class PermissionRepositoryTest {
     private static final UserRepository userRepository = new ArangoDBUserRepository();
     private static final ResourceRepository resourceRepository = new ArangoDBResourceRepository();
     private static final PermissionRepository repo = new ArangoDBPermissionRepository();
-    private static final AuthorizationService authorizationService = new AuthorizationService(userRepository, repo, roleRepository, resourceRepository);
+    private static final AuthorizationService authorizationService = new AuthorizationService(repo, resourceRepository);
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -127,18 +126,6 @@ public class PermissionRepositoryTest {
 
     @Test
     public void findPermissions() {
-        Permission[] permissions = repo.findPermissionsWithRoleAndPermissionNameAndResource("cashier", "discount", "sku");
-        Assert.assertEquals(permissions.length, 3);
-        permissions = repo.findPermissionsFromRoleWithPermissionName("cashier", "discount");
-        Assert.assertEquals(permissions.length, 4);
-        // for (Permission permission : permissions) {
-        //   System.out.println(permission);
-        //  }
-        permissions = repo.findPermissionsFromRoleWithPermissionName("cashier", "打开钱箱");
-        Assert.assertEquals(permissions.length, 1);
-        Collection<String> collection = repo.getNonRepetitivePermissionName();
-        // for (String name : collection)
-        //    System.out.println(name);
     }
 
     @Test

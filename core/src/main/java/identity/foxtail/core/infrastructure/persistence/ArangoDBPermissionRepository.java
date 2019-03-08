@@ -75,12 +75,11 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
         if (exist) {
             VertexEntity role = graph.vertexCollection("role").getVertex(permission.roleDescriptor().id(), VertexEntity.class);
             VertexEntity resource = graph.vertexCollection("resource").getVertex(permission.resourceDescriptor().id(), VertexEntity.class);
-            if (!permission.roleDescriptor().id().equals(role.getKey()) || !permission.resourceDescriptor().id().equals(resource.getKey())) {
+            if (permission.roleDescriptor().id().equals(role.getKey()) && permission.resourceDescriptor().id().equals(resource.getKey())) {
+                edge.updateEdge(permission.id(), permission, UPDATE_OPTIONS);
+            } else {
                 edge.deleteEdge(permission.id());
                 edge.insertEdge(new ProcessorEdge(role.getId(), resource.getId(), permission));
-            } else {
-                edge.updateEdge(permission.id(), permission, UPDATE_OPTIONS);
-                //identity.collection("processor").updateDocument(permission.id(), permission, UPDATE_OPTIONS);
             }
         } else {
             VertexEntity role = graph.vertexCollection("role").getVertex(permission.roleDescriptor().id(), VertexEntity.class);
@@ -122,33 +121,6 @@ public class ArangoDBPermissionRepository implements PermissionRepository {
             set.add(slices.next().getAsString());
         }
         return set;
-    }
-
-    @Override
-    public Permission[] findPermissionsWithRoleAndPermissionNameAndResource(String roleId, String permissionName, String resourceId) {
-        final String query = " WITH role,resource\n " +
-                "FOR v,e,p IN 1..2 OUTBOUND @role processor FILTER p.vertices[1]._key == @resourceId FILTER p.edges[0].name == @permissionName SORT p.edges[0].schedule DESC " +
-                "RETURN {id:e._key,name:e.name," +
-                "role:{id:p.vertices[0]._key,name:p.vertices[0].name}," +
-                "processor:{fuel:e.processor.fuel}," +
-                "schedule:e.schedule," +
-                "resource:{id:p.vertices[1]._key,name:p.vertices[1].name,creator:p.vertices[1].creator}}";
-        Map<String, Object> bindVars = new MapBuilder().put("role", "role/" + roleId).put("permissionName", permissionName).
-                put("resourceId", resourceId).get();
-        return findPermissions(query, bindVars);
-    }
-
-    @Override
-    public Permission[] findPermissionsFromRoleWithPermissionName(String roleId, String permissionName) {
-        final String query = " WITH role,resource\n " +
-                "FOR v,e,p IN 1..2 OUTBOUND @role processor FILTER p.edges[0].name == @permissionName SORT p.edges[0].processor.schedule DESC " +
-                "RETURN {id:e._key,name:e.name," +
-                "role:{id:p.vertices[0]._key,name:p.vertices[0].name}," +
-                "processor:{fuel:e.processor.fuel}," +
-                "schedule:e.schedule," +
-                "resource:{id:p.vertices[1]._key,name:p.vertices[1].name,creator:p.vertices[1].creator}}";
-        Map<String, Object> bindVars = new MapBuilder().put("role", "role/" + roleId).put("permissionName", permissionName).get();
-        return findPermissions(query, bindVars);
     }
 
     @Override

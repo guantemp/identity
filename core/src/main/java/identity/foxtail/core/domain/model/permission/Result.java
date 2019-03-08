@@ -31,12 +31,6 @@ public class Result {
     private ResultStatusCode code;
     private String message;
 
-    /**
-     * @param message
-     */
-    public Result(String message) {
-        this(ResultStatusCode.Permit, message);
-    }
 
     /**
      * @param code

@@ -44,7 +44,7 @@ public class AuthorizationServiceTest {
     private static final UserRepository userRepository = new ArangoDBUserRepository();
     private static final ResourceRepository resourceRepository = new ArangoDBResourceRepository();
     private static final PermissionRepository permissionRepository = new ArangoDBPermissionRepository();
-    private static final AuthorizationService authorizationService = new AuthorizationService(userRepository, permissionRepository, roleRepository, resourceRepository);
+    private static final AuthorizationService authorizationService = new AuthorizationService(permissionRepository, resourceRepository);
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -114,26 +114,25 @@ public class AuthorizationServiceTest {
         Processor discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=20"));
         Permission discountPermission = new Permission("7770", "discount", CFO.toRoleDescriptor(), discount, catalog.toResourceDescriptor());
         permissionRepository.save(discountPermission);
-
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=30"));
         discountPermission = new Permission("7771", "discount", cashierSupr.toRoleDescriptor(), new Schedule("* 20 12 33"), discount, apple.toResourceDescriptor());
         permissionRepository.save(discountPermission);
         discountPermission = new Permission("7772", "discount", cashierSupr.toRoleDescriptor(), new Schedule("* 18 12 33"), discount, apple.toResourceDescriptor());
         permissionRepository.save(discountPermission);
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=35"));
-        discountPermission = new Permission("7777", "discount", cashierSupr.toRoleDescriptor(), discount, catalog.toResourceDescriptor());
+        discountPermission = new Permission("7773", "discount", cashierSupr.toRoleDescriptor(), discount, catalog.toResourceDescriptor());
         permissionRepository.save(discountPermission);
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=40"));
-        discountPermission = new Permission("7773", "discount", cashierSupr.toRoleDescriptor(), discount, meat.toResourceDescriptor());
+        discountPermission = new Permission("7774", "discount", cashierSupr.toRoleDescriptor(), discount, meat.toResourceDescriptor());
         permissionRepository.save(discountPermission);
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=45"));
-        discountPermission = new Permission("7774", "discount", cashierSupr.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
-        permissionRepository.save(discountPermission);
-        discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=60"));
-        discountPermission = new Permission("7775", "discount", cashier.toRoleDescriptor(), discount, Two_knife_meat.toResourceDescriptor());
+        discountPermission = new Permission("7775", "discount", cashierSupr.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
         permissionRepository.save(discountPermission);
         discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=50"));
         discountPermission = new Permission("7776", "discount", cashier.toRoleDescriptor(), discount, fresh.toResourceDescriptor());
+        permissionRepository.save(discountPermission);
+        discount = new Processor(EngineManager.queryEngine("discount"), new Fuel("rate>=60"));
+        discountPermission = new Permission("7777", "discount", cashier.toRoleDescriptor(), discount, Two_knife_meat.toResourceDescriptor());
         permissionRepository.save(discountPermission);
 
         Processor red = new Processor(EngineManager.queryEngine("red_catalog"), new Fuel("value<=45.00"));
