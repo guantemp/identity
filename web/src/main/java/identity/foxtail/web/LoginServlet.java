@@ -38,17 +38,78 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/v1/login"}, name = "login", asyncSupported = false, initParams = {
         @WebInitParam(name = "max_error_times", value = "5"), @WebInitParam(name = "cookie_expired", value = "600")})
 public class LoginServlet extends HttpServlet {
-    private static int max_error_times = 5; // error times
-    private static int cookie_expired = 10 * 60;//ten Minutes
+    private static int max_error_times; // error times
+    private static int cookie_expired;//ten Minutes
     private static Cache<String, Integer> cache = null;
 
     @Override
     public void init() throws ServletException {
+        super.init();
         ServletConfig config = getServletConfig();
         if (config != null) {
-            max_error_times = NumberHelper.intOf(config.getInitParameter("max_error_times"), 5);
+            max_error_times = NumberHelper.intOf(config.getInitParameter("max_error_times"), 3);
             cookie_expired = NumberHelper.intOf(config.getInitParameter("max_error_times"), 600);
         }
+    }
+
+    /**
+     * @param username
+     * @param password
+     * @return
+     */
+    private boolean validate(String username, String password) {
+        username = username.trim();
+        password = password.trim();
+        if (username == null || username.isEmpty() || username.length() < 3 || username.length() > 255 ||
+                password == null || password.isEmpty() || password.length() < 6 || password.length() > 40)
+            return false;
+        return true;
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        response.setContentType("application/json; charset=UTF-8");
+        JsonFactory jasonFactory = new JsonFactory();
+        JsonGenerator generator = jasonFactory.createGenerator(response.getOutputStream(), JsonEncoding.UTF8)
+                .setPrettyPrinter(new DefaultPrettyPrinter());
+        generator.writeStartObject();
+        generator.writeStringField("redirectUrl", response.encodeURL(request.getHeader("Referer")));
+        generator.writeStringField("session", session.getId());
+        generator.writeNumberField("notice_interval", 5000);
+        generator.writeStringField("title", "登录");
+
+        generator.writeFieldName("notice");
+        generator.writeStartArray();
+        generator.writeStartObject();
+        generator.writeStringField("image", "//cdn-www.lk361.com/www/Images/account/logon/computer01.png");
+        generator.writeStringField("href", "https://bbs.lk361.com/forum.php?mod=viewthread&tid=150");
+        generator.writeStringField("alt", "在线进销存,进销存软件,经销商管理,scrm管理系统,免费进销存软件,进销存软件哪个好,进销存软件免费版");
+        generator.writeEndObject();
+
+        generator.writeStartObject();
+        generator.writeStringField("image", "//cdn-www.lk361.com/www/Images/account/logon/computer02.png");
+        generator.writeStringField("href", "https://bbs.lk361.com/thread-162-1-1.html");
+        generator.writeStringField("alt", "在线进销存,进销存软件,经销商管理,crm管理系统,免费进销存软件,进销存软件哪个好,进销存软件免费版");
+        generator.writeEndObject();
+        generator.writeEndArray();
+
+        generator.writeObjectFieldStart("openid");
+        generator.writeObjectFieldStart("wechat");
+        generator.writeStringField("icon", "http://pic1.16pic.com/00/00/17/16pic_17604_b.jpg");
+        generator.writeStringField("appid", "wx325465");
+        generator.writeEndObject();
+        generator.writeObjectFieldStart("qq");
+        generator.writeStringField("icon", "http://www.wetchat.com//");
+        generator.writeStringField("appid", "qq325dfgdf465");
+        generator.writeEndObject();
+        generator.writeObjectFieldStart("sina");
+        generator.writeStringField("icon", "http://www.wetchat.com//");
+        generator.writeStringField("token", "wxdsg325465");
+        generator.writeEndObject();
+        generator.writeEndObject();
+        generator.writeEndObject();
+        generator.close();
     }
 
     @Override
@@ -105,68 +166,6 @@ public class LoginServlet extends HttpServlet {
             generator.writeStringField("code", "400");
             generator.writeStringField("msg", "Wrong request format");
         }
-        generator.flush();
-        generator.close();
-    }
-
-
-    /**
-     * @param username
-     * @param password
-     * @return
-     */
-    private boolean validate(String username, String password) {
-        username = username.trim();
-        password = password.trim();
-        if (username == null || username.isEmpty() || username.length() < 3 || username.length() > 255 ||
-                password == null || password.isEmpty() || password.length() < 6 || password.length() > 40)
-            return false;
-        return true;
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        response.setContentType("application/json; charset=UTF-8");
-        JsonFactory jasonFactory = new JsonFactory();
-        JsonGenerator generator = jasonFactory.createGenerator(response.getOutputStream(), JsonEncoding.UTF8)
-                .setPrettyPrinter(new DefaultPrettyPrinter());
-        generator.writeStartObject();
-        generator.writeStringField("redirectUrl", response.encodeURL(request.getHeader("Referer")));
-        generator.writeStringField("session", session.getId());
-        generator.writeNumberField("notice_interval", 5000);
-        generator.writeStringField("title", "我的测试");
-
-        generator.writeFieldName("notice");
-        generator.writeStartArray();
-        generator.writeStartObject();
-        generator.writeStringField("image", "//cdn-www.lk361.com/www/Images/account/logon/computer01.png");
-        generator.writeStringField("href", "https://bbs.lk361.com/forum.php?mod=viewthread&tid=150");
-        generator.writeStringField("alt", "在线进销存,进销存软件,经销商管理,crm管理系统,免费进销存软件,进销存软件哪个好,进销存软件免费版");
-        generator.writeEndObject();
-
-        generator.writeStartObject();
-        generator.writeStringField("image", "//cdn-www.lk361.com/www/Images/account/logon/computer02.png");
-        generator.writeStringField("href", "https://bbs.lk361.com/thread-162-1-1.html");
-        generator.writeStringField("alt", "在线进销存,进销存软件,经销商管理,crm管理系统,免费进销存软件,进销存软件哪个好,进销存软件免费版");
-        generator.writeEndObject();
-        generator.writeEndArray();
-
-        generator.writeObjectFieldStart("openid");
-        generator.writeObjectFieldStart("wechat");
-        generator.writeStringField("icon", "http://pic1.16pic.com/00/00/17/16pic_17604_b.jpg");
-        generator.writeStringField("appid", "wx325465");
-        generator.writeEndObject();
-        generator.writeObjectFieldStart("qq");
-        generator.writeStringField("icon", "http://www.wetchat.com//");
-        generator.writeStringField("appid", "qq325dfgdf465");
-        generator.writeEndObject();
-        generator.writeObjectFieldStart("sina");
-        generator.writeStringField("icon", "http://www.wetchat.com//");
-        generator.writeStringField("token", "wxdsg325465");
-        generator.writeEndObject();
-        generator.writeEndObject();
-        generator.writeEndObject();
         generator.flush();
         generator.close();
     }
