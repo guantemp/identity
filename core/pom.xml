@@ -36,23 +36,18 @@
             <version>5.0.3</version>
         </dependency>
         <dependency>
-            <groupId>cc.foxtail</groupId>
-            <artifactId>mi-id</artifactId>
+            <groupId>mi.foxtail</groupId>
+            <artifactId>id</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>cc.foxtail</groupId>
-            <artifactId>mi-crypto</artifactId>
+            <groupId>mi.foxtail</groupId>
+            <artifactId>crypto</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-        </dependency>
-        <dependency>
-            <groupId>cc.foxtail</groupId>
-            <artifactId>mi-util</artifactId>
+            <groupId>mi.foxtail</groupId>
+            <artifactId>util</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

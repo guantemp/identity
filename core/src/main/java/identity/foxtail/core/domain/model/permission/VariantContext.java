@@ -36,8 +36,4 @@ public class VariantContext {
         variantMap.put(key, value);
         return this;
     }
-
-    public void clear() {
-        variantMap.clear();
-    }
 }

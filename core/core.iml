@@ -20,13 +20,13 @@
     <orderEntry type="library" name="Maven: com.arangodb:arangodb-java-driver:5.0.3" level="project" />
     <orderEntry type="library" name="Maven: com.arangodb:velocypack:1.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.arangodb:velocypack-module-jdk8:1.0.2" level="project" />
-    <orderEntry type="library" name="Maven: cc.foxtail:mi-id:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: cc.foxtail:mi-to:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: cc.foxtail:mi-system:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: cc.foxtail:mi-crypto:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: mi.foxtail:id:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: mi.foxtail:to:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: mi.foxtail:system:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: mi.foxtail:crypto:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: de.svenkubiak:jBCrypt:0.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.lambdaworks:scrypt:1.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
-    <orderEntry type="library" name="Maven: cc.foxtail:mi-util:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: mi.foxtail:util:1.0-SNAPSHOT" level="project" />
   </component>
 </module>
