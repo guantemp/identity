@@ -43,12 +43,12 @@ import java.util.Collection;
  * @version 0.0.2 2018-11-13
  */
 
-public class ArangoDBSetup {
-    private static final Logger logger = LoggerFactory.getLogger(ArangoDBSetup.class);
+public class IdentitySetup {
+    private static final Logger logger = LoggerFactory.getLogger(IdentitySetup.class);
 
     public static void main(String[] args) {
-        ArangoDBSetup.setup("identity");
-        ArangoDBSetup.setup("identity_a71");
+        IdentitySetup.setup("identity");
+        IdentitySetup.setup("identity_a71");
     }
 
     public static void setup(String databaseName) {

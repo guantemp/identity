@@ -15,7 +15,7 @@
  *
  */
 
-package identity.foxtail.core.infrastructure.resources;
+package identity.foxtail.core.infrastructure.i18n;
 
 
 import mi.foxtail.util.NLS;
