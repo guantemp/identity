@@ -22,6 +22,7 @@
           <element id="library" level="project" name="Maven: com.esotericsoftware:minlog:1.3.0" />
           <element id="library" level="project" name="Maven: de.javakaffee:kryo-serializers:0.45" />
           <element id="library" level="project" name="Maven: com.carrotsearch:java-sizeof:0.0.5" />
+          <element id="library" level="project" name="Maven: com.typesafe:config:1.3.3" />
           <element id="archive" name="core-1.0-SNAPSHOT.jar">
             <element id="module-output" name="core" />
           </element>

@@ -7,11 +7,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="core" />
+        <module name="oauth" />
         <module name="web" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="core" target="1.8" />
+      <module name="oauth" target="1.7" />
       <module name="web" target="1.8" />
       <module name="webapp" target="8" />
     </bytecodeTargetLevel>
