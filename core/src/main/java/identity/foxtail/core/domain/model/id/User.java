@@ -48,11 +48,13 @@ public class User {
     private static final String ANONYMOUS_OF_ID = "anonymous";
     private static final Pattern CELLPHONE_NUMBER_ZH = Pattern.compile("^1([358][0-9]|4[579]|66|7[0135678]|9[89])[0-9]{8}$");
     private static final Pattern FIXED_TELEPHONE_ZH = Pattern.compile("^(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)$");
+    private static final Pattern EMAIL = Pattern.compile("^([a-z0-9A-Z]+[-|\\\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\\\.)+[a-zA-Z]{2,}$\"");
     @DocumentField(DocumentField.Type.KEY)
     private String id;
     private String username;
     private String password;
     private String telephoneNumber;
+    private String email;
     private Enablement enablement;
 
     /**
@@ -253,5 +255,13 @@ public class User {
 
     protected void setEnablement(Enablement enablement) {
         this.enablement = Objects.requireNonNull(enablement, "enablement is required");
+    }
+
+    public String email() {
+        return email;
+    }
+
+    private void setEmail(String email) {
+        this.email = email;
     }
 }
