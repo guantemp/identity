@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited by guan xiangHuan (www.foxtail.cc/author/guan xiangHuan). -->
+<!-- edited by guan xiangHuan (www.hoprxi.com/author/guan xiangHuan). -->
 <caches version="0.0.2 Builder 20171222" compatibleWith="0.0.1 Builder 20170709">
     <cache region="group" provider="LocalCache">
         <cullPloy>cc.foxtail.cache.local.LRU</cullPloy>
