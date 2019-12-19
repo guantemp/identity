@@ -32,7 +32,7 @@ public class DomainRegistry {
         return SimpleDomainEventPublisher.instance();
     }
 
-    public static HashService hash() {
+    public static HashService hashService() {
         return new SM3Hash();
     }
 }
