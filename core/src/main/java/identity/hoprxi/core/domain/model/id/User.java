@@ -63,7 +63,7 @@ public class User {
     private User() {
         this.id = ANONYMOUS_OF_ID;
         this.username = ANONYMOUS_OF_ID;
-        this.password = DomainRegistry.encryption().encrypt(ANONYMOUS_OF_ID);
+        this.password = DomainRegistry.hash().encrypt(ANONYMOUS_OF_ID);
         this.telephoneNumber = ANONYMOUS_OF_ID;
         this.enablement = Enablement.FOREVER;
     }
@@ -122,7 +122,7 @@ public class User {
         currentPassword = Objects.requireNonNull(currentPassword, "currentPassword is required");
         if (currentPassword.equals(changedPassword))
             throw new IllegalArgumentException("password not chang.");
-        if (!DomainRegistry.encryption().check(currentPassword, password))
+        if (!DomainRegistry.hash().check(currentPassword, password))
             throw new IllegalArgumentException("currentPassword not confirmed.");
         protectPassword(changedPassword);
         DomainRegistry.domainEventPublisher().publish(new UserPasswordChanged(id));
@@ -219,7 +219,7 @@ public class User {
     protected void protectPassword(String password) {
         if (new PasswordService().isWeak(password))
             throw new IllegalArgumentException("password is weak.");
-        this.password = DomainRegistry.encryption().encrypt(password);
+        this.password = DomainRegistry.hash().encrypt(password);
     }
     /**
      * @param username

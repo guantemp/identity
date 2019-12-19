@@ -84,13 +84,13 @@ public class LoginServlet extends HttpServlet {
         generator.writeStartObject();
         generator.writeStringField("image", "//cdn-www.lk361.com/www/Images/account/logon/computer01.png");
         generator.writeStringField("href", "https://bbs.lk361.com/forum.php?mod=viewthread&tid=150");
-        generator.writeStringField("alt", "在线进销存,进销存软件,经销商管理,scrm管理系统,免费进销存软件,进销存软件哪个好,进销存软件免费版");
+        generator.writeStringField("alt", "在线进销存,进销存软件,经销商管理,scrm管理系统,sass进销存软件,进销存软件哪个好,进销存软件免费版");
         generator.writeEndObject();
 
         generator.writeStartObject();
         generator.writeStringField("image", "//cdn-www.lk361.com/www/Images/account/logon/computer02.png");
         generator.writeStringField("href", "https://bbs.lk361.com/thread-162-1-1.html");
-        generator.writeStringField("alt", "在线进销存,进销存软件,经销商管理,crm管理系统,免费进销存软件,进销存软件哪个好,进销存软件免费版");
+        generator.writeStringField("alt", "在线进销存,进销存软件,经销商管理,crm管理系统,sass进销存软件,进销存软件哪个好,进销存软件免费版");
         generator.writeEndObject();
         generator.writeEndArray();
 

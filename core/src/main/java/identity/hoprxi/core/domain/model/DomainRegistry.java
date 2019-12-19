@@ -19,8 +19,8 @@ package identity.hoprxi.core.domain.model;
 
 import event.hoprxi.domain.model.DomainEventPublisher;
 import event.hoprxi.infrastruture.simple.SimpleDomainEventPublisher;
-import mi.hoprxi.crypto.EncryptionService;
-import mi.hoprxi.crypto.ScryptEncryption;
+import mi.hoprxi.crypto.HashService;
+import mi.hoprxi.crypto.SM3Hash;
 
 /***
  * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
@@ -32,7 +32,7 @@ public class DomainRegistry {
         return SimpleDomainEventPublisher.instance();
     }
 
-    public static EncryptionService encryption() {
-        return new ScryptEncryption();
+    public static HashService hash() {
+        return new SM3Hash();
     }
 }

@@ -197,7 +197,7 @@ public class ArangoDBUserRepository implements UserRepository {
         if (slices != null && slices.hasNext()) {
             try {
                 User user = rebuild(slices.next());
-                if (DomainRegistry.encryption().check(password, (String) passwordField.get(user)))
+                if (DomainRegistry.hash().check(password, (String) passwordField.get(user)))
                     return user;
             } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
                 if (LOGGER.isDebugEnabled()) {
