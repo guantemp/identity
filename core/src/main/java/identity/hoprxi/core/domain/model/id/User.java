@@ -63,7 +63,7 @@ public class User {
     private User() {
         this.id = ANONYMOUS_OF_ID;
         this.username = ANONYMOUS_OF_ID;
-        this.password = DomainRegistry.hash().encrypt(ANONYMOUS_OF_ID);
+        this.password = DomainRegistry.hash().hash(ANONYMOUS_OF_ID);
         this.telephoneNumber = ANONYMOUS_OF_ID;
         this.enablement = Enablement.FOREVER;
     }
@@ -219,7 +219,7 @@ public class User {
     protected void protectPassword(String password) {
         if (new PasswordService().isWeak(password))
             throw new IllegalArgumentException("password is weak.");
-        this.password = DomainRegistry.hash().encrypt(password);
+        this.password = DomainRegistry.hash().hash(password);
     }
     /**
      * @param username
