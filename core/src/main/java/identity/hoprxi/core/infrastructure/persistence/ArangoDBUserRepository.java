@@ -173,7 +173,7 @@ public class ArangoDBUserRepository implements UserRepository {
         if (id.equals(User.ANONYMOUS.id()))
             return User.ANONYMOUS;
         boolean enable = slice.get("enablement").get("enable").getAsBoolean();
-        LocalDateTime expirationDate = LocalDateTime.parse(slice.get("enablement").get("expirationDate").getAsString(), DateTimeFormatter.ISO_ZONED_DATE_TIME);
+        LocalDateTime expirationDate = LocalDateTime.parse(slice.get("enablement").get("expirationDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         // System.out.println(expirationDate);
         Enablement enablement = new Enablement(enable, expirationDate);
         String username = slice.get("username").getAsString();
