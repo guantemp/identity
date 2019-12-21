@@ -46,11 +46,6 @@ import java.util.Collection;
 public class IdentitySetup {
     private static final Logger logger = LoggerFactory.getLogger(IdentitySetup.class);
 
-    public static void main(String[] args) {
-        IdentitySetup.setup("identity");
-        IdentitySetup.setup("identity_a71");
-    }
-
     public static void setup(String databaseName) {
         ArangoDB arangoDB = ArangoDBUtil.getResource();
         if (arangoDB.db(databaseName).exists()) {
@@ -97,7 +92,7 @@ public class IdentitySetup {
         logger.info("{} be created", databaseName);
     }
 
-    protected static void init() {
+    public static void init() {
         long start = System.currentTimeMillis();
         ArangoDB arangoDB = ArangoDBUtil.getResource();
         ArangoDatabase database = arangoDB.db("identity");
