@@ -1,17 +1,17 @@
 /*
- *  Copyright 2018 www.hoprxi.com All rights Reserved.
+ * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
  */
 package identity.hoprxi.core.domain.model.id;
@@ -115,16 +115,16 @@ public class User {
 
     /**
      * @param currentPassword
-     * @param changedPassword
+     * @param newPassword
      * @throws IllegalArgumentException if password no change or currentPassword isn't correct
      */
-    public void changPassword(String currentPassword, String changedPassword) {
+    public void changPassword(String currentPassword, String newPassword) {
         currentPassword = Objects.requireNonNull(currentPassword, "currentPassword is required");
-        if (currentPassword.equals(changedPassword))
+        if (currentPassword.equals(newPassword))
             throw new IllegalArgumentException("password not chang.");
         if (!DomainRegistry.hashService().check(currentPassword, password))
             throw new IllegalArgumentException("currentPassword not confirmed.");
-        protectPassword(changedPassword);
+        protectPassword(newPassword);
         DomainRegistry.domainEventPublisher().publish(new UserPasswordChanged(id));
     }
 
@@ -221,6 +221,19 @@ public class User {
             throw new IllegalArgumentException("password is weak.");
         this.password = DomainRegistry.hashService().hash(password);
     }
+/*
+    private void setPaymentPassword(String paymentPassword) {
+        paymentPassword = Objects.requireNonNull(paymentPassword, "paymentPassword is required").trim();
+        if (!paymentPassword.isEmpty()) {
+            Matcher matcher = PAYMENT_PASSWORD_PATTERN.matcher(paymentPassword);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("paymentPassword must 6 digit number");
+        }
+        HashService hashService = DomainRegistry.getHashService();
+        this.paymentPassword = hashService.hash(paymentPassword);
+    }
+
+ */
     /**
      * @param username
      * @throws IllegalArgumentException If the length of the username is not [1,255)
