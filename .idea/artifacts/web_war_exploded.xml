@@ -38,7 +38,7 @@
           <element id="library" level="project" name="Maven: mi.hoprxi:to:1.0-SNAPSHOT" />
           <element id="library" level="project" name="Maven: mi.hoprxi:system:1.0-SNAPSHOT" />
           <element id="library" level="project" name="Maven: mi.hoprxi:crypto:1.0-SNAPSHOT" />
-          <element id="library" level="project" name="Maven: de.svenkubiak:jBCrypt:0.4.1" />
+          <element id="library" level="project" name="Maven: org.mindrot:jbcrypt:0.4" />
           <element id="library" level="project" name="Maven: org.bouncycastle:bcprov-jdk15on:1.62" />
           <element id="library" level="project" name="Maven: org.bouncycastle:bcpkix-jdk15on:1.62" />
           <element id="library" level="project" name="Maven: com.arangodb:arangodb-java-driver-async:5.1.0" />

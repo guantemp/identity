@@ -14,26 +14,39 @@
  *  limitations under the License.
  *
  */
-package identity.hoprxi.core.domain.model.id;
 
-import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+package identity.hoprxi.core.infrastructure.persistence;
+
+
+import identity.hoprxi.core.domain.model.id.Enablement;
+import identity.hoprxi.core.domain.model.id.User;
+import identity.hoprxi.core.domain.model.id.UserRepository;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.time.LocalDateTime;
 
-/***
- * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuan</a>
+/**
+ * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
+ * @version 0.0.1 2020-12-05
  * @since JDK8.0
- * @version 0.0.2 2018-11-13
  */
-public class UserRepositoryTest {
+public class ArangoDBUserRepositoryTest {
+
     private static UserRepository repository = new ArangoDBUserRepository("identity");
 
+    @AfterClass
+    public static void teardown() {
+        repository.remove("shifu");
+        repository.remove("ershixiong");
+        repository.remove("dashixiong");
+        repository.remove(User.ANONYMOUS.id());
+    }
+
     @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    public void setUpBeforeClass() throws Exception {
         User shifu = new User("shifu", "唐僧", "Qwe123465", "13679682301", new Enablement(true, LocalDateTime.now().plusDays(40)));
         repository.save(shifu);
         User dashixiong = new User("dashixiong", "孙悟空", "Qwe1234653", "18982455056", new Enablement(true, LocalDateTime.now().plusSeconds(30)));
@@ -47,14 +60,6 @@ public class UserRepositoryTest {
         repository.save(User.ANONYMOUS);
     }
 
-    @AfterClass
-    public static void teardown() {
-        repository.remove("shifu");
-        repository.remove("ershixiong");
-        repository.remove("dashixiong");
-        repository.remove(User.ANONYMOUS.id());
-    }
-
     @Test
     public void all() {
         User[] users = repository.all(0, 1);
@@ -64,7 +69,7 @@ public class UserRepositoryTest {
         users = repository.all(2, 2);
         Assert.assertEquals(2, users.length);
         users = repository.all(5, 1);
-        Assert.assertEquals(0, users.length);
+        Assert.assertEquals(1, users.length);
     }
 
     @Test
