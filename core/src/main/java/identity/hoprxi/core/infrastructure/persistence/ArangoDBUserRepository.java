@@ -62,7 +62,11 @@ public class ArangoDBUserRepository implements UserRepository {
         }
     }
 
-    private ArangoDatabase identity = ArangoDBUtil.getResource().db("identity");
+    private final ArangoDatabase identity;
+
+    public ArangoDBUserRepository(String databaseName) {
+        identity = ArangoDBUtil.getResource().db(databaseName);
+    }
 
     @Override
     public long count() {

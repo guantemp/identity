@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 www.hoprxi.com All rights Reserved.
+ * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import java.util.Collection;
  */
 public class PermissionRepositoryTest {
     private static final RoleRepository roleRepository = new ArangoDBRoleRepository();
-    private static final UserRepository userRepository = new ArangoDBUserRepository();
+    private static final UserRepository userRepository = new ArangoDBUserRepository("identity");
     private static final ResourceRepository resourceRepository = new ArangoDBResourceRepository();
     private static final PermissionRepository repo = new ArangoDBPermissionRepository();
     private static final AuthorizationService authorizationService = new AuthorizationService(repo, resourceRepository);

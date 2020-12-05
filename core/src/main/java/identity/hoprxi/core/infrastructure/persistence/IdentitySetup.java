@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 www.hoprxi.com All rights Reserved.
+ * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,12 +64,10 @@ public class IdentitySetup {
         Collection<String> index = new ArrayList<>();
         //SkiplistIndexOptions indexOptions = new SkiplistIndexOptions().sparse(true);
         index.add("username");
+        index.add("telephoneNumber");
         HashIndexOptions hashIndexOptions = new HashIndexOptions().unique(true);
         db.collection("user").ensureHashIndex(index, hashIndexOptions);
-        index.clear();
-        index.add("telephoneNumber");
-        db.collection("user").ensureHashIndex(index, hashIndexOptions);
-        //
+        //index
         index.clear();
         index.add("name");
         db.collection("group").ensureHashIndex(index, hashIndexOptions);
