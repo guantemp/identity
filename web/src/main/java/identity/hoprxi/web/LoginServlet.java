@@ -1,17 +1,17 @@
 /*
- *  Copyright 2018 www.hoprxi.com All rights Reserved.
+ * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
  */
 package identity.hoprxi.web;
@@ -36,10 +36,10 @@ import java.io.IOException;
  * @version 0.0.1 2018-04-08
  */
 @WebServlet(urlPatterns = {"/v1/login"}, name = "login", asyncSupported = false, initParams = {
-        @WebInitParam(name = "max_error_times", value = "5"), @WebInitParam(name = "cookie_expired", value = "600")})
+        @WebInitParam(name = "max_error_times", value = "5"), @WebInitParam(name = "cookie_expired", value = "300")})
 public class LoginServlet extends HttpServlet {
     private static int max_error_times; // error times
-    private static int cookie_expired;//ten Minutes
+    private static int cookie_expired;//five Minutes
     private static Cache<String, Integer> cache = null;
 
     @Override
@@ -48,7 +48,7 @@ public class LoginServlet extends HttpServlet {
         ServletConfig config = getServletConfig();
         if (config != null) {
             max_error_times = NumberHelper.intOf(config.getInitParameter("max_error_times"), 3);
-            cookie_expired = NumberHelper.intOf(config.getInitParameter("max_error_times"), 600);
+            cookie_expired = NumberHelper.intOf(config.getInitParameter("max_error_times"), 300);
         }
     }
 

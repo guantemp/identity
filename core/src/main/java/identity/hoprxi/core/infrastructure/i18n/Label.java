@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 www.hoprxi.com All rights Reserved.
+ * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import mi.hoprxi.util.NLS;
  * @version 0.0.1 builder 2019-01-15
  */
 public class Label extends NLS {
-    private static final String BUNDLE_NAME = "hr.foxtail.infrastructure.resource.label"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "hr.hoprxi.infrastructure.i18n.label"; //$NON-NLS-1$
 
     public static String NATION_HAN;
     public static String PRIMARY_SCHOOL;
