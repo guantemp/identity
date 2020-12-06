@@ -33,7 +33,7 @@ import java.io.IOException;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2018-04-08
+ * @version 0.0.1 2020-12-08
  */
 @WebServlet(urlPatterns = {"/v1/login"}, name = "login", asyncSupported = false, initParams = {
         @WebInitParam(name = "max_error_times", value = "5"), @WebInitParam(name = "cookie_expired", value = "300")})
