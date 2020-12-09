@@ -114,20 +114,23 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        JsonFactory jasonFactory = new JsonFactory();
-        JsonParser parser = jasonFactory.createParser(request.getInputStream());
         String username = null;
         String password = null;
-        while (parser.nextToken() != JsonToken.END_OBJECT) {
-            String fieldname = parser.getCurrentName();
-            switch (fieldname) {
-                case "username":
-                    parser.nextValue();
-                    username = parser.getValueAsString();
-                    break;
-                case "password":
-                    parser.nextValue();
-                    password = parser.getValueAsString();
+        JsonFactory jasonFactory = new JsonFactory();
+        JsonParser parser = jasonFactory.createParser(request.getInputStream());
+        while (!parser.isClosed()) {
+            JsonToken jsonToken = parser.nextToken();
+            if (JsonToken.FIELD_NAME.equals(jsonToken)) {
+                String fieldName = parser.getCurrentName();
+                parser.nextToken();
+                switch (fieldName) {
+                    case "username":
+                        username = parser.getValueAsString();
+                        break;
+                    case "password":
+                        password = parser.getValueAsString();
+                        break;
+                }
             }
         }
         response.setContentType("application/json; charset=UTF-8");
