@@ -46,7 +46,7 @@ import java.nio.charset.StandardCharsets;
  * @since JDK8.0
  */
 @WebServlet(urlPatterns = {"/v1/wxAuth"}, name = "wxAuth", asyncSupported = false, initParams = {
-        @WebInitParam(name = "appid", value = "wx16772085b996e8e0"), @WebInitParam(name = "secret", value = "")})
+        @WebInitParam(name = "appid", value = "wx16772085b996e8e0"), @WebInitParam(name = "secret", value = "21d09e4f8930cbc8949fcf7be911f3df")})
 public class WxAuthServlet extends HttpServlet {
     private static String appid = null;
     private static String secret = null;
