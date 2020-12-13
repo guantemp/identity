@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  * @since JDK8.0
  */
 @WebServlet(urlPatterns = {"/v1/sms"}, name = "sms", asyncSupported = false, initParams = {
-        @WebInitParam(name = "expire", value = "5*60*1000"), @WebInitParam(name = "accessKey", value = ""),
+        @WebInitParam(name = "expire", value = "5*60*1000"), @WebInitParam(name = "accessKey", value = "LTAI4FypER7p4KzaTVFcRHjd"),
         @WebInitParam(name = "secret", value = ""), @WebInitParam(name = "signName", value = "ABC商城"),
         @WebInitParam(name = "templateCode", value = "SMS_206562265")})
 public class SmsServlet extends HttpServlet {
