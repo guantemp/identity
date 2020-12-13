@@ -19,7 +19,6 @@ package identity.hoprxi.core.infrastructure.persistence;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.ArangoGraph;
-import com.arangodb.entity.CollectionType;
 import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.KeyType;
 import com.arangodb.entity.VertexEntity;
@@ -57,7 +56,7 @@ public class IdentitySetup {
         //vertex
         CollectionCreateOptions vertexOptions = new CollectionCreateOptions();
         vertexOptions.keyOptions(true, KeyType.traditional, 1, 1);
-        for (String s : new String[]{"resource", "role", "group", "user"}) {
+        for (String s : new String[]{"resource", "role", "group", "user", "socialAuth"}) {
             db.createCollection(s, vertexOptions);
         }
         //index
@@ -72,19 +71,22 @@ public class IdentitySetup {
         index.add("name");
         db.collection("group").ensureHashIndex(index, hashIndexOptions);
         db.collection("role").ensureHashIndex(index, hashIndexOptions);
+        /*
         //edge
         CollectionCreateOptions edgeOptions = new CollectionCreateOptions().type(CollectionType.EDGES);
-        for (String s : new String[]{"subordinate", "act", "create"}) {
+        for (String s : new String[]{"subordinate", "act", "create","processor"}) {
             db.createCollection(s, edgeOptions);
         }
         edgeOptions.keyOptions(true, KeyType.traditional, 1, 1);
         db.createCollection("processor", edgeOptions);
+         */
         //graph
         Collection<EdgeDefinition> list = new ArrayList<>();
         list.add(new EdgeDefinition().collection("create").from("user").to("resource"));
         list.add(new EdgeDefinition().collection("act").from("group", "user").to("role"));
         list.add(new EdgeDefinition().collection("subordinate").from("group", "resource").to("group", "user", "resource"));
         list.add(new EdgeDefinition().collection("processor").from("role").to("resource"));
+        list.add(new EdgeDefinition().collection("bind").from("socialAuth").to("user"));
         db.createGraph("identity", list);
         arangoDB.shutdown();
         logger.info("{} be created", databaseName);
