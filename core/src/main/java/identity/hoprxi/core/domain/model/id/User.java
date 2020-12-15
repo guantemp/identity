@@ -232,8 +232,8 @@ public class User {
         HashService hashService = DomainRegistry.getHashService();
         this.paymentPassword = hashService.hash(paymentPassword);
     }
-
  */
+
     /**
      * @param username
      * @throws IllegalArgumentException If the length of the username is not [1,255)
@@ -259,10 +259,10 @@ public class User {
     }
 
     protected void setTelephoneNumber(String telephoneNumber) {
-        if (null == telephoneNumber)
-            telephoneNumber = username;
-        if (!CELLPHONE_NUMBER_ZH.matcher(telephoneNumber).find() && !FIXED_TELEPHONE_ZH.matcher(telephoneNumber).find())
+        if (null != telephoneNumber && !CELLPHONE_NUMBER_ZH.matcher(telephoneNumber).find() && !FIXED_TELEPHONE_ZH.matcher(telephoneNumber).find())
             throw new IllegalArgumentException("Illegal telephone number");
+        if (null == telephoneNumber && CELLPHONE_NUMBER_ZH.matcher(username).find() && FIXED_TELEPHONE_ZH.matcher(username).find())
+            telephoneNumber = username;
         this.telephoneNumber = telephoneNumber;
     }
 

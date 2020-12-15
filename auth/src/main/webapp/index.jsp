@@ -24,6 +24,6 @@
 <h3>
     <a href="v1/sms?mobile=13679692301">validate</a></h3>
 <p>
-    <a href="v1/wxAuth?code=001aVoGa1jBq9A0yxBFa1DUfKr1aVoGb">Wx_AUTH</a></p>
+    <a href="v1/wxAuth?js_code=001aVoGa1jBq9A0yxBFa1DUfKr1aVoGb">Wx_AUTH</a></p>
 </body>
 </html>

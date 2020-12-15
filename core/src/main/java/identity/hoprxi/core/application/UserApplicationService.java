@@ -25,6 +25,7 @@ import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuan</a>
@@ -33,6 +34,7 @@ import java.util.Objects;
  */
 public final class UserApplicationService {
     private static final int EXPIRED_DAYS = 45;
+    private static Pattern SMS_CODE_PATTERN = Pattern.compile("^\\d{6,6}$");
     private static final PasswordService passwordService = new PasswordService();
     private UserRepository userRepository = new ArangoDBUserRepository("identity");
     private UserService userService = new UserService(userRepository);
@@ -44,12 +46,11 @@ public final class UserApplicationService {
         String password = registerUserCommand.getPassword();
         if (password == null)
             password = passwordService.generateStrongPassword();
-        UserDescriptor userDescriptor = userService.registerUser(userRepository.nextIdentity(),
+        return userService.registerUser(userRepository.nextIdentity(),
                 registerUserCommand.getUsername(),
                 password,
                 registerUserCommand.getNickname(),
                 new Enablement(true, LocalDateTime.now().plusDays(EXPIRED_DAYS)));
-        return userDescriptor;
     }
 
     public void changeUserPassword(ChangeUserPasswordCommand changeUserPasswordCommand) {
@@ -70,6 +71,14 @@ public final class UserApplicationService {
         return userService.authenticate(username, password);
     }
 
+    public UserDescriptor authenticate(String username, int smsCode) {
+        username = Objects.requireNonNull(username, "username required").trim();
+        if (username.isEmpty())
+            throw new IllegalArgumentException("username must can not be empty.");
+        if (!SMS_CODE_PATTERN.matcher(String.valueOf(smsCode)).matches())
+            throw new IllegalArgumentException("username must can not be empty.");
+        return null;
+    }
 
     private User existingUser(String userId) {
         User user = userRepository.find(userId);

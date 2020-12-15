@@ -25,17 +25,5 @@
                              http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
   <display-name>Archetype Created Web Application</display-name>
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-    <welcome-file>index.htm</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
-  </welcome-file-list>
-  <servlet>
-    <servlet-name>users</servlet-name>
-    <servlet-class>identity.hoprxi.web.UserServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>users</servlet-name>
-    <url-pattern>/v1/users</url-pattern>
-  </servlet-mapping>
 </web-app>
+

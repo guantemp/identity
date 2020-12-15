@@ -20,8 +20,8 @@ import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import identity.hoprxi.core.application.UserApplicationService;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
-import mi.hoprxi.cache.Cache;
 import mi.hoprxi.util.NumberHelper;
+import salt.hoprxi.cache.Cache;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;

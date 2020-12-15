@@ -15,19 +15,27 @@
  *
  */
 
-package identity.hoprxi.core.domain.model;
+package identity.hoprxi.core.domain.model.id;
 
 /**
  * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
- * @version 0.0.1 2020-12-13
+ * @version 0.0.1 2020-12-15
  * @since JDK8.0
  */
-public class SocialAuth {
-    private String openId;
-    private String unionid;
-    private Source from;
+public interface SocializationRepository {
+    /**
+     * @param socialization
+     */
+    void save(Socialization socialization);
 
-    public enum Source {
-        WECHAT, QQ, SINA_WEI_BO, XIAO_MI, APPLE
-    }
+    /**
+     * @param id
+     * @return
+     */
+    Socialization find(String id);
+
+    /**
+     * @param id
+     */
+    void remove(String id);
 }

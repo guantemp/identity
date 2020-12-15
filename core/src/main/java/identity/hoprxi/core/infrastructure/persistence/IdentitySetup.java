@@ -39,7 +39,7 @@ import java.util.Collection;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 2018-11-13
+ * @version 0.0.3 2020-12-13
  */
 
 public class IdentitySetup {
@@ -56,7 +56,7 @@ public class IdentitySetup {
         //vertex
         CollectionCreateOptions vertexOptions = new CollectionCreateOptions();
         vertexOptions.keyOptions(true, KeyType.traditional, 1, 1);
-        for (String s : new String[]{"resource", "role", "group", "user", "socialAuth"}) {
+        for (String s : new String[]{"resource", "role", "group", "user", "socialization"}) {
             db.createCollection(s, vertexOptions);
         }
         //index
@@ -86,7 +86,7 @@ public class IdentitySetup {
         list.add(new EdgeDefinition().collection("act").from("group", "user").to("role"));
         list.add(new EdgeDefinition().collection("subordinate").from("group", "resource").to("group", "user", "resource"));
         list.add(new EdgeDefinition().collection("processor").from("role").to("resource"));
-        list.add(new EdgeDefinition().collection("bind").from("socialAuth").to("user"));
+        list.add(new EdgeDefinition().collection("bind").from("socialization").to("user"));
         db.createGraph("identity", list);
         arangoDB.shutdown();
         logger.info("{} be created", databaseName);
@@ -114,7 +114,7 @@ public class IdentitySetup {
         VertexEntity eu = graph.vertexCollection("user").insertVertex(User.ANONYMOUS);
         //graph.edgeCollection("contain").insertEdge(new ArangoDBGroupRepository.ActEdge(g1.getId(), eu.getId()));
 
-        User test = new User("admin", "Qwe1234", "管理员", "admin", Enablement.FOREVER);
+        User test = new User("admin", "Qwe1234", "管理员", "13679692305", Enablement.FOREVER);
         eu = graph.vertexCollection("user").insertVertex(test);
         // EdgeEntity edge = graph.edgeCollection("contain").insertEdge(new ArangoDBGroupRepository.ActEdge(g.getId(), eu.getId()));
         VPackSlice slice = graph.vertexCollection("user").getVertex("admin", VPackSlice.class);
