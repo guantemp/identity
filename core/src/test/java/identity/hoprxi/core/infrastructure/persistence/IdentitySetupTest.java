@@ -29,5 +29,6 @@ public class IdentitySetupTest {
     @Test
     public void setup() {
         IdentitySetup.setup("identity");
+        IdentitySetup.setup("identity_13679692301");
     }
 }

@@ -42,7 +42,11 @@ public class UserSocializationService {
     }
 
     public void bind(String userId, String unionId, String thirdPartyName) {
-        new Socialization(unionId, userId, Socialization.ThirdParty.valueOf(thirdPartyName));
+        User user = userRepository.find(userId);
+        if (user == null)
+            throw new IllegalArgumentException("user is't exists");
+        Socialization socialization = new Socialization(unionId, userId, Socialization.ThirdParty.valueOf(thirdPartyName));
+        socializationRepository.save(socialization);
     }
 
     public void unbundling(String userId, String unionId) {

@@ -71,7 +71,7 @@ public class ArangoDBSocializationRepository implements SocializationRepository 
 
     private void insertBindEdgeOfBrand(ArangoGraph graph, DocumentEntity itemVertex, String userId) {
         VertexEntity userVertex = graph.vertexCollection("user").getVertex(userId, VertexEntity.class);
-        graph.edgeCollection("bing").insertEdge(new BindEdge(itemVertex.getId(), userVertex.getId()));
+        graph.edgeCollection("bind").insertEdge(new BindEdge(itemVertex.getId(), userVertex.getId()));
     }
 
     @Override
