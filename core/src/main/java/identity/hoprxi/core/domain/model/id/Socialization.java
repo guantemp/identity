@@ -58,6 +58,18 @@ public class Socialization {
         return unionId != null ? unionId.equals(that.unionId) : that.unionId == null;
     }
 
+    public String unionId() {
+        return unionId;
+    }
+
+    public String userId() {
+        return userId;
+    }
+
+    public ThirdParty thirdParty() {
+        return thirdParty;
+    }
+
     @Override
     public int hashCode() {
         return unionId != null ? unionId.hashCode() : 0;

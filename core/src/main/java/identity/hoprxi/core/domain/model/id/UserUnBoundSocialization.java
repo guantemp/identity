@@ -22,20 +22,5 @@ package identity.hoprxi.core.domain.model.id;
  * @version 0.0.1 2020-12-15
  * @since JDK8.0
  */
-public interface SocializationRepository {
-    /**
-     * @param socialization
-     */
-    void save(Socialization socialization);
-
-    /**
-     * @param unionId
-     * @return
-     */
-    Socialization find(String unionId);
-
-    /**
-     * @param unionId
-     */
-    void remove(String unionId);
+public class UserUnBoundSocialization {
 }

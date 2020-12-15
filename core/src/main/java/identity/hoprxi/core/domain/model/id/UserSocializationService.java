@@ -17,6 +17,7 @@
 
 package identity.hoprxi.core.domain.model.id;
 
+import identity.hoprxi.core.infrastructure.persistence.ArangoDBSocializationRepository;
 import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
 
 /**
@@ -26,6 +27,7 @@ import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
  */
 public class UserSocializationService {
     private UserRepository userRepository = new ArangoDBUserRepository("identity");
+    private SocializationRepository socializationRepository = new ArangoDBSocializationRepository("identity");
 
     public void createSocialization(String unionId, String userId, String thirdParty) {
         Socialization.ThirdParty from = Socialization.ThirdParty.valueOf(thirdParty);
