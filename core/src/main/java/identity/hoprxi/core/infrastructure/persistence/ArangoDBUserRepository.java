@@ -102,7 +102,9 @@ public class ArangoDBUserRepository implements UserRepository {
     @Override
     public void remove(String id) {
         ArangoGraph graph = identity.graph("identity");
-        graph.vertexCollection("user").deleteVertex(id);
+        boolean exists = identity.collection("user").documentExists(id);
+        if (exists)
+            graph.vertexCollection("user").deleteVertex(id);
     }
 
     @Override

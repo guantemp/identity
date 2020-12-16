@@ -20,6 +20,7 @@ package identity.hoprxi.core.domain.model.id;
 import com.arangodb.entity.DocumentField;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
@@ -73,6 +74,15 @@ public class Socialization {
     @Override
     public int hashCode() {
         return unionId != null ? unionId.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Socialization.class.getSimpleName() + "[", "]")
+                .add("unionId='" + unionId + "'")
+                .add("userId='" + userId + "'")
+                .add("thirdParty=" + thirdParty)
+                .toString();
     }
 
     public enum ThirdParty {

@@ -81,7 +81,7 @@ public class ArangoDBSocializationRepository implements SocializationRepository 
         if (slice != null) {
             try {
                 String id = slice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
-                String userId = slice.get("userid").getAsString();
+                String userId = slice.get("userId").getAsString();
                 Socialization.ThirdParty thirdParty = Socialization.ThirdParty.valueOf(slice.get("thirdParty").getAsString());
                 Socialization socialization = socializationConstructor.newInstance(id, userId, thirdParty);
                 return socialization;
@@ -97,7 +97,10 @@ public class ArangoDBSocializationRepository implements SocializationRepository 
     @Override
     public void remove(String unionId) {
         ArangoGraph graph = identity.graph("identity");
-        graph.vertexCollection("socialization").deleteVertex(unionId);
+        boolean exists = identity.collection("socialization").documentExists(unionId);
+        if (exists) {
+            graph.vertexCollection("socialization").deleteVertex(unionId);
+        }
     }
 
     private static class BindEdge {

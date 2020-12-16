@@ -20,6 +20,8 @@ package identity.hoprxi.core.domain.model.id;
 import identity.hoprxi.core.infrastructure.persistence.ArangoDBSocializationRepository;
 import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
 
+import java.util.Optional;
+
 /**
  * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
  * @version 0.0.1 2020-12-14
@@ -41,15 +43,24 @@ public class UserSocializationService {
         new Socialization(unionId, userId, from);
     }
 
-    public void bind(String userId, String unionId, String thirdPartyName) {
+    public void bindUser(String userId, String unionId, String thirdPartyName) {
         User user = userRepository.find(userId);
+        //Optional.ofNullable(user).orElseGet()
         if (user == null)
             throw new IllegalArgumentException("user is't exists");
         Socialization socialization = new Socialization(unionId, userId, Socialization.ThirdParty.valueOf(thirdPartyName));
         socializationRepository.save(socialization);
     }
 
-    public void unbundling(String userId, String unionId) {
+    public void unbindUser(String unionId) {
+        socializationRepository.remove(unionId);
+    }
 
+    public UserDescriptor getBindUser(String unionId) {
+        Socialization socialization = socializationRepository.find(unionId);
+        return Optional.ofNullable(socialization).map(u -> {
+            User user = userRepository.find(socialization.userId());
+            return user.toUserDescriptor();
+        }).orElseGet(() -> UserDescriptor.NullUserDescriptor);
     }
 }
