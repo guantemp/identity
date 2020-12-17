@@ -48,14 +48,9 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="module" module-name="core" />
     <orderEntry type="library" name="Maven: event.hoprxi:core:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: mi.hoprxi:id:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: mi.hoprxi:to:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: mi.hoprxi:system:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: mi.hoprxi:crypto:1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.mindrot:jbcrypt:0.4" level="project" />
-    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk15on:1.62" level="project" />
-    <orderEntry type="library" name="Maven: org.bouncycastle:bcpkix-jdk15on:1.62" level="project" />
-    <orderEntry type="library" name="Maven: mi.hoprxi:util:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: salt.hoprxi:id:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: salt.hoprxi:to:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: salt.hoprxi:crypto:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.arangodb:arangodb-java-driver-async:5.1.0" level="project" />
     <orderEntry type="library" name="Maven: com.arangodb:arangodb-java-driver:5.0.7" level="project" />
     <orderEntry type="library" name="Maven: com.arangodb:velocypack:1.4.1" level="project" />

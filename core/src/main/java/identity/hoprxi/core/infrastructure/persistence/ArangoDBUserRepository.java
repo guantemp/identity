@@ -27,9 +27,9 @@ import identity.hoprxi.core.domain.model.DomainRegistry;
 import identity.hoprxi.core.domain.model.id.Enablement;
 import identity.hoprxi.core.domain.model.id.User;
 import identity.hoprxi.core.domain.model.id.UserRepository;
-import mi.hoprxi.id.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import salt.hoprxi.id.LongId;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -96,7 +96,7 @@ public class ArangoDBUserRepository implements UserRepository {
 
     @Override
     public String nextIdentity() {
-        return new ObjectId().id();
+        return String.valueOf(LongId.generate());
     }
 
     @Override
@@ -189,7 +189,7 @@ public class ArangoDBUserRepository implements UserRepository {
         //ISO_LOCAL_DATE
         LocalDateTime expirationDate = LocalDateTime.parse(slice.get("enablement").get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         // System.out.println(expirationDate);
-        Enablement enablement = new Enablement(enable, expirationDate);
+        Enablement enablement = Enablement.getInstance(enable, expirationDate);
         String password = slice.get("password").getAsString();
         User user = userConstructor.newInstance(id, username, telephoneNumber, email, enablement);
         //User user =new User(id,username,password,telephoneNumber,enablement);

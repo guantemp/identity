@@ -242,8 +242,8 @@ public class User {
         this.enablement = Optional.ofNullable(enablement).map(e -> enablement).orElse(Enablement.PERMANENCE);
     }
 
-    public boolean isEnable() {
-        return enablement.isEnable() && enablement.isExpired();
+    public boolean isAvailable() {
+        return enablement.isEnable() && !enablement.isExpired();
     }
 
     public Creator toCreator() {
@@ -251,7 +251,7 @@ public class User {
     }
 
     public UserDescriptor toUserDescriptor() {
-        return new UserDescriptor(id, username, enablement.expirationDate());
+        return new UserDescriptor(id, username, enablement.expiryDate());
     }
 
     public GroupMember toGroupMember() {

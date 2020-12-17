@@ -28,9 +28,9 @@ import com.arangodb.velocypack.VPackSlice;
 import identity.hoprxi.core.domain.model.id.Enablement;
 import identity.hoprxi.core.domain.model.id.Group;
 import identity.hoprxi.core.domain.model.id.User;
-import mi.hoprxi.id.LongId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import salt.hoprxi.id.LongId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

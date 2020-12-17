@@ -55,22 +55,22 @@
         <dependency>
             <groupId>event.hoprxi</groupId>
             <artifactId>core</artifactId>
-            <version>${event.hoprxi.version}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>mi.hoprxi</groupId>
+            <groupId>salt.hoprxi</groupId>
             <artifactId>id</artifactId>
-            <version>${mi.hoprxi.version}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>mi.hoprxi</groupId>
+            <groupId>salt.hoprxi</groupId>
             <artifactId>crypto</artifactId>
-            <version>${mi.hoprxi.version}</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>mi.hoprxi</groupId>
-            <artifactId>util</artifactId>
-            <version>${mi.hoprxi.version}</version>
+            <groupId>salt.hoprxi</groupId>
+            <artifactId>utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.arangodb</groupId>

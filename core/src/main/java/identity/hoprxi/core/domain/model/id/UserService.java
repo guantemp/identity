@@ -66,7 +66,7 @@ public class UserService {
         User user = repository.usernameAuthenticCredentials(username, password);
         if (user == null)
             return UserDescriptor.NullUserDescriptor;
-        if (user.isEnable())
+        if (user.isAvailable())
             return user.toUserDescriptor();
         return UserDescriptor.NullUserDescriptor;
     }

@@ -41,8 +41,7 @@ public class Enablement {
      */
     public Enablement(boolean enable, LocalDateTime expiryDate) {
         this.enable = enable;
-        this.expiryDate = expiryDate;
-        //setExpirationDate(expirationDate);
+        setExpiryDate(expiryDate);
     }
 
     public static Enablement getInstance(boolean enable, LocalDateTime expirationDate) {
@@ -52,7 +51,7 @@ public class Enablement {
     }
 
     private void setExpiryDate(LocalDateTime expiryDate) {
-        if (expiryDate.isBefore(LocalDateTime.now().minusMinutes(3)))
+        if (!expiryDate.isEqual(DAY_OF_INFAMY) && expiryDate.isBefore(LocalDateTime.now()))
             throw new IllegalArgumentException("The expiry date must be some time in the future.");
         this.expiryDate = expiryDate;
     }
@@ -61,7 +60,7 @@ public class Enablement {
         return enable;
     }
 
-    public LocalDateTime expirationDate() {
+    public LocalDateTime expiryDate() {
         return expiryDate;
     }
 
@@ -91,7 +90,7 @@ public class Enablement {
     public String toString() {
         return "Enablement{" +
                 "enable=" + enable +
-                ", expirationDate=" + expiryDate +
+                ", expiryDate=" + expiryDate +
                 '}';
     }
 }

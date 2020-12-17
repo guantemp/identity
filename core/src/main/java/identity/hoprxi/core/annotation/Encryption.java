@@ -16,8 +16,8 @@
  */
 package identity.hoprxi.core.annotation;
 
-import mi.hoprxi.crypto.HashService;
-import mi.hoprxi.crypto.SM3Hash;
+import salt.hoprxi.crypto.HashService;
+import salt.hoprxi.crypto.SM3Hash;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

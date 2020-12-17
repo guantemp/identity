@@ -17,8 +17,7 @@
 
 package identity.hoprxi.core.infrastructure.i18n;
 
-
-import mi.hoprxi.util.NLS;
+import salt.hoprxi.utils.NLS;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>

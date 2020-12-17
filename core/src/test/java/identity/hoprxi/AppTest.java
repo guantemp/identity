@@ -17,9 +17,11 @@
 
 package identity.hoprxi;
 
+import identity.hoprxi.core.domain.model.id.Enablement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -41,5 +43,7 @@ public class AppTest {
         Assert.assertFalse(Optional.ofNullable(str3).map(u -> str3.length() > 6 && str3.length() <= 255).orElse(false));
         Pattern EMAIL_PATTERN = Pattern.compile("^\\s*\\w+(?:\\.{0,1}[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$");
         System.out.println(EMAIL_PATTERN.matcher("327885095@qq.com").matches());
+        Enablement enablement = new Enablement(true, LocalDateTime.now().plusMinutes(15));
+        System.out.println(Optional.ofNullable(enablement).map(e -> enablement).orElse(Enablement.PERMANENCE));
     }
 }

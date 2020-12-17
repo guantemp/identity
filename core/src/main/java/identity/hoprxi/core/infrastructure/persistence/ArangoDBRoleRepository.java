@@ -31,9 +31,9 @@ import identity.hoprxi.core.domain.model.element.RoleRepository;
 import identity.hoprxi.core.domain.model.id.Group;
 import identity.hoprxi.core.domain.model.id.GroupMember;
 import identity.hoprxi.core.domain.model.id.GroupMemberType;
-import mi.hoprxi.id.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import salt.hoprxi.id.ObjectId;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

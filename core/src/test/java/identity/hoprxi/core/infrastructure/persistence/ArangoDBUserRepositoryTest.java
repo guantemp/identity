@@ -50,7 +50,7 @@ public class ArangoDBUserRepositoryTest {
     public void setUpBeforeClass() throws Exception {
         User shifu = new User("shifu", "唐僧", "Qwe123465", "13679682333", "32788595@qq.com", new Enablement(true, LocalDateTime.now().plusDays(40)));
         repository.save(shifu);
-        User dashixiong = new User("dashixiong", "孙悟空", "Qwe1234653", "18982455055", "gutemP@126.com", new Enablement(true, LocalDateTime.now().plusSeconds(30)));
+        User dashixiong = new User("dashixiong", "孙悟空", "Qwe1234653", "18982455055", "gutemP@126.com", new Enablement(true, LocalDateTime.now().plusMinutes(30)));
         repository.save(dashixiong);
         User ershixiong = new User("ershixiong", "猪八戒", "Qwe1234655", "18982455066", null, new Enablement(true, LocalDateTime.now().plusMinutes(15)));
         repository.save(ershixiong);
@@ -86,11 +86,11 @@ public class ArangoDBUserRepositoryTest {
         chang.rename("看我七十二变->牛魔王");
         chang.changTelephoneNumber("17782455066");
         chang.changPassword("Qwe1234653", "guanQ24,.io23");
-        chang.defineEnablement(Enablement.PERMANENCE);
+        //chang.defineEnablement(Enablement.PERMANENCE);
         repository.save(chang);
         chang = repository.telephoneNumberAuthenticCredentials("17782455066", "guanQ24,.io23");
         Assert.assertEquals("17782455066", chang.telephoneNumber());
-        Assert.assertTrue(chang.isEnable());
+        Assert.assertTrue(chang.isAvailable());
         Assert.assertEquals(chang.username(), "看我七十二变->牛魔王");
     }
 
@@ -116,5 +116,6 @@ public class ArangoDBUserRepositoryTest {
         repository.remove("ershixiong");
         Assert.assertFalse(repository.isUsernameExists("猪八戒"));
         Assert.assertFalse(repository.isTelephoneNumberExists("18982455066"));
+        Assert.assertTrue(repository.find("bailongma").enablement() == Enablement.PERMANENCE);
     }
 }
