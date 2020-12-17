@@ -39,6 +39,14 @@ public class UserBoundSocialization implements DomainEvent {
         this.eventVersion = 1;
     }
 
+    public String userId() {
+        return userId;
+    }
+
+    public String unionId() {
+        return unionId;
+    }
+
     @Override
     public LocalDateTime occurredOn() {
         return occurredOn;

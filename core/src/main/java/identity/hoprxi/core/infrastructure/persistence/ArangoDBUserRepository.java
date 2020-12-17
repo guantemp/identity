@@ -226,4 +226,14 @@ public class ArangoDBUserRepository implements UserRepository {
         final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, null, VPackSlice.class);
         return cursor.hasNext() ? true : false;
     }
+
+    @Override
+    public boolean isEmailExists(String email) {
+        return false;
+    }
+
+    @Override
+    public User emailAuthenticCredentials(String email, String password) {
+        return null;
+    }
 }

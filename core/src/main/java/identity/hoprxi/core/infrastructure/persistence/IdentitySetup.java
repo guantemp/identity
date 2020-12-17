@@ -23,7 +23,7 @@ import com.arangodb.entity.EdgeDefinition;
 import com.arangodb.entity.KeyType;
 import com.arangodb.entity.VertexEntity;
 import com.arangodb.model.CollectionCreateOptions;
-import com.arangodb.model.HashIndexOptions;
+import com.arangodb.model.PersistentIndexOptions;
 import com.arangodb.velocypack.VPackSlice;
 import identity.hoprxi.core.domain.model.id.Enablement;
 import identity.hoprxi.core.domain.model.id.Group;
@@ -61,16 +61,17 @@ public class IdentitySetup {
         }
         //index
         Collection<String> index = new ArrayList<>();
+        PersistentIndexOptions persistentIndexOptions = new PersistentIndexOptions().unique(true);
         //SkiplistIndexOptions indexOptions = new SkiplistIndexOptions().sparse(true);
         index.add("username");
         index.add("telephoneNumber");
-        HashIndexOptions hashIndexOptions = new HashIndexOptions().unique(true);
-        db.collection("user").ensureHashIndex(index, hashIndexOptions);
+        index.add("email");
+        db.collection("user").ensurePersistentIndex(index, persistentIndexOptions);
         //index
         index.clear();
         index.add("name");
-        db.collection("group").ensureHashIndex(index, hashIndexOptions);
-        db.collection("role").ensureHashIndex(index, hashIndexOptions);
+        db.collection("group").ensurePersistentIndex(index, persistentIndexOptions);
+        db.collection("role").ensurePersistentIndex(index, persistentIndexOptions);
         /*
         //edge
         CollectionCreateOptions edgeOptions = new CollectionCreateOptions().type(CollectionType.EDGES);

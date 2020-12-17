@@ -39,22 +39,26 @@ public class UserService {
      * @param id
      * @param username
      * @param password
-     * @param cellphoneNumber
+     * @param telephoneNumber
      * @param enablement
      * @return
      */
-    public UserDescriptor registerUser(String id, String username, String password, String cellphoneNumber, Enablement enablement) {
+    public UserDescriptor registerUser(String id, String username, String password, String telephoneNumber, String email, Enablement enablement) {
         User user = repository.find(id);
         if (user != null)
             return UserDescriptor.NullUserDescriptor;
         if (repository.isUsernameExists(username))
             return UserDescriptor.NullUserDescriptor;
-        if (repository.isTelephoneNumberExists(cellphoneNumber))
+        if (repository.isTelephoneNumberExists(telephoneNumber))
             return UserDescriptor.NullUserDescriptor;
         user = new User(id, username, password);
         repository.save(user);
-        DomainRegistry.domainEventPublisher().publish(new UserCreated(id, username, cellphoneNumber, enablement));
+        DomainRegistry.domainEventPublisher().publish(new UserCreated(id, username, telephoneNumber, enablement));
         return user.toUserDescriptor();
+    }
+
+    public UserDescriptor registerUser(String id, String username, String password) {
+        return registerUser(id, username, password, null, null, Enablement.PERMANENCE);
     }
 
     /**
@@ -70,6 +74,4 @@ public class UserService {
             return user.toUserDescriptor();
         return UserDescriptor.NullUserDescriptor;
     }
-
-
 }

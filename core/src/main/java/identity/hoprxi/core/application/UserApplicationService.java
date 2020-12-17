@@ -19,11 +19,13 @@ package identity.hoprxi.core.application;
 import identity.hoprxi.core.application.command.ChangeUserPasswordCommand;
 import identity.hoprxi.core.application.command.ChangeUsernameCommand;
 import identity.hoprxi.core.application.command.RegisterUserCommand;
-import identity.hoprxi.core.domain.model.id.*;
+import identity.hoprxi.core.domain.model.id.User;
+import identity.hoprxi.core.domain.model.id.UserDescriptor;
+import identity.hoprxi.core.domain.model.id.UserRepository;
+import identity.hoprxi.core.domain.model.id.UserService;
 import identity.hoprxi.core.domain.servers.PasswordService;
 import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -48,9 +50,7 @@ public final class UserApplicationService {
             password = passwordService.generateStrongPassword();
         return userService.registerUser(userRepository.nextIdentity(),
                 registerUserCommand.getUsername(),
-                password,
-                "",
-                new Enablement(true, LocalDateTime.now().plusDays(EXPIRED_DAYS)));
+                password);
     }
 
     public void changeUserPassword(ChangeUserPasswordCommand changeUserPasswordCommand) {

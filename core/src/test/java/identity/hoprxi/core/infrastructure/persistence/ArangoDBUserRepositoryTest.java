@@ -52,7 +52,7 @@ public class ArangoDBUserRepositoryTest {
         repository.save(shifu);
         User dashixiong = new User("dashixiong", "孙悟空", "Qwe1234653", "18982455055", "gutemP@126.com", new Enablement(true, LocalDateTime.now().plusMinutes(30)));
         repository.save(dashixiong);
-        User ershixiong = new User("ershixiong", "猪八戒", "Qwe1234655", "18982455066", null, new Enablement(true, LocalDateTime.now().plusMinutes(15)));
+        User ershixiong = new User("ershixiong", "猪八戒", "Qwe1234655", "18982455066", "5227436@qq.com", new Enablement(true, LocalDateTime.now().plusMinutes(15)));
         repository.save(ershixiong);
         User shasheng = new User("shasheng", "沙僧", "Qwe12346535");
         repository.save(shasheng);
@@ -75,7 +75,8 @@ public class ArangoDBUserRepositoryTest {
         Assert.assertEquals(1, users.length);
     }
 
-    @Test
+
+    @Test(invocationCount = 2, threadPoolSize = 1)
     public void nextIdentity() throws Exception {
         Assert.assertNotNull(repository.nextIdentity());
     }
