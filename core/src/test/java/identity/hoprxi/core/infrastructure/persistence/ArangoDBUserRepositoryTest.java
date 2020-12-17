@@ -59,7 +59,7 @@ public class ArangoDBUserRepositoryTest {
         User xiaobai = new User("bailongma", "白龙马", "Qwe12346535");
         repository.save(xiaobai);
         repository.save(User.ANONYMOUS);
-        User xiaobian = new User("xiaobian", "19982455055", "Qwe1246%5");
+        User xiaobian = new User("xiaobian", "13679692308", "Qwe1246%5");
         repository.save(xiaobian);
     }
 
@@ -85,7 +85,7 @@ public class ArangoDBUserRepositoryTest {
         User chang = repository.find("dashixiong");
         chang.rename("看我七十二变->牛魔王");
         chang.changTelephoneNumber("17782455066");
-        chang.changPassword("Qwe1234653", "guanQ24,.io23");
+        chang.changPassword("guanQ24,.io23");
         //chang.defineEnablement(Enablement.PERMANENCE);
         repository.save(chang);
         chang = repository.telephoneNumberAuthenticCredentials("17782455066", "guanQ24,.io23");

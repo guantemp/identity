@@ -55,7 +55,7 @@ public final class UserApplicationService {
 
     public void changeUserPassword(ChangeUserPasswordCommand changeUserPasswordCommand) {
         User user = existingUser(changeUserPasswordCommand.getCurrentPassword());
-        user.changPassword(changeUserPasswordCommand.getCurrentPassword(), changeUserPasswordCommand.getChangedPassword());
+        user.changPassword(changeUserPasswordCommand.getChangedPassword());
     }
 
     public void changeUsername(ChangeUsernameCommand changeUsernameCommand) {

@@ -186,8 +186,7 @@ public class ArangoDBUserRepository implements UserRepository {
         if (!slice.get("email").isNone())
             email = slice.get("email").getAsString();
         boolean enable = slice.get("enablement").get("enable").getAsBoolean();
-        //ISO_LOCAL_DATE
-        LocalDateTime expirationDate = LocalDateTime.parse(slice.get("enablement").get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        LocalDateTime expirationDate = LocalDateTime.parse(slice.get("enablement").get("deadline").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         // System.out.println(expirationDate);
         Enablement enablement = Enablement.getInstance(enable, expirationDate);
         String password = slice.get("password").getAsString();

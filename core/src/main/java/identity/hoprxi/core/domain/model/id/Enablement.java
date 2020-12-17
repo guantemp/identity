@@ -27,45 +27,59 @@ public class Enablement {
     private static final LocalDateTime DAY_OF_INFAMY = LocalDateTime.of(2015, 3, 26, 0, 0);
     public static final Enablement PERMANENCE = new Enablement(true, DAY_OF_INFAMY) {
         @Override
-        public boolean isExpired() {
+        public boolean isOverdue() {
             return false;
         }
     };
     private boolean enable;
-    private LocalDateTime expiryDate;
+    private LocalDateTime deadline;
 
     /**
      * @param enable
-     * @param expiryDate
+     * @param deadline
      * @throws IllegalArgumentException if expirationDate is past time
      */
-    public Enablement(boolean enable, LocalDateTime expiryDate) {
+    public Enablement(boolean enable, LocalDateTime deadline) {
         this.enable = enable;
-        setExpiryDate(expiryDate);
+        setDeadline(deadline);
     }
 
-    public static Enablement getInstance(boolean enable, LocalDateTime expirationDate) {
-        if (enable && DAY_OF_INFAMY.isEqual(expirationDate))
+    public static Enablement getInstance(boolean enable, LocalDateTime deadline) {
+        if (enable && DAY_OF_INFAMY.isEqual(deadline))
             return Enablement.PERMANENCE;
-        return new Enablement(enable, expirationDate);
+        return new Enablement(enable, deadline);
     }
 
-    private void setExpiryDate(LocalDateTime expiryDate) {
-        if (!expiryDate.isEqual(DAY_OF_INFAMY) && expiryDate.isBefore(LocalDateTime.now()))
+    private void setDeadline(LocalDateTime deadline) {
+        if (!deadline.isEqual(DAY_OF_INFAMY) && deadline.isBefore(LocalDateTime.now()))
             throw new IllegalArgumentException("The expiry date must be some time in the future.");
-        this.expiryDate = expiryDate;
+        this.deadline = deadline;
     }
 
     public boolean isEnable() {
         return enable;
     }
 
-    public LocalDateTime expiryDate() {
-        return expiryDate;
+    public LocalDateTime deadline() {
+        return deadline;
     }
 
-    public boolean isExpired() {
-        return LocalDateTime.now().isAfter(expiryDate);
+    public boolean isOverdue() {
+        return LocalDateTime.now().isAfter(deadline);
+    }
+
+    public Enablement changeDeadline(LocalDateTime newExpiryDate) {
+        if (newExpiryDate == null || newExpiryDate.isBefore(LocalDateTime.now()))
+            return this;
+        return new Enablement(enable, newExpiryDate);
+    }
+
+    public Enablement disable() {
+        return new Enablement(false, deadline);
+    }
+
+    public Enablement enable() {
+        return new Enablement(true, deadline);
     }
 
     @Override
@@ -76,13 +90,13 @@ public class Enablement {
         Enablement that = (Enablement) o;
 
         if (enable != that.enable) return false;
-        return expiryDate != null ? expiryDate.equals(that.expiryDate) : that.expiryDate == null;
+        return deadline != null ? deadline.equals(that.deadline) : that.deadline == null;
     }
 
     @Override
     public int hashCode() {
         int result = (enable ? 1 : 0);
-        result = 31 * result + (expiryDate != null ? expiryDate.hashCode() : 0);
+        result = 31 * result + (deadline != null ? deadline.hashCode() : 0);
         return result;
     }
 
@@ -90,7 +104,7 @@ public class Enablement {
     public String toString() {
         return "Enablement{" +
                 "enable=" + enable +
-                ", expiryDate=" + expiryDate +
+                ", deadline=" + deadline +
                 '}';
     }
 }

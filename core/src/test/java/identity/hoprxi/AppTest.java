@@ -34,8 +34,8 @@ public class AppTest {
 
     @Test
     public void test() {
-        String username = null;
-        boolean tf = Optional.ofNullable(username).map(u -> username.length() > 1 || username.length() <= 255).orElse(false);
+        String str1 = null;
+        boolean tf = Optional.ofNullable(str1).map(u -> str1.length() > 1 || str1.length() <= 255).orElse(false);
         Assert.assertFalse(tf);
         String str2 = "sdgftusd";
         Assert.assertTrue(Optional.ofNullable(str2).map(u -> str2.length() > 6 && str2.length() <= 255).orElse(false));
@@ -45,5 +45,13 @@ public class AppTest {
         System.out.println(EMAIL_PATTERN.matcher("327885095@qq.com").matches());
         Enablement enablement = new Enablement(true, LocalDateTime.now().plusMinutes(15));
         System.out.println(Optional.ofNullable(enablement).map(e -> enablement).orElse(Enablement.PERMANENCE));
+
+        String telephoneNumber = null;
+        String username = "13679692308";
+        Pattern MOBILE_CN_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
+        Pattern FIXED_TELEPHONE_CN_PATTERN = Pattern.compile("^(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)$");
+        if (null == telephoneNumber && (MOBILE_CN_PATTERN.matcher(username).find() || FIXED_TELEPHONE_CN_PATTERN.matcher(username).find()))
+            telephoneNumber = username;
+        System.out.println(telephoneNumber);
     }
 }

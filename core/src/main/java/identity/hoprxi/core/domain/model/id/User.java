@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 public class User {
     public static final User ANONYMOUS = new User() {
         @Override
-        public void changPassword(String currentPassword, String newPassword) {
+        public void changPassword(String newPassword) {
             //do nothing
         }
 
@@ -125,40 +125,6 @@ public class User {
         this(id, username, password, null, null, Enablement.PERMANENCE);
     }
 
-
-    /**
-     * @param currentPassword
-     * @param newPassword
-     * @throws IllegalArgumentException if password no change or currentPassword isn't correct
-     */
-    public void changPassword(String currentPassword, String newPassword) {
-        currentPassword = Objects.requireNonNull(currentPassword, "currentPassword is required");
-        if (currentPassword.equals(newPassword))
-            throw new IllegalArgumentException("password not chang.");
-        if (!DomainRegistry.hashService().check(currentPassword, password))
-            throw new IllegalArgumentException("currentPassword not confirmed.");
-        protectPassword(newPassword);
-        DomainRegistry.domainEventPublisher().publish(new UserPasswordChanged(id));
-    }
-
-    /**
-     * @param telephoneNumber
-     */
-    public void changTelephoneNumber(String telephoneNumber) {
-        if (null != telephoneNumber && !this.telephoneNumber.equals(telephoneNumber) &&
-                (MOBILE_CN_PATTERN.matcher(telephoneNumber).find() || FIXED_TELEPHONE_CN_PATTERN.matcher(telephoneNumber).find())) {
-            this.telephoneNumber = telephoneNumber;
-            DomainRegistry.domainEventPublisher().publish(new UserTelephoneNumberChanged(id, telephoneNumber));
-        }
-    }
-
-    public void rename(String username) {
-        if (!this.username.equals(username)) {
-            setUsername(username);
-            DomainRegistry.domainEventPublisher().publish(new UserRenamed(id, username));
-        }
-    }
-
     /**
      * @param enablement
      */
@@ -182,6 +148,13 @@ public class User {
         this.username = username;
     }
 
+    public void rename(String username) {
+        if (!this.username.equals(username)) {
+            setUsername(username);
+            DomainRegistry.domainEventPublisher().publish(new UserRenamed(id, username));
+        }
+    }
+
     /**
      * @param password
      * @throws IllegalArgumentException if password is weak
@@ -192,6 +165,16 @@ public class User {
         this.password = DomainRegistry.hashService().hash(password);
     }
 
+    /**
+     * @param newPassword
+     * @throws IllegalArgumentException if password no change or currentPassword isn't correct
+     */
+    public void changPassword(String newPassword) {
+        if (null != newPassword && !DomainRegistry.hashService().check(newPassword, password)) {
+            protectPassword(newPassword);
+            DomainRegistry.domainEventPublisher().publish(new UserPasswordChanged(id));
+        }
+    }
 
     public String telephoneNumber() {
         return telephoneNumber;
@@ -200,10 +183,22 @@ public class User {
     private void setTelephoneNumber(String telephoneNumber) {
         if (null != telephoneNumber && !MOBILE_CN_PATTERN.matcher(telephoneNumber).find() && !FIXED_TELEPHONE_CN_PATTERN.matcher(telephoneNumber).find())
             throw new IllegalArgumentException("Illegal telephone number");
-        if (null == telephoneNumber && MOBILE_CN_PATTERN.matcher(username).find() && FIXED_TELEPHONE_CN_PATTERN.matcher(username).find())
+        if (null == telephoneNumber && (MOBILE_CN_PATTERN.matcher(username).find() || FIXED_TELEPHONE_CN_PATTERN.matcher(username).find()))
             telephoneNumber = username;
         this.telephoneNumber = telephoneNumber;
     }
+
+    /**
+     * @param telephoneNumber
+     */
+    public void changTelephoneNumber(String telephoneNumber) {
+        if (null != telephoneNumber && !this.telephoneNumber.equals(telephoneNumber) &&
+                (MOBILE_CN_PATTERN.matcher(telephoneNumber).find() || FIXED_TELEPHONE_CN_PATTERN.matcher(telephoneNumber).find())) {
+            this.telephoneNumber = telephoneNumber;
+            DomainRegistry.domainEventPublisher().publish(new UserTelephoneNumberChanged(id, telephoneNumber));
+        }
+    }
+
 
     public String id() {
         return id;
@@ -234,6 +229,12 @@ public class User {
         this.email = email;
     }
 
+    public void changeEmail(String newEmail) {
+        if (newEmail != null && !newEmail.equals(email) && EMAIL_PATTERN.matcher(username).find()) {
+            email = newEmail;
+        }
+    }
+
     public Enablement enablement() {
         return enablement;
     }
@@ -243,7 +244,7 @@ public class User {
     }
 
     public boolean isAvailable() {
-        return enablement.isEnable() && !enablement.isExpired();
+        return enablement.isEnable() && !enablement.isOverdue();
     }
 
     public Creator toCreator() {
@@ -251,7 +252,7 @@ public class User {
     }
 
     public UserDescriptor toUserDescriptor() {
-        return new UserDescriptor(id, username, enablement.expiryDate());
+        return new UserDescriptor(id, username, enablement.deadline());
     }
 
     public GroupMember toGroupMember() {
