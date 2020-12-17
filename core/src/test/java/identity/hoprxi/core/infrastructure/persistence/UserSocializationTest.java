@@ -48,9 +48,9 @@ public class UserSocializationTest {
      */
     @BeforeClass
     public void setUpBeforeClass() {
-        User lili = new User("lili", "唐僧", "Qwe123465", "13679682301", new Enablement(true, LocalDateTime.now().plusDays(40)));
+        User lili = new User("lili", "唐僧", "Qwe123465", "13679682301", null, new Enablement(true, LocalDateTime.now().plusDays(40)));
         repository.save(lili);
-        User shasheng = new User("shasheng", "沙僧", "Qwe12346535", "18982435170");
+        User shasheng = new User("shasheng", "沙僧", "Qwe12346535", "18982435170", null, Enablement.PERMANENCE);
         repository.save(shasheng);
     }
 

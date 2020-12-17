@@ -49,7 +49,7 @@ public final class UserApplicationService {
         return userService.registerUser(userRepository.nextIdentity(),
                 registerUserCommand.getUsername(),
                 password,
-                registerUserCommand.getNickname(),
+                "",
                 new Enablement(true, LocalDateTime.now().plusDays(EXPIRED_DAYS)));
     }
 

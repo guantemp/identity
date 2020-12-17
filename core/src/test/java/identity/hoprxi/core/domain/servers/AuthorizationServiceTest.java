@@ -48,21 +48,21 @@ public class AuthorizationServiceTest {
 
     @BeforeClass
     public static void setUpBeforeClass() {
-        User Bailong = new User("Bailong", "白龙马", "@ewt56gh", "18982455058", Enablement.FOREVER);
+        User Bailong = new User("Bailong", "白龙马", "@ewt56gh", "18982455058", null, Enablement.PERMANENCE);
         userRepository.save(Bailong);
 
         Role cashier = new Role("cashier", "收银员", "收钱的");
-        User Sand_Monk = new User("Sand_Monk", "沙僧", ")dgdf324", "18982455057", Enablement.FOREVER);
+        User Sand_Monk = new User("Sand_Monk", "沙僧", ")dgdf324", "18982455057", null, Enablement.PERMANENCE);
         userRepository.save(Sand_Monk);
         cashier.assignUser(Sand_Monk);
         roleRepository.save(cashier);
-        User Zhu_Bajie = new User("Zhu_Bajie", "猪八戒", "Wfhf456", "13679692301", Enablement.FOREVER);
+        User Zhu_Bajie = new User("Zhu_Bajie", "猪八戒", "Wfhf456", "13679692301", null, Enablement.PERMANENCE);
         cashier.assignUser(Zhu_Bajie);
         userRepository.save(Zhu_Bajie);
         roleRepository.save(cashier);
 
         Role cashierSupr = new Role("cashierSupr", "收银主管", "收银员的老大");
-        User Son_Goku = new User("Sun_WuKong", "孫悟空", "%dfhdfs26", "0830-2135679", Enablement.FOREVER);
+        User Son_Goku = new User("Sun_WuKong", "孫悟空", "%dfhdfs26", "0830-2135679", null, Enablement.PERMANENCE);
         cashierSupr.assignUser(Son_Goku);
         userRepository.save(Son_Goku);
         roleRepository.save(cashierSupr);
@@ -70,7 +70,7 @@ public class AuthorizationServiceTest {
         roleRepository.save(cashier);
 
         Role CFO = new Role("CFO", "财务总监", "财政一把手，对董事会负责");
-        User tang = new User("tang", "唐僧", "wtfgvvdgdf", "18982455056", Enablement.FOREVER);
+        User tang = new User("tang", "唐僧", "wtfgvvdgdf", "18982455056", null, Enablement.PERMANENCE);
         CFO.assignUser(tang);
         userRepository.save(tang);
         roleRepository.save(CFO);

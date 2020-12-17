@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 www.hoprxi.com All rights Reserved.
+ * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ public class PasswordServiceTest {
     public void generateStrongPassword() {
         PasswordService ps = new PasswordService();
         Assert.assertTrue(ps.isStrong(ps.generateStrongPassword()));
+        System.out.println(ps.generateStrongPassword());
+        System.out.println(ps.generateStrongPassword());
     }
 
     @Test

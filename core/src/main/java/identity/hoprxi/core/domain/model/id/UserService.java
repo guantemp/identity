@@ -51,7 +51,7 @@ public class UserService {
             return UserDescriptor.NullUserDescriptor;
         if (repository.isTelephoneNumberExists(cellphoneNumber))
             return UserDescriptor.NullUserDescriptor;
-        user = new User(id, username, password, cellphoneNumber, enablement);
+        user = new User(id, username, password);
         repository.save(user);
         DomainRegistry.domainEventPublisher().publish(new UserCreated(id, username, cellphoneNumber, enablement));
         return user.toUserDescriptor();

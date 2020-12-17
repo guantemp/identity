@@ -1,36 +1,35 @@
 /*
- *  Copyright 2018 www.hoprxi.com All rights Reserved.
+ * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
  */
 package identity.hoprxi.core.domain.servers;
 
 import java.util.Objects;
 import java.util.Random;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.hoprxi.com/author/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 20171225
+ * @version 0.0.1 2020-12-25
  */
-public final class PasswordService {
+public class PasswordService {
     private static final String DIGITS = "0123456789";
     private static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final int STRONG_THRESHOLD = 20;
     private static final String SYMBOLS = "\"`!?$?%^&*()_-+={[}]:;@'~#|\\<,>.?/";
+    private static final int STRONG_THRESHOLD = 20;
     private static final int VERY_STRONG_THRESHOLD = 40;
     private static final Pattern CHINESE_PATTERN = Pattern.compile("[\u4e00-\u9fa5]");
 
@@ -39,11 +38,7 @@ public final class PasswordService {
     }
 
     private boolean isContainChinese(String str) {
-        Matcher m = CHINESE_PATTERN.matcher(str);
-        if (m.find()) {
-            return true;
-        }
-        return false;
+        return CHINESE_PATTERN.matcher(str).matches();
     }
 
     private int calculatePasswordStrength(String plainTextPassword) {
@@ -90,7 +85,7 @@ public final class PasswordService {
      */
     public String generateStrongPassword() {
         String generatedPassword = null;
-        StringBuffer password = new StringBuffer();
+        StringBuilder password = new StringBuilder();
         Random random = new Random();
         boolean isStrong = false;
         int index = 0;

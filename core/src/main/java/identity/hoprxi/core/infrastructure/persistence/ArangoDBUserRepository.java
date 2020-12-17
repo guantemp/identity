@@ -53,7 +53,7 @@ public class ArangoDBUserRepository implements UserRepository {
         try {
             passwordField = User.class.getDeclaredField("password");
             passwordField.setAccessible(true);
-            userConstructor = User.class.getDeclaredConstructor(String.class, String.class, String.class, Enablement.class);
+            userConstructor = User.class.getDeclaredConstructor(String.class, String.class, String.class, String.class, Enablement.class);
             userConstructor.setAccessible(true);
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             if (LOGGER.isDebugEnabled()) {
@@ -178,14 +178,20 @@ public class ArangoDBUserRepository implements UserRepository {
         String id = slice.get(DocumentField.Type.KEY.getSerializeName()).getAsString();
         if (id.equals(User.ANONYMOUS.id()))
             return User.ANONYMOUS;
+        String username = slice.get("username").getAsString();
+        String telephoneNumber = null;
+        if (!slice.get("telephoneNumber").isNone())
+            telephoneNumber = slice.get("telephoneNumber").getAsString();
+        String email = null;
+        if (!slice.get("email").isNone())
+            email = slice.get("email").getAsString();
         boolean enable = slice.get("enablement").get("enable").getAsBoolean();
-        LocalDateTime expirationDate = LocalDateTime.parse(slice.get("enablement").get("expirationDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        //ISO_LOCAL_DATE
+        LocalDateTime expirationDate = LocalDateTime.parse(slice.get("enablement").get("expiryDate").getAsString(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         // System.out.println(expirationDate);
         Enablement enablement = new Enablement(enable, expirationDate);
-        String username = slice.get("username").getAsString();
-        String telephoneNumber = slice.get("telephoneNumber").getAsString();
         String password = slice.get("password").getAsString();
-        User user = userConstructor.newInstance(id, username, telephoneNumber, enablement);
+        User user = userConstructor.newInstance(id, username, telephoneNumber, email, enablement);
         //User user =new User(id,username,password,telephoneNumber,enablement);
         passwordField.set(user, password);
         return user;

@@ -39,25 +39,28 @@ public class ArangoDBUserRepositoryTest {
 
     @AfterClass
     public static void teardown() {
-        repository.remove("shifu");
-        repository.remove("ershixiong");
-        repository.remove("dashixiong");
-        repository.remove(User.ANONYMOUS.id());
+        //repository.remove("shifu");
+        //repository.remove("ershixiong");
+        //repository.remove("dashixiong");
+        //repository.remove("xiaobian");
+        //repository.remove(User.ANONYMOUS.id());
     }
 
     @BeforeClass
     public void setUpBeforeClass() throws Exception {
-        User shifu = new User("shifu", "唐僧", "Qwe123465", "13679682333", new Enablement(true, LocalDateTime.now().plusDays(40)));
+        User shifu = new User("shifu", "唐僧", "Qwe123465", "13679682333", "32788595@qq.com", new Enablement(true, LocalDateTime.now().plusDays(40)));
         repository.save(shifu);
-        User dashixiong = new User("dashixiong", "孙悟空", "Qwe1234653", "18982455055", new Enablement(true, LocalDateTime.now().plusSeconds(30)));
+        User dashixiong = new User("dashixiong", "孙悟空", "Qwe1234653", "18982455055", "gutemP@126.com", new Enablement(true, LocalDateTime.now().plusSeconds(30)));
         repository.save(dashixiong);
-        User ershixiong = new User("ershixiong", "猪八戒", "Qwe1234655", "18982455066", new Enablement(true, LocalDateTime.now().plusMinutes(15)));
+        User ershixiong = new User("ershixiong", "猪八戒", "Qwe1234655", "18982455066", null, new Enablement(true, LocalDateTime.now().plusMinutes(15)));
         repository.save(ershixiong);
-        User shasheng = new User("shasheng", "沙僧", "Qwe12346535", "18982435170");
+        User shasheng = new User("shasheng", "沙僧", "Qwe12346535");
         repository.save(shasheng);
-        User xiaobai = new User("bailongma", "白龙马", "Qwe12346535", "18982495270");
+        User xiaobai = new User("bailongma", "白龙马", "Qwe12346535");
         repository.save(xiaobai);
         repository.save(User.ANONYMOUS);
+        User xiaobian = new User("xiaobian", "19982455055", "Qwe1246%5");
+        repository.save(xiaobian);
     }
 
     @Test
@@ -68,7 +71,7 @@ public class ArangoDBUserRepositoryTest {
         Assert.assertEquals(2, users.length);
         users = repository.all(2, 2);
         Assert.assertEquals(2, users.length);
-        users = repository.all(5, 1);
+        users = repository.all(6, 1);
         Assert.assertEquals(1, users.length);
     }
 
@@ -83,7 +86,7 @@ public class ArangoDBUserRepositoryTest {
         chang.rename("看我七十二变->牛魔王");
         chang.changTelephoneNumber("17782455066");
         chang.changPassword("Qwe1234653", "guanQ24,.io23");
-        chang.defineEnablement(Enablement.FOREVER);
+        chang.defineEnablement(Enablement.PERMANENCE);
         repository.save(chang);
         chang = repository.telephoneNumberAuthenticCredentials("17782455066", "guanQ24,.io23");
         Assert.assertEquals("17782455066", chang.telephoneNumber());
@@ -108,10 +111,10 @@ public class ArangoDBUserRepositoryTest {
     public void isExists() throws Exception {
         Assert.assertTrue(repository.isUsernameExists("唐僧"));
         Assert.assertTrue(repository.isTelephoneNumberExists("18982455055"));
-        Assert.assertTrue(repository.isUsernameExists("白龙马"));
-        Assert.assertTrue(repository.isTelephoneNumberExists("18982495270"));
-        repository.remove("bailongma");
-        Assert.assertFalse(repository.isUsernameExists("白龙马"));
-        Assert.assertFalse(repository.isTelephoneNumberExists("18982495270"));
+        Assert.assertTrue(repository.isUsernameExists("猪八戒"));
+        Assert.assertTrue(repository.isTelephoneNumberExists("18982455066"));
+        repository.remove("ershixiong");
+        Assert.assertFalse(repository.isUsernameExists("猪八戒"));
+        Assert.assertFalse(repository.isTelephoneNumberExists("18982455066"));
     }
 }

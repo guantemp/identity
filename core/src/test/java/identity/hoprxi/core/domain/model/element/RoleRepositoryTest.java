@@ -41,21 +41,21 @@ public class RoleRepositoryTest {
     public static void setUpBeforeClass() {
         Group finance_and_accounting_department = new Group("finance_and_accounting_department", "财会科", "管理收银员");
 
-        User a = new User("laoda_2", "如来", "ewtredsf", "13679692308", new Enablement(true, LocalDateTime.now().plusDays(30)));
+        User a = new User("laoda_2", "如来", "ewtredsf", "13679692308", null, new Enablement(true, LocalDateTime.now().plusDays(30)));
         userRepository.save(a);
         finance_and_accounting_department.addUser(a);
         groupRepository.save(finance_and_accounting_department);
 
         Group cashier_leader = new Group("cashier_leader", "收银组长");
-        User c = new User("shifu", "唐僧", "Etrtwq676565", "13679692302", new Enablement(true, LocalDateTime.now().plusDays(30)));
+        User c = new User("shifu", "唐僧", "Etrtwq676565", "13679692302", null, new Enablement(true, LocalDateTime.now().plusDays(30)));
         userRepository.save(c);
         cashier_leader.addUser(c);
         groupRepository.save(cashier_leader);
 
         Group cashier = new Group("cashier", "收银员组", "受限的收银员组别");
-        User d = new User("da", "孙悟空", "Etrtwq676565", "13679692303", new Enablement(true, LocalDateTime.now().plusDays(30)));
+        User d = new User("da", "孙悟空", "Etrtwq676565", "13679692303", null, new Enablement(true, LocalDateTime.now().plusDays(30)));
         userRepository.save(d);
-        User e = new User("er", "猪八戒", "Etrtwq6565", "13679692304", new Enablement(true, LocalDateTime.now().plusDays(30)));
+        User e = new User("er", "猪八戒", "Etrtwq6565", "13679692304", null, new Enablement(true, LocalDateTime.now().plusDays(30)));
         userRepository.save(e);
         cashier.addUser(d);
         cashier.addUser(e);
@@ -65,7 +65,7 @@ public class RoleRepositoryTest {
 
         Role cfo = new Role("CFO", "财务总监", "管理公司所有钱有关的事");
         cfo.assignGroup(finance_and_accounting_department, service);
-        User b = new User("laoda_1", "观音", "ewtr35edsf", "13679692309", new Enablement(true, LocalDateTime.now().plusDays(30)));
+        User b = new User("laoda_1", "观音", "ewtr35edsf", "13679692309", null, new Enablement(true, LocalDateTime.now().plusDays(30)));
         userRepository.save(b);
         cfo.assignUser(b);
         roleRepository.save(cfo);

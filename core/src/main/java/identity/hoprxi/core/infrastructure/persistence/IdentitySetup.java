@@ -106,7 +106,7 @@ public class IdentitySetup {
 
         for (int i = 0; i < 8; i++) {
             User user = new User(String.valueOf(LongId.generate()),
-                    "Qwe1234" + i, "测试中文" + i, "Qwe1234" + i, new Enablement(true, LocalDateTime.now().plusDays(45)));
+                    "Qwe1234" + i, "测试中文" + i, "Qwe1234" + i, null, new Enablement(true, LocalDateTime.now().plusDays(45)));
             VertexEntity du = graph.vertexCollection("user").insertVertex(user);
             //graph.edgeCollection("contain").insertEdge(new ArangoDBGroupRepository.ActEdge(g1.getId(), du.getId()));
         }
@@ -114,7 +114,7 @@ public class IdentitySetup {
         VertexEntity eu = graph.vertexCollection("user").insertVertex(User.ANONYMOUS);
         //graph.edgeCollection("contain").insertEdge(new ArangoDBGroupRepository.ActEdge(g1.getId(), eu.getId()));
 
-        User test = new User("admin", "Qwe1234", "管理员", "13679692305", Enablement.FOREVER);
+        User test = new User("admin", "Qwe1234", "管理员", "13679692305", null, Enablement.PERMANENCE);
         eu = graph.vertexCollection("user").insertVertex(test);
         // EdgeEntity edge = graph.edgeCollection("contain").insertEdge(new ArangoDBGroupRepository.ActEdge(g.getId(), eu.getId()));
         VPackSlice slice = graph.vertexCollection("user").getVertex("admin", VPackSlice.class);

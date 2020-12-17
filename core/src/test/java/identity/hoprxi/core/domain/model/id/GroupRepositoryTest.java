@@ -38,8 +38,8 @@ public class GroupRepositoryTest {
     @BeforeClass
     public static void setUpBeforeClass() {
         Group cashier = new Group("cashier", "收银员_A组", "被限制权力的收银员");
-        User u1 = new User("chuxianzi", "楚仙子", "32545eter75", "0833-2175215", new Enablement(true, LocalDateTime.now().plusMinutes(5)));
-        User u2 = new User("wanghao", "王浩", "436843idsio", "0830-2117535", new Enablement(true, LocalDateTime.now().plusDays(3)));
+        User u1 = new User("chuxianzi", "楚仙子", "32545eter75", "0833-2175215", null, new Enablement(true, LocalDateTime.now().plusMinutes(5)));
+        User u2 = new User("wanghao", "王浩", "436843idsio", "0830-2117535", null, new Enablement(true, LocalDateTime.now().plusDays(3)));
         userRepository.save(u1);
         userRepository.save(u2);
         cashier.addUser(u1);
@@ -47,7 +47,7 @@ public class GroupRepositoryTest {
         groupRepository.save(cashier);
 
         Group director_of_the_cashier = new Group("director_of_the_cashier", "收银主管", "前台收银管理全部权限");
-        User u3 = new User("13679692301", "观自在", "asd79692301", "13679692301", new Enablement(true, LocalDateTime.now().plusDays(30)));
+        User u3 = new User("13679692301", "观自在", "asd79692301", "13679692301", null, new Enablement(true, LocalDateTime.now().plusDays(30)));
         userRepository.save(u3);
         director_of_the_cashier.addUser(u3);
         groupRepository.save(director_of_the_cashier);
@@ -91,7 +91,7 @@ public class GroupRepositoryTest {
 
         User aUser = userRepository.find("13679692301");
         userRepository.find("chuxianzi");
-        User bUser = new User("root", "root", "Qwe123465", "0431-4567890", Enablement.FOREVER);
+        User bUser = new User("root", "root", "Qwe123465", "0431-4567890", null, Enablement.PERMANENCE);
         Assert.assertTrue(cashier_Group.isUserInGroup(aUser, service));
         Assert.assertFalse(cashier_Group.isUserInGroup(bUser, service));
 

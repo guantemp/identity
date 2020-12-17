@@ -18,6 +18,7 @@
 package identity.hoprxi.core.domain.model.element;
 
 import identity.hoprxi.core.domain.model.id.Creator;
+import identity.hoprxi.core.domain.model.id.Enablement;
 import identity.hoprxi.core.domain.model.id.User;
 import identity.hoprxi.core.domain.model.id.UserRepository;
 import identity.hoprxi.core.infrastructure.persistence.ArangoDBResourceRepository;
@@ -34,7 +35,7 @@ public class ResourceRepositoryTest {
 
     @BeforeClass
     public static void setUp() {
-        User admin = new User("admin", "管理员", "ERSdgre7783", "0830-2517210");
+        User admin = new User("admin", "管理员", "ERSdgre7783", "0830-2517210", null, Enablement.PERMANENCE);
         userRepository.save(admin);
         creator = admin.toCreator();
 

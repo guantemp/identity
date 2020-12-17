@@ -18,18 +18,15 @@ package identity.hoprxi.auth.servlet;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import identity.hoprxi.core.application.UserApplicationService;
-import identity.hoprxi.core.application.command.RegisterUserCommand;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
-import mi.hoprxi.util.NumberHelper;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Optional;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -49,49 +46,95 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        boolean authentica = NumberHelper.booleanOf((String) session.getAttribute("authentica"));
-        if (authentica) {
-            JsonFactory jasonFactory = new JsonFactory();
-            JsonParser parser = jasonFactory.createParser(request.getInputStream());
-            String username = null;
-            String cellphoneNumber = null;
-            String password = null;
-            while (parser.nextToken() != JsonToken.END_OBJECT) {
-                String fieldname = parser.getCurrentName();
-                switch (fieldname) {
+        String command = "registerByPassword";
+        String username = null;
+        String password = null;
+        String confirmPassword = null;
+        String unionId = null;
+        String thirdParty = null;
+        int smsCode = 0;
+        JsonFactory jasonFactory = new JsonFactory();
+        JsonParser parser = jasonFactory.createParser(request.getInputStream());
+        while (!parser.isClosed()) {
+            JsonToken jsonToken = parser.nextToken();
+            if (JsonToken.FIELD_NAME.equals(jsonToken)) {
+                String fieldName = parser.getCurrentName();
+                parser.nextToken();
+                switch (fieldName) {
+                    case "command":
+                        command = parser.getValueAsString();
+                        break;
+                    case "smsCode":
+                        smsCode = parser.getValueAsInt();
+                        break;
                     case "username":
-                        parser.nextValue();
                         username = parser.getValueAsString();
                         break;
-                    case "cellphoneNumber":
-                        parser.nextValue();
-                        cellphoneNumber = parser.getValueAsString();
-                        break;
                     case "password":
-                        parser.nextValue();
                         password = parser.getValueAsString();
+                        break;
+                    case "confirmPassword":
+                        confirmPassword = parser.getValueAsString();
+                        break;
+                    case "unionId":
+                        unionId = parser.getValueAsString();
+                        break;
+                    case "thirdParty":
+                        thirdParty = parser.getValueAsString();
                         break;
                 }
             }
-            RegisterUserCommand registerUserCommand = new RegisterUserCommand(username, password, cellphoneNumber);
-            UserApplicationService userApplicationService = new UserApplicationService();
-            UserDescriptor userDescriptor = userApplicationService.registerUser(registerUserCommand);
-            response.setContentType("application/json; charset=UTF-8");
-            JsonGenerator generator = jasonFactory.createGenerator(response.getOutputStream(), JsonEncoding.UTF8)
-                    .setPrettyPrinter(new DefaultPrettyPrinter());
-            if (userDescriptor == UserDescriptor.NullUserDescriptor) {
-                generator.writeStringField("error", "400");
-                generator.writeStringField("msg", "The user not create");
-            } else {
-                response.setStatus(HttpServletResponse.SC_CREATED);
-                generator.writeStringField("redirectUrl", response.encodeURL(request.getHeader("Referer")));
-            }
-            generator.flush();
-            generator.close();
+        }
+        response.setContentType("application/json; charset=UTF-8");
+        JsonGenerator generator = jasonFactory.createGenerator(response.getOutputStream(), JsonEncoding.UTF8)
+                .setPrettyPrinter(new DefaultPrettyPrinter());
+        UserDescriptor userDescriptor = UserDescriptor.NullUserDescriptor;
+        switch (command) {
+            case "bind":
+                break;
+            case "registerByPassword":
+                userDescriptor = registerUserByPassword(generator, username, password, confirmPassword);
+                break;
+            case "registerBySmsCode":
+                break;
         }
 
+        if (userDescriptor == UserDescriptor.NullUserDescriptor) {
+            generator.writeStringField("error", "400");
+            generator.writeStringField("msg", "The user not create");
+        } else {
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            generator.writeStringField("redirectUrl", response.encodeURL(request.getHeader("Referer")));
+        }
+        generator.flush();
+        generator.close();
+    }
 
+    private UserDescriptor registerUserByPassword(JsonGenerator generator, String username, String password, String confirmPassword) throws IOException {
+        if (!checkUserName(username)) {
+            generator.writeStartObject();
+            generator.writeNumberField("code", 400);
+            generator.writeStringField("msg", "错误/非法的用户名");
+            generator.writeEndObject();
+            return UserDescriptor.NullUserDescriptor;
+        }
+        if (!chekPassword(password, confirmPassword)) {
+            generator.writeStartObject();
+            generator.writeNumberField("code", 400);
+            generator.writeStringField("msg", "密码不符合规范");
+            generator.writeEndObject();
+            return UserDescriptor.NullUserDescriptor;
+        }
+        return UserDescriptor.NullUserDescriptor;
+    }
+
+    private boolean checkUserName(String username) {
+        return Optional.ofNullable(username).map(u -> username.length() > 1 && username.length() <= 255).orElse(false);
+    }
+
+    private boolean chekPassword(String password, String confirmPassword) {
+        Optional.ofNullable(password).map(u -> confirmPassword).map(b -> password.equals(confirmPassword)).orElse(false);
+        return false;
     }
 
     @Override
