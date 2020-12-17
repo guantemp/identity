@@ -252,7 +252,7 @@ public class User {
     }
 
     public UserDescriptor toUserDescriptor() {
-        return new UserDescriptor(id, username, enablement.deadline());
+        return new UserDescriptor(id, username, enablement.isEnable() && !enablement.isOverdue());
     }
 
     public GroupMember toGroupMember() {

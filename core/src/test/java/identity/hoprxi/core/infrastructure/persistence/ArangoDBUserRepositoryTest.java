@@ -39,11 +39,11 @@ public class ArangoDBUserRepositoryTest {
 
     @AfterClass
     public static void teardown() {
-        //repository.remove("shifu");
-        //repository.remove("ershixiong");
-        //repository.remove("dashixiong");
-        //repository.remove("xiaobian");
-        //repository.remove(User.ANONYMOUS.id());
+        repository.remove("shifu");
+        repository.remove("ershixiong");
+        repository.remove("dashixiong");
+        repository.remove("xiaobian");
+        repository.remove(User.ANONYMOUS.id());
     }
 
     @BeforeClass

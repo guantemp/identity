@@ -16,19 +16,18 @@
  */
 package identity.hoprxi.core.domain.model.id;
 
-import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 20171228
+ * @version 0.0.2 2020-12-17
  */
 public class UserDescriptor {
     public static final UserDescriptor NullUserDescriptor = new UserDescriptor();
     private String username;
     private String id;
-    private LocalDateTime expiryDateTime;
+    private boolean available;
 
     /**
      * only for null user descriptor
@@ -36,18 +35,18 @@ public class UserDescriptor {
     private UserDescriptor() {
         this.id = "null";
         this.username = "null user";
-        this.expiryDateTime = LocalDateTime.MAX;
+        this.available = true;
     }
 
     /**
      * @param id
      * @param username
-     * @param expiryDateTime
+     * @param available
      */
-    protected UserDescriptor(String id, String username, LocalDateTime expiryDateTime) {
+    protected UserDescriptor(String id, String username, boolean available) {
         this.id = id;
         this.username = username;
-        this.expiryDateTime = expiryDateTime;
+        this.available = available;
     }
 
     public String username() {
@@ -58,8 +57,8 @@ public class UserDescriptor {
         return id;
     }
 
-    public LocalDateTime expiryDateTime() {
-        return expiryDateTime;
+    public boolean isAvailable() {
+        return available;
     }
 
     @Override
@@ -82,7 +81,7 @@ public class UserDescriptor {
         return new StringJoiner(", ", UserDescriptor.class.getSimpleName() + "[", "]")
                 .add("username='" + username + "'")
                 .add("id='" + id + "'")
-                .add("expiryDateTime=" + expiryDateTime)
+                .add("available=" + available)
                 .toString();
     }
 }
