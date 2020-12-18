@@ -19,6 +19,7 @@ package identity.hoprxi.core.infrastructure.persistence;
 
 import identity.hoprxi.core.domain.model.id.*;
 import org.junit.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -30,50 +31,48 @@ import java.time.LocalDateTime;
  * @version 0.0.1 2020-12-15
  * @since JDK8.0
  */
-public class UserSocializationTest {
+public class ArangoDBSocializationRepositoryTest {
     private static UserRepository repository = new ArangoDBUserRepository("identity");
     private static ArangoDBSocializationRepository socRepository = new ArangoDBSocializationRepository("identity");
     private static UserSocializationService service = new UserSocializationService();
 
-    /*
-            @AfterClass
-            public static void teardown() {
-                repository.remove("lili");
-                repository.remove("shasheng");
-                socRepository.remove("dy325fbg54");
-                socRepository.remove("reyrtuh436235sd");
-                socRepository.remove("sdtyger345634");
-            }
+    @AfterClass
+    public static void teardown() {
+        repository.remove("tangtang");
+        repository.remove("shasheng");
+        socRepository.remove("dy325fbg54");
+        socRepository.remove("ojuOc5fgU_HH2PYklITXWmXfq620");
+        socRepository.remove("sdtyger345634");
+    }
 
-     */
     @BeforeClass
     public void setUpBeforeClass() {
-        User lili = new User("lili", "唐僧", "Qwe123465", "13679682301", null, new Enablement(true, LocalDateTime.now().plusDays(40)));
+        User lili = new User("tangtang", "唐僧", "Qwe123465", "13679682301", null, new Enablement(true, LocalDateTime.now().plusDays(40)));
         repository.save(lili);
         User shasheng = new User("shasheng", "沙僧", "Qwe12346535", "18982435170", null, Enablement.PERMANENCE);
         repository.save(shasheng);
     }
 
-    @Test
+    @Test(priority = 2)
     public void testSave() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        service.bindUser("lili", "dy325fbg54", "WECHAT");
-        service.bindUser("lili", "reyrtuh436235sd", "WECHAT");
-        service.bindUser("shasheng", "sdtyger345634", "QQ");
-        service.bindUser("lili", "f1f1f1f1", "WECHAT");
+        service.bindUser("唐僧", "dy325fbg54", "WECHAT");
+        service.bindUser("沙僧", "ojuOc5fgU_HH2PYklITXWmXfq620", "WECHAT");
+        service.bindUser("唐僧", "sdtyger345634", "QQ");
+        service.bindUser("沙僧", "f1f1f1f1", "WECHAT");
         service.unbindUser("f1f1f1f1");
     }
 
-    @Test
+    @Test(priority = 20)
     public void testFind() {
-        Socialization socialization = socRepository.find("dy325fbg54");
+        Socialization socialization = socRepository.find("ojuOc5fgU_HH2PYklITXWmXfq620");
         Assert.assertNotNull(socialization);
         UserDescriptor userDescriptor = service.getBindUser("dy325fbg54");
-        System.out.println(userDescriptor);
-        userDescriptor = service.getBindUser("dy25fbg54");
+        Assert.assertEquals(userDescriptor.id(), "tangtang");
+        userDescriptor = service.getBindUser("4634567");
         Assert.assertTrue(userDescriptor == UserDescriptor.NullUserDescriptor);
         socialization = socRepository.find("dy325f1bg54");
         Assert.assertNull(socialization);
-        socialization = socRepository.find("f1f1f1f1");
-        Assert.assertNull(socialization);
+        userDescriptor = service.getBindUser("ojuOc5fgU_HH2PYklITXWmXfq620");
+        Assert.assertEquals(userDescriptor.id(), "shasheng");
     }
 }

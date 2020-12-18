@@ -36,10 +36,13 @@ public class UserSocializationService {
     private static final PasswordService passwordService = new PasswordService();
 
     public UserDescriptor registerUser(String username, String password, String telephoneNumber, String email, boolean enable, LocalDateTime deadline) {
+        User user = userRepository.findByUsername(username);
+        if (user != null)
+            throw new UsernameExistsException("{code:40001, message:\"用户名已存在\"}");
         if (password == null || password.isEmpty())
             password = passwordService.generateStrongPassword();
         Enablement enablement = Enablement.getInstance(enable, deadline);
-        User user = new User(userRepository.nextIdentity(), username, password, telephoneNumber, email, enablement);
+        user = new User(userRepository.nextIdentity(), username, password, telephoneNumber, email, enablement);
         userRepository.save(user);
         DomainRegistry.domainEventPublisher().publish(new UserCreated(user.id(), username, telephoneNumber, email, enablement));
         return user.toUserDescriptor();

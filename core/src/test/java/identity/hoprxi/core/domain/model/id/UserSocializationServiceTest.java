@@ -53,5 +53,7 @@ public class UserSocializationServiceTest {
 
     @Test
     public void testGetBindUser() {
+        UserDescriptor userDescriptor = service.getBindUser("ojuOc5fgU_HH2PYklITXWmXfq620");
+        System.out.println(userDescriptor);
     }
 }
