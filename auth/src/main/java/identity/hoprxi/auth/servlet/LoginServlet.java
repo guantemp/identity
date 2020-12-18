@@ -20,8 +20,8 @@ import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import identity.hoprxi.core.application.UserApplicationService;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
-import mi.hoprxi.util.NumberHelper;
 import salt.hoprxi.cache.Cache;
+import salt.hoprxi.utils.NumberHelper;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -161,7 +161,7 @@ public class LoginServlet extends HttpServlet {
                 generator.writeObjectFieldStart("user");
                 generator.writeStringField("id", userDescriptor.id());
                 generator.writeStringField("username", userDescriptor.username());
-                generator.writeStringField("expired", userDescriptor.expiryDateTime().toString());
+                generator.writeBooleanField("available", userDescriptor.isAvailable());
                 generator.writeEndObject();
                 generator.writeEndObject();
             }

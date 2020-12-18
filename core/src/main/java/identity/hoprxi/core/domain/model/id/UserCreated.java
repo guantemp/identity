@@ -57,7 +57,6 @@ public class UserCreated implements DomainEvent {
         return occurredOn;
     }
 
-
     public String username() {
         return username;
     }

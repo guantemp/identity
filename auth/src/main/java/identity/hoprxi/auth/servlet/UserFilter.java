@@ -20,7 +20,7 @@ package identity.hoprxi.auth.servlet;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import identity.hoprxi.core.domain.servers.PasswordService;
-import mi.hoprxi.util.NumberHelper;
+import salt.hoprxi.utils.NumberHelper;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

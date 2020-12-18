@@ -35,16 +35,6 @@ public class UserSocializationService {
     private SocializationRepository socializationRepository = new ArangoDBSocializationRepository("identity");
     private static final PasswordService passwordService = new PasswordService();
 
-
-    /**
-     * @param username
-     * @param password
-     * @param telephoneNumber
-     * @param email
-     * @param enable
-     * @param deadline
-     * @return
-     */
     public UserDescriptor registerUser(String username, String password, String telephoneNumber, String email, boolean enable, LocalDateTime deadline) {
         if (password == null || password.isEmpty())
             password = passwordService.generateStrongPassword();
@@ -64,9 +54,12 @@ public class UserSocializationService {
             DomainRegistry.domainEventPublisher().publish(new UserCreated(user.id(), username,
                     null, null, Enablement.PERMANENCE));
         }
-        Socialization socialization = new Socialization(unionId, user.id(), Socialization.ThirdParty.valueOf(thirdPartyName));
-        socializationRepository.save(socialization);
-        DomainRegistry.domainEventPublisher().publish(new SocializationBoundUser(unionId, user.id(), thirdPartyName));
+        Socialization socialization = socializationRepository.find(unionId);
+        if (socialization == null) {
+            socialization = new Socialization(unionId, user.id(), Socialization.ThirdParty.valueOf(thirdPartyName));
+            socializationRepository.save(socialization);
+            DomainRegistry.domainEventPublisher().publish(new SocializationBoundUser(unionId, user.id(), thirdPartyName));
+        }
     }
 
     public void unbindUser(String unionId) {
