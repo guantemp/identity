@@ -17,10 +17,37 @@
 
 package identity.hoprxi.core.domain.model.id;
 
+import event.hoprxi.domain.model.DomainEvent;
+
+import java.time.LocalDateTime;
+
 /**
  * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
  * @version 0.0.1 2020-12-15
  * @since JDK8.0
  */
-public class UserUnBoundSocialization {
+public class SocializationUnboundUser implements DomainEvent {
+    private int eventVersion;
+    private LocalDateTime occurredOn;
+    private String unionId;
+
+    public SocializationUnboundUser(String unionId) {
+        this.unionId = unionId;
+        this.occurredOn = LocalDateTime.now();
+        this.eventVersion = 1;
+    }
+
+    public String unionId() {
+        return unionId;
+    }
+
+    @Override
+    public LocalDateTime occurredOn() {
+        return occurredOn;
+    }
+
+    @Override
+    public int version() {
+        return eventVersion;
+    }
 }

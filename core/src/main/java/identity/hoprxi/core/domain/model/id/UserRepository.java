@@ -61,6 +61,8 @@ public interface UserRepository {
      */
     boolean isUsernameExists(String username);
 
+    User findByUsername(String username);
+
     /**
      * @param username
      * @param password

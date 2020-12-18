@@ -17,9 +17,12 @@
 
 package identity.hoprxi.core.domain.model.id;
 
+import identity.hoprxi.core.domain.model.DomainRegistry;
+import identity.hoprxi.core.domain.servers.PasswordService;
 import identity.hoprxi.core.infrastructure.persistence.ArangoDBSocializationRepository;
 import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -30,30 +33,48 @@ import java.util.Optional;
 public class UserSocializationService {
     private UserRepository userRepository = new ArangoDBUserRepository("identity");
     private SocializationRepository socializationRepository = new ArangoDBSocializationRepository("identity");
+    private static final PasswordService passwordService = new PasswordService();
 
-    public void createSocialization(String unionId, String userId, String thirdParty) {
-        Socialization.ThirdParty from = Socialization.ThirdParty.valueOf(thirdParty);
-        //Optional.ofNullable(userRepository.find(userId))
-        //         .map(u->new Socialization(unionId,userId,from))
-        //       .flatMap()
-        //        .orElseThrow(()->new IllegalArgumentException(""));
-        User user = userRepository.find(userId);
-        if (user == null)
-            throw new IllegalArgumentException("user is't exists");
-        new Socialization(unionId, userId, from);
+
+    /**
+     * @param username
+     * @param password
+     * @param telephoneNumber
+     * @param email
+     * @param enable
+     * @param deadline
+     * @return
+     */
+    public UserDescriptor registerUser(String username, String password, String telephoneNumber, String email, boolean enable, LocalDateTime deadline) {
+        if (password == null || password.isEmpty())
+            password = passwordService.generateStrongPassword();
+        Enablement enablement = Enablement.getInstance(enable, deadline);
+        User user = new User(userRepository.nextIdentity(), username, password, telephoneNumber, email, enablement);
+        userRepository.save(user);
+        DomainRegistry.domainEventPublisher().publish(new UserCreated(user.id(), username, telephoneNumber, email, enablement));
+        return user.toUserDescriptor();
     }
 
-    public void bindUser(String userId, String unionId, String thirdPartyName) {
-        User user = userRepository.find(userId);
-        //Optional.ofNullable(user).orElseGet()
-        if (user == null)
-            throw new IllegalArgumentException("user is't exists");
-        Socialization socialization = new Socialization(unionId, userId, Socialization.ThirdParty.valueOf(thirdPartyName));
+    public void bindUser(String username, String unionId, String thirdPartyName) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            user = new User(userRepository.nextIdentity(), username, passwordService.generateStrongPassword(),
+                    null, null, Enablement.PERMANENCE);
+            userRepository.save(user);
+            DomainRegistry.domainEventPublisher().publish(new UserCreated(user.id(), username,
+                    null, null, Enablement.PERMANENCE));
+        }
+        Socialization socialization = new Socialization(unionId, user.id(), Socialization.ThirdParty.valueOf(thirdPartyName));
         socializationRepository.save(socialization);
+        DomainRegistry.domainEventPublisher().publish(new SocializationBoundUser(unionId, user.id(), thirdPartyName));
     }
 
     public void unbindUser(String unionId) {
-        socializationRepository.remove(unionId);
+        Socialization socialization = socializationRepository.find(unionId);
+        if (socialization != null) {
+            socializationRepository.remove(unionId);
+            DomainRegistry.domainEventPublisher().publish(new SocializationUnboundUser(unionId));
+        }
     }
 
     public UserDescriptor getBindUser(String unionId) {

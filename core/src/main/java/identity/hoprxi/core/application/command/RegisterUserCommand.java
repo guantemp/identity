@@ -16,6 +16,8 @@
  */
 package identity.hoprxi.core.application.command;
 
+import java.time.LocalDateTime;
+
 /**
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuan</a>
  * @version 0.0.2 2020-12-17
@@ -23,26 +25,45 @@ package identity.hoprxi.core.application.command;
  */
 public class RegisterUserCommand {
     private String username;
+    private String telephoneNumber;
+    private String email;
     private String password;
+    private boolean enable;
+    private LocalDateTime deadline;
 
-    public RegisterUserCommand(String username, String password) {
+    public RegisterUserCommand(String username, String telephoneNumber, String email, String password,
+                               boolean enable, LocalDateTime deadline) {
         this.username = username;
+        this.telephoneNumber = telephoneNumber;
+        this.email = email;
         this.password = password;
+        this.enable = enable;
+        this.deadline = deadline;
+    }
+
+    public String getTelephoneNumber() {
+        return telephoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public LocalDateTime getDeadline() {
+        return deadline;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

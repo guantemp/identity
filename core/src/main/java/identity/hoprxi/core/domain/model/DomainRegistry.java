@@ -25,7 +25,7 @@ import salt.hoprxi.crypto.SM3Hash;
 /***
  * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.2 20180122
+ * @version 0.0.2 2020-12-18
  */
 public class DomainRegistry {
     public static DomainEventPublisher domainEventPublisher() {

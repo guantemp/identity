@@ -20,17 +20,19 @@ import identity.hoprxi.core.domain.model.id.User;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
 import identity.hoprxi.core.domain.model.id.UserRepository;
 
+import java.util.Optional;
+
 /***
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2018-01-06
+ * @version 0.0.1 2020-12-18
  */
 public class AuthenticationService {
-    private UserRepository repository;
+    private UserRepository userRepository;
 
-    public AuthenticationService(UserRepository repository) {
+    public AuthenticationService(UserRepository userRepository) {
         super();
-        this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -38,10 +40,24 @@ public class AuthenticationService {
      * @param password
      * @return
      */
-    public UserDescriptor authenticate(String username, String password) {
-        User user = repository.usernameAuthenticCredentials(username, password);
-        if (user != null && user.isAvailable())
-            return user.toUserDescriptor();
+    public UserDescriptor authenticateByUsernameAndPassword(String username, String password) {
+        User user = userRepository.usernameAuthenticCredentials(username, password);
+        return Optional.ofNullable(user).map(User::isAvailable).map(d -> user.toUserDescriptor()).orElse(UserDescriptor.NullUserDescriptor);
+    }
+
+    public UserDescriptor authenticateByTelAndPassword(String tel, String password) {
+        return UserDescriptor.NullUserDescriptor;
+    }
+
+    public UserDescriptor authenticateByTelAndSmsCode(String tel, boolean smsCodeChecked) {
+        return UserDescriptor.NullUserDescriptor;
+    }
+
+    public UserDescriptor authenticateByEmailAndPassword(String email, String password) {
+        return UserDescriptor.NullUserDescriptor;
+    }
+
+    public UserDescriptor authenticateByThirdParty(String unionId) {
         return UserDescriptor.NullUserDescriptor;
     }
 }

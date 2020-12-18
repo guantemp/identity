@@ -26,15 +26,17 @@ import java.time.LocalDateTime;
  * @version 0.0.1 2020-12-15
  * @since JDK8.0
  */
-public class UserBoundSocialization implements DomainEvent {
+public class SocializationBoundUser implements DomainEvent {
     private int eventVersion;
     private LocalDateTime occurredOn;
     private String userId;
     private String unionId;
+    private String thirdPartyName;
 
-    public UserBoundSocialization(String userId, String unionId) {
+    public SocializationBoundUser(String userId, String unionId, String thirdPartyName) {
         this.userId = userId;
         this.unionId = unionId;
+        this.thirdPartyName = thirdPartyName;
         this.occurredOn = LocalDateTime.now();
         this.eventVersion = 1;
     }
@@ -45,6 +47,10 @@ public class UserBoundSocialization implements DomainEvent {
 
     public String unionId() {
         return unionId;
+    }
+
+    public String thirdPartyName() {
+        return thirdPartyName;
     }
 
     @Override

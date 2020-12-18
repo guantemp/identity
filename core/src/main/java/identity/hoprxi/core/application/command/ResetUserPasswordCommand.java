@@ -14,24 +14,19 @@
  *  limitations under the License.
  *
  */
+
 package identity.hoprxi.core.application.command;
 
+import java.util.StringJoiner;
+
 /**
- * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuan</a>
+ * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
  * @version 0.0.1 2020-12-18
  * @since JDK8.0
  */
-
-public class ChangeUserPasswordCommand {
+public class ResetUserPasswordCommand {
     private String userId;
-    private String currentPassword;
-    private String changedPassword;
-
-    public ChangeUserPasswordCommand(String userId, String currentPassword, String changedPassword) {
-        this.userId = userId;
-        this.currentPassword = currentPassword;
-        this.changedPassword = changedPassword;
-    }
+    private String newPassword;
 
     public String getUserId() {
         return userId;
@@ -41,19 +36,19 @@ public class ChangeUserPasswordCommand {
         this.userId = userId;
     }
 
-    public String getCurrentPassword() {
-        return currentPassword;
+    public String getNewPassword() {
+        return newPassword;
     }
 
-    public void setCurrentPassword(String currentPassword) {
-        this.currentPassword = currentPassword;
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 
-    public String getChangedPassword() {
-        return changedPassword;
-    }
-
-    public void setChangedPassword(String changedPassword) {
-        this.changedPassword = changedPassword;
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", ResetUserPasswordCommand.class.getSimpleName() + "[", "]")
+                .add("userId='" + userId + "'")
+                .add("newPassword='" + newPassword + "'")
+                .toString();
     }
 }

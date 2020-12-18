@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 public class User {
     public static final User ANONYMOUS = new User() {
         @Override
-        public void changPassword(String newPassword) {
+        public void resetPassword(String newPassword) {
             //do nothing
         }
 
@@ -169,7 +169,7 @@ public class User {
      * @param newPassword
      * @throws IllegalArgumentException if password no change or currentPassword isn't correct
      */
-    public void changPassword(String newPassword) {
+    public void resetPassword(String newPassword) {
         if (null != newPassword && !DomainRegistry.hashService().check(newPassword, password)) {
             protectPassword(newPassword);
             DomainRegistry.domainEventPublisher().publish(new UserPasswordChanged(id));

@@ -22,40 +22,45 @@ import identity.hoprxi.core.application.command.RegisterUserCommand;
 import identity.hoprxi.core.domain.model.id.User;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
 import identity.hoprxi.core.domain.model.id.UserRepository;
-import identity.hoprxi.core.domain.model.id.UserService;
-import identity.hoprxi.core.domain.servers.PasswordService;
+import identity.hoprxi.core.domain.model.id.UserSocializationService;
+import identity.hoprxi.core.domain.servers.AuthenticationService;
 import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
-
-import java.util.Objects;
-import java.util.regex.Pattern;
 
 /**
  * @author <a href="www.hoprxi.com/authors/guan xiangHuan">guan xiangHuan</a>
- * @version 0.0.1 20180411
+ * @version 0.0.2 2020-12-18
  * @since JDK8.0
  */
 public final class UserApplicationService {
     private static final int EXPIRED_DAYS = 45;
-    private static Pattern SMS_CODE_PATTERN = Pattern.compile("^\\d{6,6}$");
-    private static final PasswordService passwordService = new PasswordService();
     private UserRepository userRepository = new ArangoDBUserRepository("identity");
-    private UserService userService = new UserService(userRepository);
+    private UserSocializationService userSocializationService = new UserSocializationService();
+    private AuthenticationService authenticationService = new AuthenticationService(userRepository);
 
     /**
      * @param registerUserCommand
      */
     public UserDescriptor registerUser(RegisterUserCommand registerUserCommand) {
-        String password = registerUserCommand.getPassword();
-        if (password == null)
-            password = passwordService.generateStrongPassword();
-        return userService.registerUser(userRepository.nextIdentity(),
-                registerUserCommand.getUsername(),
-                password);
+        if (userRepository.isUsernameExists(registerUserCommand.getUsername()))
+            return UserDescriptor.NullUserDescriptor;
+        if (userRepository.isTelephoneNumberExists(registerUserCommand.getTelephoneNumber()))
+            return UserDescriptor.NullUserDescriptor;
+        if (userRepository.isEmailExists(registerUserCommand.getEmail()))
+            return UserDescriptor.NullUserDescriptor;
+        return userSocializationService.registerUser(
+                registerUserCommand.getUsername(), registerUserCommand.getPassword(),
+                registerUserCommand.getTelephoneNumber(), registerUserCommand.getEmail(),
+                registerUserCommand.isEnable(), registerUserCommand.getDeadline()
+        );
+    }
+
+    public UserDescriptor authenticate(String username, String password) {
+        return authenticationService.authenticateByUsernameAndPassword(username, password);
     }
 
     public void changeUserPassword(ChangeUserPasswordCommand changeUserPasswordCommand) {
         User user = existingUser(changeUserPasswordCommand.getCurrentPassword());
-        user.changPassword(changeUserPasswordCommand.getChangedPassword());
+        user.resetPassword(changeUserPasswordCommand.getChangedPassword());
     }
 
     public void changeUsername(ChangeUsernameCommand changeUsernameCommand) {
@@ -63,20 +68,9 @@ public final class UserApplicationService {
         user.rename(changeUsernameCommand.getUsername());
     }
 
-    public UserDescriptor authenticate(String username, String password) {
-        username = Objects.requireNonNull(username, "username required").trim();
-        if (username.isEmpty())
-            throw new IllegalArgumentException("username must can not be empty.");
-        password = Objects.requireNonNull(password, "password required");
-        return userService.authenticate(username, password);
-    }
 
     public UserDescriptor authenticate(String username, int smsCode) {
-        username = Objects.requireNonNull(username, "username required").trim();
-        if (username.isEmpty())
-            throw new IllegalArgumentException("username must can not be empty.");
-        if (!SMS_CODE_PATTERN.matcher(String.valueOf(smsCode)).matches())
-            throw new IllegalArgumentException("username must can not be empty.");
+
         return null;
     }
 

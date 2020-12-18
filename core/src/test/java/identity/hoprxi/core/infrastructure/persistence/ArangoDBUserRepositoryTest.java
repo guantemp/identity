@@ -42,6 +42,7 @@ public class ArangoDBUserRepositoryTest {
         repository.remove("shifu");
         repository.remove("ershixiong");
         repository.remove("dashixiong");
+        repository.remove("bailongma");
         repository.remove("xiaobian");
         repository.remove(User.ANONYMOUS.id());
     }
@@ -86,7 +87,7 @@ public class ArangoDBUserRepositoryTest {
         User chang = repository.find("dashixiong");
         chang.rename("看我七十二变->牛魔王");
         chang.changTelephoneNumber("17782455066");
-        chang.changPassword("guanQ24,.io23");
+        chang.resetPassword("guanQ24,.io23");
         //chang.defineEnablement(Enablement.PERMANENCE);
         repository.save(chang);
         chang = repository.telephoneNumberAuthenticCredentials("17782455066", "guanQ24,.io23");

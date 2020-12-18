@@ -140,7 +140,6 @@ public class ArangoDBUserRepository implements UserRepository {
     public User find(String id) {
         ArangoGraph graph = identity.graph("identity");
         VPackSlice slice = graph.vertexCollection("user").getVertex(id, VPackSlice.class);
-        if (slice != null) {
             try {
                 return rebuild(slice);
             } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -148,7 +147,6 @@ public class ArangoDBUserRepository implements UserRepository {
                     LOGGER.debug("Can't rebuild user", e);
                 }
             }
-        }
         return null;
     }
 
@@ -160,12 +158,29 @@ public class ArangoDBUserRepository implements UserRepository {
         return checkPassword(password, cursor);
     }
 
+
     @Override
     public boolean isUsernameExists(String username) {
         final String query = "FOR v IN user FILTER v.username == @username RETURN v";
         final Map<String, Object> bindVars = new MapBuilder().put("username", username).get();
         final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, VPackSlice.class);
         return cursor.hasNext() ? true : false;
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        final String query = "FOR v IN user FILTER v.username == @username RETURN v";
+        final Map<String, Object> bindVars = new MapBuilder().put("username", username).get();
+        final ArangoCursor<VPackSlice> slices = identity.query(query, bindVars, VPackSlice.class);
+        while (slices.hasNext()) {
+            try {
+                return rebuild(slices.next());
+            } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Can't rebuild user", e);
+            }
+        }
+        return null;
     }
 
     /**
