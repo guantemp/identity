@@ -66,13 +66,13 @@ public class ArangoDBSocializationRepositoryTest {
     public void testFind() {
         Socialization socialization = socRepository.find("ojuOc5fgU_HH2PYklITXWmXfq620");
         Assert.assertNotNull(socialization);
-        UserDescriptor userDescriptor = service.getBindUser("dy325fbg54");
+        UserDescriptor userDescriptor = service.getSocializationBindUser("dy325fbg54");
         Assert.assertEquals(userDescriptor.id(), "tangtang");
-        userDescriptor = service.getBindUser("4634567");
+        userDescriptor = service.getSocializationBindUser("4634567");
         Assert.assertTrue(userDescriptor == UserDescriptor.NullUserDescriptor);
         socialization = socRepository.find("dy325f1bg54");
         Assert.assertNull(socialization);
-        userDescriptor = service.getBindUser("ojuOc5fgU_HH2PYklITXWmXfq620");
+        userDescriptor = service.getSocializationBindUser("ojuOc5fgU_HH2PYklITXWmXfq620");
         Assert.assertEquals(userDescriptor.id(), "shasheng");
     }
 }

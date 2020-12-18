@@ -48,7 +48,7 @@ public class UserSocializationService {
         return user.toUserDescriptor();
     }
 
-    public void bindUser(String username, String unionId, String thirdPartyName) {
+    public UserDescriptor bindUser(String username, String unionId, String thirdPartyName) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
             user = new User(userRepository.nextIdentity(), username, passwordService.generateStrongPassword(),
@@ -63,6 +63,7 @@ public class UserSocializationService {
             socializationRepository.save(socialization);
             DomainRegistry.domainEventPublisher().publish(new SocializationBoundUser(unionId, user.id(), thirdPartyName));
         }
+        return user.toUserDescriptor();
     }
 
     public void unbindUser(String unionId) {
@@ -73,7 +74,7 @@ public class UserSocializationService {
         }
     }
 
-    public UserDescriptor getBindUser(String unionId) {
+    public UserDescriptor getSocializationBindUser(String unionId) {
         Socialization socialization = socializationRepository.find(unionId);
         return Optional.ofNullable(socialization).map(u -> {
             User user = userRepository.find(socialization.userId());

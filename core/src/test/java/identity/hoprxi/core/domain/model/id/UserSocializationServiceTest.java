@@ -17,6 +17,9 @@
 
 package identity.hoprxi.core.domain.model.id;
 
+import identity.hoprxi.core.infrastructure.persistence.ArangoDBSocializationRepository;
+import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 /**
@@ -25,35 +28,53 @@ import org.testng.annotations.Test;
  * @since JDK8.0
  */
 public class UserSocializationServiceTest {
+    private static UserRepository repository = new ArangoDBUserRepository("identity");
+    private static ArangoDBSocializationRepository socRepository = new ArangoDBSocializationRepository("identity");
     private UserSocializationService service = new UserSocializationService();
+    private static String userId[] = new String[7];
+
+    @AfterClass
+    public static void teardown() {
+        for (String id : userId)
+            repository.remove(id);
+        socRepository.remove("ojuOc5fgU_HH2PYklITXWmXfq620");
+    }
 
     @Test(priority = 1)
     public void testRegisterUser() {
-        service.registerUser("13679692333", "sgjk325m,few", null,
+        UserDescriptor userDescriptor = service.registerUser("13679692333", "sgjk325m,few", null,
                 "34354mdms@ewr.org", Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
-        service.registerUser("13679692331", null, null,
+        userId[0] = userDescriptor.id();
+        userDescriptor = service.registerUser("13679692331", null, null,
                 null, Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
-        service.registerUser("13679692332", null, null,
+        userId[1] = userDescriptor.id();
+        userDescriptor = service.registerUser("13679692332", null, null,
                 null, Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
-        service.registerUser("guant@126.com", null, null,
+        userId[2] = userDescriptor.id();
+        userDescriptor = service.registerUser("guant@126.com", null, null,
                 null, Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
-        service.registerUser("5227854@qq.com", null, null,
+        userId[3] = userDescriptor.id();
+        userDescriptor = service.registerUser("5227854@qq.com", null, null,
                 null, Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
+        userId[4] = userDescriptor.id();
     }
 
     @Test(priority = 2)
     public void testBindUser() {
-        service.bindUser("52237854@qq.com", "ojuOc5fgU_HH2PYklITXWmXfq620", "WECHAT");
-        service.bindUser("32788@qq.com", "UvxXLQoYmArlxnBqmbpaA==", "WECHAT");
+        UserDescriptor userDescriptor = service.bindUser("52237854@qq.com", "ojuOc5fgU_HH2PYklITXWmXfq620", "WECHAT");
+        userId[5] = userDescriptor.id();
+        userDescriptor = service.bindUser("32788@qq.com", "UvxXLQoYmArlxnBqmbpaA==", "WECHAT");
+        userId[6] = userDescriptor.id();
     }
 
-    @Test
+    @Test(priority = 3)
     public void testUnbindUser() {
+        service.unbindUser("UvxXLQoYmArlxnBqmbpaA==");
     }
 
-    @Test
+    @Test(priority = 3)
     public void testGetBindUser() {
-        UserDescriptor userDescriptor = service.getBindUser("ojuOc5fgU_HH2PYklITXWmXfq620");
+        UserDescriptor userDescriptor = service.getSocializationBindUser("ojuOc5fgU_HH2PYklITXWmXfq620");
         System.out.println(userDescriptor);
     }
 }
