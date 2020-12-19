@@ -45,7 +45,7 @@ public class UserSocializationServiceTest {
         UserDescriptor userDescriptor = service.registerUser("13679692333", "sgjk325m,few", null,
                 "34354mdms@ewr.org", Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
         userId[0] = userDescriptor.id();
-        userDescriptor = service.registerUser("13679692331", null, null,
+        userDescriptor = service.registerUser("13679692331", null, "13679692330",
                 null, Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
         userId[1] = userDescriptor.id();
         userDescriptor = service.registerUser("13679692332", null, null,
@@ -54,22 +54,22 @@ public class UserSocializationServiceTest {
         userDescriptor = service.registerUser("guant@126.com", null, null,
                 null, Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
         userId[3] = userDescriptor.id();
-        userDescriptor = service.registerUser("5227854@qq.com", null, null,
+        userDescriptor = service.registerUser("5227854@qq.com", null, "13679692330",
                 null, Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
         userId[4] = userDescriptor.id();
     }
 
     @Test(priority = 2)
     public void testBindUser() {
-        UserDescriptor userDescriptor = service.bindUser("52237854@qq.com", "ojuOc5fgU_HH2PYklITXWmXfq620", "WECHAT");
+        UserDescriptor userDescriptor = service.socializationBindUser("52237854@qq.com", "ojuOc5fgU_HH2PYklITXWmXfq620", "WECHAT");
         userId[5] = userDescriptor.id();
-        userDescriptor = service.bindUser("32788@qq.com", "UvxXLQoYmArlxnBqmbpaA==", "WECHAT");
+        userDescriptor = service.socializationBindUser("32788@qq.com", "UvxXLQoYmArlxnBqmbpaA==", "WECHAT");
         userId[6] = userDescriptor.id();
     }
 
     @Test(priority = 3)
     public void testUnbindUser() {
-        service.unbindUser("UvxXLQoYmArlxnBqmbpaA==");
+        service.socializationUnbindUser("UvxXLQoYmArlxnBqmbpaA==");
     }
 
     @Test(priority = 3)

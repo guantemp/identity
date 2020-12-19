@@ -16,9 +16,8 @@
  */
 package identity.hoprxi.core.domain.servers;
 
-import identity.hoprxi.core.domain.model.id.User;
-import identity.hoprxi.core.domain.model.id.UserDescriptor;
-import identity.hoprxi.core.domain.model.id.UserRepository;
+import identity.hoprxi.core.domain.model.id.*;
+import identity.hoprxi.core.infrastructure.persistence.ArangoDBSocializationRepository;
 
 import java.util.Optional;
 
@@ -29,6 +28,7 @@ import java.util.Optional;
  */
 public class AuthenticationService {
     private UserRepository userRepository;
+    private SocializationRepository socializationRepository = new ArangoDBSocializationRepository("identity");
 
     public AuthenticationService(UserRepository userRepository) {
         super();
@@ -46,18 +46,25 @@ public class AuthenticationService {
     }
 
     public UserDescriptor authenticateByTelAndPassword(String tel, String password) {
-        return UserDescriptor.NullUserDescriptor;
+        User user = userRepository.telephoneNumberAuthenticCredentials(tel, password);
+        return Optional.ofNullable(user).map(User::isAvailable).map(d -> user.toUserDescriptor()).orElse(UserDescriptor.NullUserDescriptor);
     }
 
-    public UserDescriptor authenticateByTelAndSmsCode(String tel, boolean smsCodeChecked) {
-        return UserDescriptor.NullUserDescriptor;
+    public UserDescriptor authenticateByTelAndSmsCode(String tel) {
+        User user = userRepository.findByTelephoneNumber(tel);
+        return Optional.ofNullable(user).map(User::isAvailable).map(d -> user.toUserDescriptor()).orElse(UserDescriptor.NullUserDescriptor);
     }
 
     public UserDescriptor authenticateByEmailAndPassword(String email, String password) {
-        return UserDescriptor.NullUserDescriptor;
+        User user = userRepository.emailAuthenticCredentials(email, password);
+        return Optional.ofNullable(user).map(User::isAvailable).map(d -> user.toUserDescriptor()).orElse(UserDescriptor.NullUserDescriptor);
     }
 
     public UserDescriptor authenticateByThirdParty(String unionId) {
-        return UserDescriptor.NullUserDescriptor;
+        Socialization socialization = socializationRepository.find(unionId);
+        return Optional.ofNullable(socialization).map(u -> {
+            User user = userRepository.find(socialization.userId());
+            return user.toUserDescriptor();
+        }).orElseGet(() -> UserDescriptor.NullUserDescriptor);
     }
 }

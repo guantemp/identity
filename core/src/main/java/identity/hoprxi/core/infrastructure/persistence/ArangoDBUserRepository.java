@@ -212,6 +212,30 @@ public class ArangoDBUserRepository implements UserRepository {
     }
 
     @Override
+    public boolean isTelephoneNumberExists(String telephoneNumber) {
+        final String query = "FOR v IN user FILTER v.telephoneNumber == @telephoneNumber RETURN v";
+        final Map<String, Object> bindVars = new MapBuilder().put("telephoneNumber", telephoneNumber).get();
+        final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, null, VPackSlice.class);
+        return cursor.hasNext() ? true : false;
+    }
+
+    @Override
+    public User findByTelephoneNumber(String telephoneNumber) {
+        final String query = "FOR v IN user FILTER v.telephoneNumber == @telephoneNumber RETURN v";
+        final Map<String, Object> bindVars = new MapBuilder().put("telephoneNumber", telephoneNumber).get();
+        final ArangoCursor<VPackSlice> slices = identity.query(query, bindVars, VPackSlice.class);
+        while (slices.hasNext()) {
+            try {
+                return rebuild(slices.next());
+            } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Can't rebuild user", e);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public User telephoneNumberAuthenticCredentials(String telephoneNumber, String password) {
         final String query = "FOR v IN user FILTER v.telephoneNumber == @telephoneNumber RETURN v";
         final Map<String, Object> bindVars = new MapBuilder().put("telephoneNumber", telephoneNumber).get();
@@ -234,13 +258,6 @@ public class ArangoDBUserRepository implements UserRepository {
         return null;
     }
 
-    @Override
-    public boolean isTelephoneNumberExists(String telephoneNumber) {
-        final String query = "FOR v IN user FILTER v.telephoneNumber == @telephoneNumber RETURN v";
-        final Map<String, Object> bindVars = new MapBuilder().put("telephoneNumber", telephoneNumber).get();
-        final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, null, VPackSlice.class);
-        return cursor.hasNext() ? true : false;
-    }
 
     @Override
     public boolean isEmailExists(String email) {

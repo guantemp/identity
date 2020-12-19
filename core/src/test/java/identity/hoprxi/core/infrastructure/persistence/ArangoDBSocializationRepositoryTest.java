@@ -55,11 +55,11 @@ public class ArangoDBSocializationRepositoryTest {
 
     @Test(priority = 2)
     public void testSave() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        service.bindUser("唐僧", "dy325fbg54", "WECHAT");
-        service.bindUser("沙僧", "ojuOc5fgU_HH2PYklITXWmXfq620", "WECHAT");
-        service.bindUser("唐僧", "sdtyger345634", "QQ");
-        service.bindUser("沙僧", "f1f1f1f1", "WECHAT");
-        service.unbindUser("f1f1f1f1");
+        service.socializationBindUser("唐僧", "dy325fbg54", "WECHAT");
+        service.socializationBindUser("沙僧", "ojuOc5fgU_HH2PYklITXWmXfq620", "WECHAT");
+        service.socializationBindUser("唐僧", "sdtyger345634", "QQ");
+        service.socializationBindUser("沙僧", "f1f1f1f1", "WECHAT");
+        service.socializationUnbindUser("f1f1f1f1");
     }
 
     @Test(priority = 20)

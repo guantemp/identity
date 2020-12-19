@@ -61,6 +61,10 @@ public interface UserRepository {
      */
     boolean isUsernameExists(String username);
 
+    /**
+     * @param username
+     * @return
+     */
     User findByUsername(String username);
 
     /**
@@ -75,6 +79,12 @@ public interface UserRepository {
      * @return
      */
     boolean isTelephoneNumberExists(String telephoneNumber);
+
+    /**
+     * @param telephoneNumber
+     * @return
+     */
+    User findByTelephoneNumber(String telephoneNumber);
 
     /**
      * @param telephoneNumber

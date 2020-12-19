@@ -16,9 +16,10 @@
  */
 package identity.hoprxi.core.application;
 
-import identity.hoprxi.core.application.command.ChangeUserPasswordCommand;
 import identity.hoprxi.core.application.command.ChangeUsernameCommand;
 import identity.hoprxi.core.application.command.RegisterUserCommand;
+import identity.hoprxi.core.application.command.ResetUserPasswordCommand;
+import identity.hoprxi.core.application.command.SocializationBindUserCommand;
 import identity.hoprxi.core.domain.model.id.User;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
 import identity.hoprxi.core.domain.model.id.UserRepository;
@@ -31,8 +32,7 @@ import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
  * @version 0.0.2 2020-12-18
  * @since JDK8.0
  */
-public final class UserApplicationService {
-    private static final int EXPIRED_DAYS = 45;
+public class UserApplicationService {
     private UserRepository userRepository = new ArangoDBUserRepository("identity");
     private UserSocializationService userSocializationService = new UserSocializationService();
     private AuthenticationService authenticationService = new AuthenticationService(userRepository);
@@ -41,37 +41,43 @@ public final class UserApplicationService {
      * @param registerUserCommand
      */
     public UserDescriptor registerUser(RegisterUserCommand registerUserCommand) {
-        if (userRepository.isUsernameExists(registerUserCommand.getUsername()))
-            return UserDescriptor.NullUserDescriptor;
-        if (userRepository.isTelephoneNumberExists(registerUserCommand.getTelephoneNumber()))
-            return UserDescriptor.NullUserDescriptor;
-        if (userRepository.isEmailExists(registerUserCommand.getEmail()))
-            return UserDescriptor.NullUserDescriptor;
-        return userSocializationService.registerUser(
+        UserDescriptor userDescriptor = userSocializationService.registerUser(
                 registerUserCommand.getUsername(), registerUserCommand.getPassword(),
                 registerUserCommand.getTelephoneNumber(), registerUserCommand.getEmail(),
-                registerUserCommand.isEnable(), registerUserCommand.getDeadline()
-        );
+                registerUserCommand.isEnable(), registerUserCommand.getDeadline());
+        return userDescriptor;
     }
 
-    public UserDescriptor authenticate(String username, String password) {
-        return authenticationService.authenticateByUsernameAndPassword(username, password);
+    public UserDescriptor authenticate(String usernameOrTelOrEmail, String password) {
+        UserDescriptor userDescriptor = authenticationService.authenticateByUsernameAndPassword(usernameOrTelOrEmail, password);
+        if (userDescriptor != UserDescriptor.NullUserDescriptor)
+            return userDescriptor;
+        userDescriptor = authenticationService.authenticateByTelAndPassword(usernameOrTelOrEmail, password);
+        if (userDescriptor != UserDescriptor.NullUserDescriptor)
+            return userDescriptor;
+        return authenticationService.authenticateByEmailAndPassword(usernameOrTelOrEmail, password);
     }
 
-    public void changeUserPassword(ChangeUserPasswordCommand changeUserPasswordCommand) {
-        User user = existingUser(changeUserPasswordCommand.getCurrentPassword());
-        user.resetPassword(changeUserPasswordCommand.getChangedPassword());
+    public UserDescriptor authenticateBySmsCode(String tel, String smsCode) {
+        return authenticationService.authenticateByTelAndSmsCode(tel);
+    }
+
+    public UserDescriptor authenticateByThirdParty(String unionId) {
+        return authenticationService.authenticateByThirdParty(unionId);
+    }
+
+    public UserDescriptor socializationBindUser(SocializationBindUserCommand socializationBindUserCommand) {
+        return userSocializationService.socializationBindUser(socializationBindUserCommand.getUsername(), socializationBindUserCommand.getUnionId(), socializationBindUserCommand.getThirdPartyName());
+    }
+
+    public void resetUserPassword(ResetUserPasswordCommand resetUserPasswordCommand) {
+        User user = existingUser(resetUserPasswordCommand.getUserId());
+        user.resetPassword(resetUserPasswordCommand.getNewPassword());
     }
 
     public void changeUsername(ChangeUsernameCommand changeUsernameCommand) {
         User user = existingUser(changeUsernameCommand.getUserId());
         user.rename(changeUsernameCommand.getUsername());
-    }
-
-
-    public UserDescriptor authenticate(String username, int smsCode) {
-
-        return null;
     }
 
     private User existingUser(String userId) {
