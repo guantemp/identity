@@ -164,7 +164,7 @@ public class ArangoDBUserRepository implements UserRepository {
         final String query = "FOR v IN user FILTER v.username == @username RETURN v";
         final Map<String, Object> bindVars = new MapBuilder().put("username", username).get();
         final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, VPackSlice.class);
-        return cursor.hasNext() ? true : false;
+        return cursor.hasNext();
     }
 
     @Override
@@ -216,7 +216,7 @@ public class ArangoDBUserRepository implements UserRepository {
         final String query = "FOR v IN user FILTER v.telephoneNumber == @telephoneNumber RETURN v";
         final Map<String, Object> bindVars = new MapBuilder().put("telephoneNumber", telephoneNumber).get();
         final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, null, VPackSlice.class);
-        return cursor.hasNext() ? true : false;
+        return cursor.hasNext();
     }
 
     @Override
@@ -239,14 +239,14 @@ public class ArangoDBUserRepository implements UserRepository {
     public User telephoneNumberAuthenticCredentials(String telephoneNumber, String password) {
         final String query = "FOR v IN user FILTER v.telephoneNumber == @telephoneNumber RETURN v";
         final Map<String, Object> bindVars = new MapBuilder().put("telephoneNumber", telephoneNumber).get();
-        final ArangoCursor<VPackSlice> slices = identity.query(query, bindVars, null, VPackSlice.class);
-        return checkPassword(password, slices);
+        final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, null, VPackSlice.class);
+        return checkPassword(password, cursor);
     }
 
-    private User checkPassword(String password, ArangoCursor<VPackSlice> slices) {
-        if (slices != null && slices.hasNext()) {
+    private User checkPassword(String password, ArangoCursor<VPackSlice> cursor) {
+        while (cursor.hasNext()) {
             try {
-                User user = rebuild(slices.next());
+                User user = rebuild(cursor.next());
                 if (DomainRegistry.hashService().check(password, (String) passwordField.get(user)))
                     return user;
             } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
@@ -261,11 +261,17 @@ public class ArangoDBUserRepository implements UserRepository {
 
     @Override
     public boolean isEmailExists(String email) {
-        return false;
+        final String query = "FOR v IN user FILTER v.email == @email RETURN v";
+        final Map<String, Object> bindVars = new MapBuilder().put("email", email).get();
+        final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, null, VPackSlice.class);
+        return cursor.hasNext();
     }
 
     @Override
     public User emailAuthenticCredentials(String email, String password) {
-        return null;
+        final String query = "FOR v IN user FILTER v.email == @email RETURN v";
+        final Map<String, Object> bindVars = new MapBuilder().put("email", email).get();
+        final ArangoCursor<VPackSlice> cursor = identity.query(query, bindVars, null, VPackSlice.class);
+        return checkPassword(password, cursor);
     }
 }

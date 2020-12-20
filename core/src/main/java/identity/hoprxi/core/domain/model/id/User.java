@@ -170,7 +170,7 @@ public class User {
      * @throws IllegalArgumentException if password no change or currentPassword isn't correct
      */
     public void resetPassword(String newPassword) {
-        if (null != newPassword && !DomainRegistry.hashService().check(newPassword, password)) {
+        if (null != newPassword) {
             protectPassword(newPassword);
             DomainRegistry.domainEventPublisher().publish(new UserPasswordChanged(id));
         }

@@ -17,8 +17,10 @@
 
 package identity.hoprxi.core.infrastructure.persistence;
 
-import identity.hoprxi.core.domain.model.id.*;
-import org.junit.Assert;
+import identity.hoprxi.core.domain.model.id.Enablement;
+import identity.hoprxi.core.domain.model.id.User;
+import identity.hoprxi.core.domain.model.id.UserRepository;
+import identity.hoprxi.core.domain.model.id.UserSocializationService;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -60,19 +62,5 @@ public class ArangoDBSocializationRepositoryTest {
         service.socializationBindUser("唐僧", "sdtyger345634", "QQ");
         service.socializationBindUser("沙僧", "f1f1f1f1", "WECHAT");
         service.socializationUnbindUser("f1f1f1f1");
-    }
-
-    @Test(priority = 20)
-    public void testFind() {
-        Socialization socialization = socRepository.find("ojuOc5fgU_HH2PYklITXWmXfq620");
-        Assert.assertNotNull(socialization);
-        UserDescriptor userDescriptor = service.getSocializationBindUser("dy325fbg54");
-        Assert.assertEquals(userDescriptor.id(), "tangtang");
-        userDescriptor = service.getSocializationBindUser("4634567");
-        Assert.assertTrue(userDescriptor == UserDescriptor.NullUserDescriptor);
-        socialization = socRepository.find("dy325f1bg54");
-        Assert.assertNull(socialization);
-        userDescriptor = service.getSocializationBindUser("ojuOc5fgU_HH2PYklITXWmXfq620");
-        Assert.assertEquals(userDescriptor.id(), "shasheng");
     }
 }

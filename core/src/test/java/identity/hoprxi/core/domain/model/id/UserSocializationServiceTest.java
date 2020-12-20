@@ -54,7 +54,7 @@ public class UserSocializationServiceTest {
         userDescriptor = service.registerUser("guant@126.com", null, null,
                 null, Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
         userId[3] = userDescriptor.id();
-        userDescriptor = service.registerUser("5227854@qq.com", null, "13679692330",
+        userDescriptor = service.registerUser("5227854@qq.com", null, "13679692335",
                 null, Enablement.PERMANENCE.isEnable(), Enablement.PERMANENCE.deadline());
         userId[4] = userDescriptor.id();
     }
@@ -70,11 +70,5 @@ public class UserSocializationServiceTest {
     @Test(priority = 3)
     public void testUnbindUser() {
         service.socializationUnbindUser("UvxXLQoYmArlxnBqmbpaA==");
-    }
-
-    @Test(priority = 3)
-    public void testGetBindUser() {
-        UserDescriptor userDescriptor = service.getSocializationBindUser("ojuOc5fgU_HH2PYklITXWmXfq620");
-        System.out.println(userDescriptor);
     }
 }

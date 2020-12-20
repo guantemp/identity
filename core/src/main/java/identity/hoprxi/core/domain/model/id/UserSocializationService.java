@@ -23,8 +23,6 @@ import identity.hoprxi.core.infrastructure.persistence.ArangoDBSocializationRepo
 import identity.hoprxi.core.infrastructure.persistence.ArangoDBUserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * @author <a href="www.hoprxi.com/author/guan xianghuang">guan xiangHuan</a>
@@ -35,9 +33,6 @@ public class UserSocializationService {
     private UserRepository userRepository = new ArangoDBUserRepository("identity");
     private SocializationRepository socializationRepository = new ArangoDBSocializationRepository("identity");
     private static final PasswordService passwordService = new PasswordService();
-    private static final Pattern MOBILE_CN_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
-    private static final Pattern FIXED_TELEPHONE_CN_PATTERN = Pattern.compile("^(0\\d{2}-\\d{8}(-\\d{1,4})?)|(0\\d{3}-\\d{7,8}(-\\d{1,4})?)$");
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^\\s*\\w+(?:\\.{0,1}[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$");
 
     public UserDescriptor registerUser(String username, String password, String telephoneNumber, String email,
                                        boolean enable, LocalDateTime deadline) {
@@ -86,13 +81,5 @@ public class UserSocializationService {
             socializationRepository.remove(unionId);
             DomainRegistry.domainEventPublisher().publish(new SocializationUnboundUser(unionId));
         }
-    }
-
-    public UserDescriptor getSocializationBindUser(String unionId) {
-        Socialization socialization = socializationRepository.find(unionId);
-        return Optional.ofNullable(socialization).map(u -> {
-            User user = userRepository.find(socialization.userId());
-            return user.toUserDescriptor();
-        }).orElseGet(() -> UserDescriptor.NullUserDescriptor);
     }
 }
