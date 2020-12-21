@@ -21,14 +21,19 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import identity.hoprxi.core.application.UserApplicationService;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
 import salt.hoprxi.cache.Cache;
+import salt.hoprxi.cache.CacheManager;
 import salt.hoprxi.utils.NumberHelper;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
@@ -36,34 +41,21 @@ import java.io.IOException;
  * @version 0.0.1 2020-12-08
  */
 @WebServlet(urlPatterns = {"/v1/login"}, name = "login", asyncSupported = false, initParams = {
-        @WebInitParam(name = "max_error_times", value = "5"), @WebInitParam(name = "cookie_expired", value = "300")})
+        @WebInitParam(name = "auth_error_times", value = "3")})
 public class LoginServlet extends HttpServlet {
-    private static int max_error_times; // error times
-    private static int cookie_expired;//five Minutes
-    private static Cache<String, Integer> cache = null;
+    private static int auth_error_times; // error times
+    private static Pattern MOBILE_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
+    private static Pattern SMS_CODE_PATTERN = Pattern.compile("^\\d{6,6}$");
+    private static Cache<String, Integer> smsCache = CacheManager.buildCache("sms");
+    private static Cache<String, Integer> captchaCache = CacheManager.buildCache("captcha");
 
     @Override
     public void init() throws ServletException {
         super.init();
         ServletConfig config = getServletConfig();
         if (config != null) {
-            max_error_times = NumberHelper.intOf(config.getInitParameter("max_error_times"), 3);
-            cookie_expired = NumberHelper.intOf(config.getInitParameter("max_error_times"), 300);
+            auth_error_times = NumberHelper.intOf(config.getInitParameter("auth_error_times"), 3);
         }
-    }
-
-    /**
-     * @param username
-     * @param password
-     * @return
-     */
-    private boolean validate(String username, String password) {
-        username = username.trim();
-        password = password.trim();
-        if (username == null || username.isEmpty() || username.length() < 3 || username.length() > 255 ||
-                password == null || password.isEmpty() || password.length() < 6 || password.length() > 40)
-            return false;
-        return true;
     }
 
     @Override
@@ -116,6 +108,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = null;
         String password = null;
+        String method = "byPassword";
         JsonFactory jasonFactory = new JsonFactory();
         JsonParser parser = jasonFactory.createParser(request.getInputStream());
         while (!parser.isClosed()) {
@@ -130,33 +123,48 @@ public class LoginServlet extends HttpServlet {
                     case "password":
                         password = parser.getValueAsString();
                         break;
+                    case "method":
+                        method = parser.getValueAsString();
+                        break;
                 }
             }
         }
         response.setContentType("application/json; charset=UTF-8");
         JsonGenerator generator = jasonFactory.createGenerator(response.getOutputStream(), JsonEncoding.UTF8)
                 .setPrettyPrinter(new DefaultPrettyPrinter());
+        switch (method) {
+            case "byPassword":
+                loginByPassword(request, generator, username, password);
+                break;
+            case "bySms":
+                request.getRequestDispatcher("/v1/sms").forward(request, response);
+                break;
+            case "byShortcut":
+                request.getRequestDispatcher("/v1/wxAuth").forward(request, response);
+                break;
+        }
+        generator.flush();
+        generator.close();
+    }
+
+    private void loginByPassword(HttpServletRequest request, JsonGenerator generator, String username, String password) throws IOException {
         if (validate(username, password)) {
+            //if(captchaCache.get(username)>=3){
+            //需要手动验证
+            //}
             UserApplicationService service = new UserApplicationService();
             UserDescriptor userDescriptor = service.authenticate(username, password);
             if (userDescriptor == UserDescriptor.NullUserDescriptor) {
-                HttpSession session = request.getSession(true);
-                int errorTimes = NumberHelper.intOf((String) session.getAttribute(username), 0);
-                if (errorTimes > max_error_times) {
-                    Cookie cookie = new Cookie("required_captcha", "true");
-                    cookie.setMaxAge(cookie_expired);
-                    response.addCookie(cookie);
-                }
-                session.setAttribute(username, errorTimes + 1);
-                //cache.put(username, errorTimes + 1);
+                int auth_error_times = captchaCache.get(username);
+                captchaCache.put(username, auth_error_times++);
                 generator.writeStartObject();
                 generator.writeStringField("code", "401");
-                generator.writeStringField("msg", "unverified username or password is mismatch");
+                generator.writeStringField("message", "unverified username or password is mismatch");
                 generator.writeEndObject();
             } else {
                 generator.writeStartObject();
                 generator.writeStringField("code", "200");
-                generator.writeStringField("msg", "ok");
+                generator.writeStringField("message", "ok");
                 generator.writeStringField("referer", request.getHeader("Referer"));
                 generator.writeObjectFieldStart("user");
                 generator.writeStringField("id", userDescriptor.id());
@@ -166,10 +174,19 @@ public class LoginServlet extends HttpServlet {
                 generator.writeEndObject();
             }
         } else {
+            generator.writeStartObject();
             generator.writeStringField("code", "400");
-            generator.writeStringField("msg", "Wrong request format");
+            generator.writeStringField("message", "Wrong request format");
+            generator.writeEndObject();
         }
-        generator.flush();
-        generator.close();
+    }
+
+    private boolean validate(String username, String password) {
+        username = username.trim();
+        password = password.trim();
+        if (username == null || username.isEmpty() || username.length() < 3 || username.length() > 255 ||
+                password == null || password.isEmpty() || password.length() < 6 || password.length() > 40)
+            return false;
+        return true;
     }
 }

@@ -18,6 +18,9 @@ package identity.hoprxi.auth.servlet;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import identity.hoprxi.core.application.UserApplicationService;
+import identity.hoprxi.core.application.command.RegisterUserCommand;
+import identity.hoprxi.core.domain.model.id.Enablement;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
 
 import javax.servlet.ServletException;
@@ -33,7 +36,7 @@ import java.util.Optional;
  * @since JDK8.0
  * @version 0.0.1 20180408
  */
-@WebServlet(urlPatterns = {"/v1/users/*"}, name = "users", asyncSupported = false)
+@WebServlet(urlPatterns = {"/v1/user/*"}, name = "user", asyncSupported = false)
 public class UserServlet extends HttpServlet {
 
     @Override
@@ -46,13 +49,14 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String command = "registerByPassword";
         String username = null;
         String password = null;
         String confirmPassword = null;
         String unionId = null;
         String thirdParty = null;
         int smsCode = 0;
+        String invitationCode = null;
+        String method = "bySmsCode";
         JsonFactory jasonFactory = new JsonFactory();
         JsonParser parser = jasonFactory.createParser(request.getInputStream());
         while (!parser.isClosed()) {
@@ -61,11 +65,14 @@ public class UserServlet extends HttpServlet {
                 String fieldName = parser.getCurrentName();
                 parser.nextToken();
                 switch (fieldName) {
-                    case "command":
-                        command = parser.getValueAsString();
+                    case "method":
+                        method = parser.getValueAsString();
                         break;
                     case "smsCode":
                         smsCode = parser.getValueAsInt();
+                        break;
+                    case "invitationCode":
+                        invitationCode = parser.getValueAsString();
                         break;
                     case "username":
                         username = parser.getValueAsString();
@@ -88,44 +95,54 @@ public class UserServlet extends HttpServlet {
         response.setContentType("application/json; charset=UTF-8");
         JsonGenerator generator = jasonFactory.createGenerator(response.getOutputStream(), JsonEncoding.UTF8)
                 .setPrettyPrinter(new DefaultPrettyPrinter());
-        UserDescriptor userDescriptor = UserDescriptor.NullUserDescriptor;
-        switch (command) {
+        switch (method) {
             case "bind":
                 break;
-            case "registerByPassword":
-                userDescriptor = registerUserByPassword(generator, username, password, confirmPassword);
+            case "bySmsCode":
+                registerUser(generator, username, password, confirmPassword);
                 break;
-            case "registerBySmsCode":
+            case "byCode":
                 break;
-        }
-
-        if (userDescriptor == UserDescriptor.NullUserDescriptor) {
-            generator.writeStringField("error", "400");
-            generator.writeStringField("msg", "The user not create");
-        } else {
-            response.setStatus(HttpServletResponse.SC_CREATED);
-            generator.writeStringField("redirectUrl", response.encodeURL(request.getHeader("Referer")));
         }
         generator.flush();
         generator.close();
     }
 
-    private UserDescriptor registerUserByPassword(JsonGenerator generator, String username, String password, String confirmPassword) throws IOException {
+    private void registerUser(JsonGenerator generator, String username, String password, String confirmPassword) throws IOException {
         if (!checkUserName(username)) {
             generator.writeStartObject();
             generator.writeNumberField("code", 400);
-            generator.writeStringField("msg", "错误/非法的用户名");
+            generator.writeStringField("message", "错误/非法的用户名");
             generator.writeEndObject();
-            return UserDescriptor.NullUserDescriptor;
+            return;
         }
         if (!chekPassword(password, confirmPassword)) {
             generator.writeStartObject();
             generator.writeNumberField("code", 400);
-            generator.writeStringField("msg", "密码不符合规范");
+            generator.writeStringField("message", "密码不符合规范");
             generator.writeEndObject();
-            return UserDescriptor.NullUserDescriptor;
+            return;
         }
-        return UserDescriptor.NullUserDescriptor;
+        UserApplicationService service = new UserApplicationService();
+        RegisterUserCommand registerUserCommand = new RegisterUserCommand(username, null, null, password, true, Enablement.PERMANENCE.deadline());
+        UserDescriptor userDescriptor = service.registerUser(registerUserCommand);
+        if (userDescriptor == UserDescriptor.NullUserDescriptor) {
+            generator.writeStartObject();
+            generator.writeStringField("code", "401");
+            generator.writeStringField("message", "用户未能注册!");
+            generator.writeEndObject();
+        } else {
+            generator.writeStartObject();
+            generator.writeStringField("code", "200");
+            generator.writeStringField("message", "ok");
+            //generator.writeStringField("referer", request.getHeader("Referer"));
+            generator.writeObjectFieldStart("user");
+            generator.writeStringField("id", userDescriptor.id());
+            generator.writeStringField("username", userDescriptor.username());
+            generator.writeBooleanField("available", userDescriptor.isAvailable());
+            generator.writeEndObject();
+            generator.writeEndObject();
+        }
     }
 
     private boolean checkUserName(String username) {
@@ -133,8 +150,7 @@ public class UserServlet extends HttpServlet {
     }
 
     private boolean chekPassword(String password, String confirmPassword) {
-        Optional.ofNullable(password).map(u -> confirmPassword).map(b -> password.equals(confirmPassword)).orElse(false);
-        return false;
+        return Optional.ofNullable(password).map(u -> confirmPassword).map(b -> password.equals(confirmPassword)).orElse(false);
     }
 
     @Override

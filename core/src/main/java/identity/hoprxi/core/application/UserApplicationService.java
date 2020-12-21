@@ -58,7 +58,7 @@ public class UserApplicationService {
         return authenticationService.authenticateByEmailAndPassword(usernameOrTelOrEmail, password);
     }
 
-    public UserDescriptor authenticateBySmsCode(String tel, String smsCode) {
+    public UserDescriptor authenticateBySmsCode(String tel, int smsCode) {
         return authenticationService.authenticateByTelAndSmsCode(tel);
     }
 

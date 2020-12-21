@@ -46,6 +46,10 @@ public class AppTest {
         Enablement enablement = new Enablement(true, LocalDateTime.now().plusMinutes(15));
         System.out.println(Optional.ofNullable(enablement).map(e -> enablement).orElse(Enablement.PERMANENCE));
 
+        String user = null;
+        System.out.println("user:");
+        System.out.println(Optional.ofNullable(user).map(u -> user.length() > 1 && user.length() <= 255).orElse(false));
+
         String telephoneNumber = null;
         String username = "13679692308";
         Pattern MOBILE_CN_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");

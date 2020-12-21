@@ -40,8 +40,6 @@ public class UserSocializationService {
         if (password == null || password.isEmpty())
             password = passwordService.generateStrongPassword();
         User user = new User(userRepository.nextIdentity(), username, password, telephoneNumber, email, enablement);
-        System.out.println(user.username() + "   " + user.telephoneNumber());
-        System.out.println(userRepository.isTelephoneNumberExists(user.telephoneNumber()));
         if ((userRepository.isUsernameExists(username) || userRepository.isTelephoneNumberExists(username) || userRepository.isEmailExists(username))
                 || (null != user.telephoneNumber() && (userRepository.isTelephoneNumberExists(user.telephoneNumber()) || userRepository.isUsernameExists(user.telephoneNumber())))
                 || (null != user.email() && (userRepository.isEmailExists(user.email()) || userRepository.isUsernameExists(user.email())))) {

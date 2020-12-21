@@ -43,6 +43,7 @@ public class AuthenticationServiceTest {
         for (String id : userId)
             repository.remove(id);
         socRepository.remove("ojuOc5fgU_HH2PYklITXWmXfq620");
+        socRepository.remove("ojuOc5eTEYAELtAGkw-yVRT8g2bU");
     }
 
     @BeforeClass
@@ -52,7 +53,7 @@ public class AuthenticationServiceTest {
         userId[0] = user.id();
         repository.save(user);
         service1.socializationBindUser("18982455055", "ojuOc5fgU_HH2PYklITXWmXfq620", "WECHAT");
-
+        service1.socializationBindUser("18982455055", "ojuOc5eTEYAELtAGkw-yVRT8g2bU", "WECHAT");
     }
 
     @Test
@@ -74,6 +75,10 @@ public class AuthenticationServiceTest {
 
     @Test
     public void testAuthenticateByTelAndSmsCode() {
+        UserDescriptor userDescriptor = service.authenticateByTelAndSmsCode("18982455055");
+        Assert.assertEquals(userDescriptor.id(), userId[0]);
+        userDescriptor = service.authenticateByTelAndSmsCode("18982455555");
+        Assert.assertTrue(userDescriptor == UserDescriptor.NullUserDescriptor);
     }
 
     @Test
@@ -89,18 +94,11 @@ public class AuthenticationServiceTest {
     @Test
     public void testAuthenticateByThirdParty() {
         UserDescriptor userDescriptor = service.authenticateByThirdParty("ojuOc5fgU_HH2PYklITXWmXfq620");
+        Assert.assertEquals(userDescriptor.id(), userId[0]);
         System.out.println(userDescriptor);
-            /*
-            Socialization socialization = socRepository.find("ojuOc5fgU_HH2PYklITXWmXfq620");
-        Assert.assertNotNull(socialization);
-        UserDescriptor userDescriptor = service.getSocializationBindUser("dy325fbg54");
-        Assert.assertEquals(userDescriptor.id(), "tangtang");
-        userDescriptor = service.getSocializationBindUser("4634567");
+        userDescriptor = service.authenticateByThirdParty("ojuOc5eTEYAELtAGkw-yVRT8g2bU");
+        Assert.assertEquals(userDescriptor.id(), userId[0]);
+        userDescriptor = service.authenticateByThirdParty("ojuOc5fU_HH2PYklITXWmXfq620");
         Assert.assertTrue(userDescriptor == UserDescriptor.NullUserDescriptor);
-        socialization = socRepository.find("dy325f1bg54");
-        Assert.assertNull(socialization);
-        userDescriptor = service.getSocializationBindUser("ojuOc5fgU_HH2PYklITXWmXfq620");
-        Assert.assertEquals(userDescriptor.id(), "shasheng");
-             */
     }
 }

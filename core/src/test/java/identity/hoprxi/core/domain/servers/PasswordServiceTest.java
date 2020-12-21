@@ -33,6 +33,7 @@ public class PasswordServiceTest {
         Assert.assertTrue(ps.isStrong(ps.generateStrongPassword()));
         System.out.println(ps.generateStrongPassword());
         System.out.println(ps.generateStrongPassword());
+        System.out.println(ps.generateStrongPassword());
     }
 
     @Test

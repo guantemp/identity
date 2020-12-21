@@ -16,8 +16,8 @@
  */
 package identity.hoprxi.core.domain.servers;
 
+import java.security.SecureRandom;
 import java.util.Objects;
-import java.util.Random;
 import java.util.regex.Pattern;
 
 /***
@@ -86,7 +86,7 @@ public class PasswordService {
     public String generateStrongPassword() {
         String generatedPassword = null;
         StringBuilder password = new StringBuilder();
-        Random random = new Random();
+        SecureRandom random = new SecureRandom();
         boolean isStrong = false;
         int index = 0;
         while (!isStrong) {
@@ -94,7 +94,7 @@ public class PasswordService {
             switch (opt) {
                 case 0:
                     index = random.nextInt(LETTERS.length());
-                    password.append(LETTERS.substring(index, index + 1));
+                    password.append(LETTERS, index, index + 1);
                     break;
                 case 1:
                     index = random.nextInt(LETTERS.length());
@@ -102,11 +102,11 @@ public class PasswordService {
                     break;
                 case 2:
                     index = random.nextInt(DIGITS.length());
-                    password.append(DIGITS.substring(index, index + 1));
+                    password.append(DIGITS, index, index + 1);
                     break;
                 case 3:
                     index = random.nextInt(SYMBOLS.length());
-                    password.append(SYMBOLS.substring(index, index + 1));
+                    password.append(SYMBOLS, index, index + 1);
                     break;
             }
             generatedPassword = password.toString();
