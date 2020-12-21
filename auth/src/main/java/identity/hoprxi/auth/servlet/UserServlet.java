@@ -22,6 +22,8 @@ import identity.hoprxi.core.application.UserApplicationService;
 import identity.hoprxi.core.application.command.RegisterUserCommand;
 import identity.hoprxi.core.domain.model.id.Enablement;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
+import salt.hoprxi.cache.Cache;
+import salt.hoprxi.cache.CacheManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -38,6 +40,7 @@ import java.util.Optional;
  */
 @WebServlet(urlPatterns = {"/v1/user/*"}, name = "user", asyncSupported = false)
 public class UserServlet extends HttpServlet {
+    private static Cache<String, Integer> cache = CacheManager.buildCache("sms");
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -99,7 +102,7 @@ public class UserServlet extends HttpServlet {
             case "bind":
                 break;
             case "bySmsCode":
-                registerUser(generator, username, password, confirmPassword);
+                registerUser(generator, username, password, confirmPassword, smsCode);
                 break;
             case "byCode":
                 break;
@@ -108,7 +111,7 @@ public class UserServlet extends HttpServlet {
         generator.close();
     }
 
-    private void registerUser(JsonGenerator generator, String username, String password, String confirmPassword) throws IOException {
+    private void registerUser(JsonGenerator generator, String username, String password, String confirmPassword, int smsCode) throws IOException {
         if (!checkUserName(username)) {
             generator.writeStartObject();
             generator.writeNumberField("code", 400);
@@ -116,9 +119,17 @@ public class UserServlet extends HttpServlet {
             generator.writeEndObject();
             return;
         }
+        Integer code = cache.get(username);
+        if (code != null && code.intValue() != smsCode) {
+            generator.writeStartObject();
+            generator.writeNumberField("code", 401);
+            generator.writeStringField("message", "短信验证码不正确或已过期。");
+            generator.writeEndObject();
+            return;
+        }
         if (!chekPassword(password, confirmPassword)) {
             generator.writeStartObject();
-            generator.writeNumberField("code", 400);
+            generator.writeNumberField("code", 402);
             generator.writeStringField("message", "密码不符合规范");
             generator.writeEndObject();
             return;

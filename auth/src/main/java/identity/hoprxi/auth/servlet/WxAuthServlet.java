@@ -16,10 +16,10 @@
  */
 package identity.hoprxi.auth.servlet;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import identity.hoprxi.core.application.UserApplicationService;
+import identity.hoprxi.core.domain.model.id.UserDescriptor;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -45,8 +45,9 @@ import java.nio.charset.StandardCharsets;
  * @version 0.0.1 2020-12-09
  * @since JDK8.0
  */
-@WebServlet(urlPatterns = {"/v1/wxAuth"}, name = "wxAuth", asyncSupported = false, initParams = {
-        @WebInitParam(name = "appid", value = "wx16772085b996e8e0"), @WebInitParam(name = "secret", value = "21d09e4f8930cbc8949fcf7be911f3df")})
+@WebServlet(urlPatterns = {"/v1/auth"}, name = "auth", asyncSupported = false, initParams = {
+        @WebInitParam(name = "appid", value = ""),
+        @WebInitParam(name = "secret", value = "")})
 public class WxAuthServlet extends HttpServlet {
     private static String appid = null;
     private static String secret = null;
@@ -67,10 +68,11 @@ public class WxAuthServlet extends HttpServlet {
         resp.setContentType("application/json; charset=UTF-8");
         JsonGenerator generator = jasonFactory.createGenerator(resp.getOutputStream(), JsonEncoding.UTF8)
                 .setPrettyPrinter(new DefaultPrettyPrinter());
-        generator.writeStartObject();
         if (js_code == null || js_code.isEmpty()) {
+            generator.writeStartObject();
             generator.writeNumberField("code", 400);
-            generator.writeStringField("msg", "未发现合法的登录凭证!");
+            generator.writeStringField("msg", "非法凭证号：" + js_code);
+            generator.writeEndObject();
         } else {
             try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
                 URI uri = new URIBuilder()
@@ -86,24 +88,59 @@ public class WxAuthServlet extends HttpServlet {
                 try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
                     HttpEntity entity = response.getEntity();
                     if (entity != null) {
-                        String result = EntityUtils.toString(entity, StandardCharsets.UTF_8);
-                        generator.writeRaw(result);
+                        String jsonResult = EntityUtils.toString(entity, StandardCharsets.UTF_8);
                         EntityUtils.consume(entity);
                         response.close();
-                        System.out.println(result);
+                        ok(generator, jsonResult);
                     }
                 }
             } catch (URISyntaxException e) {
+                generator.writeStartObject();
                 generator.writeNumberField("code", 401);
                 generator.writeStringField("msg", "微信服务器离线!");
+                generator.writeEndObject();
             }
         }
         generator.flush();
         generator.close();
     }
 
+    private void ok(JsonGenerator generator, String json) throws IOException {
+        String openid = null;
+        String session_key = null;
+        String unionId = null;
+        JsonFactory jasonFactory = new JsonFactory();
+        JsonParser parser = jasonFactory.createParser(json);
+        while (!parser.isClosed()) {
+            JsonToken jsonToken = parser.nextToken();
+            if (JsonToken.FIELD_NAME.equals(jsonToken)) {
+                String fieldName = parser.getCurrentName();
+                parser.nextToken();
+                switch (fieldName) {
+                    case "openid":
+                        openid = parser.getValueAsString();
+                        break;
+                    case "session_key":
+                        session_key = parser.getValueAsString();
+                        break;
+                    case "unionId":
+                        unionId = parser.getValueAsString();
+                        break;
+                }
+            }
+        }
+        if (unionId != null) //替换openid
+            openid = unionId;
+        UserApplicationService service = new UserApplicationService();
+        UserDescriptor userDescriptor = service.authenticateByThirdParty(openid);
+        if (userDescriptor == UserDescriptor.NullUserDescriptor) {
+
+        }
+    }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        doGet(req, resp);
     }
+
 }

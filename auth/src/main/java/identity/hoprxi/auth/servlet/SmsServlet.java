@@ -25,8 +25,10 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import identity.hoprxi.core.application.UserApplicationService;
+import identity.hoprxi.core.domain.model.id.UserDescriptor;
 import salt.hoprxi.cache.Cache;
-import salt.hoprxi.cache.l1.concurrentMap.ConcurrentMapCacheBuilder;
+import salt.hoprxi.cache.CacheManager;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -36,7 +38,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -51,7 +52,7 @@ import java.util.regex.Pattern;
 public class SmsServlet extends HttpServlet {
     private static Pattern MOBILE_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
     private static Pattern SMS_CODE_PATTERN = Pattern.compile("^\\d{6,6}$");
-    private static Cache<String, Integer> cache = new ConcurrentMapCacheBuilder<String, Integer>("sms").expired(15, TimeUnit.MINUTES).build();
+    private static Cache<String, Integer> cache = CacheManager.buildCache("sms");
     private static String accessKey;
     private static String secret;
     private static String signName;
@@ -77,8 +78,10 @@ public class SmsServlet extends HttpServlet {
                 .setPrettyPrinter(new DefaultPrettyPrinter());
         generator.writeStartObject();
         if (!validate(mobile)) {
+            generator.writeStartObject();
             generator.writeNumberField("code", 400);
-            generator.writeStringField("msg", "错误的手机号码");
+            generator.writeStringField("message", "错误的手机号码");
+            generator.writeEndObject();
         } else {
             DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKey, secret);
             IAcsClient client = new DefaultAcsClient(profile);
@@ -97,7 +100,7 @@ public class SmsServlet extends HttpServlet {
                 CommonResponse response = client.getCommonResponse(request);
                 JsonParser parser = jasonFactory.createParser(response.getData());
                 String code = null;
-                String msg = null;
+                String message = null;
                 while (!parser.isClosed()) {
                     JsonToken jsonToken = parser.nextToken();
                     if (JsonToken.FIELD_NAME.equals(jsonToken)) {
@@ -108,25 +111,30 @@ public class SmsServlet extends HttpServlet {
                                 code = parser.getValueAsString();
                                 break;
                             case "Message":
-                                msg = parser.getValueAsString();
+                                message = parser.getValueAsString();
                                 break;
                         }
                     }
                 }
                 if (code.equals("OK")) {
                     cache.put(mobile, saveSmsCode);
+                    generator.writeStartObject();
                     generator.writeNumberField("code", 200);
-                    generator.writeStringField("msg", "验证码已发送");
+                    generator.writeStringField("message", "验证码已发送");
+                    generator.writeEndObject();
                 } else {
-                    generator.writeNumberField("code", 201);
-                    generator.writeStringField("msg", msg);
+                    generator.writeStartObject();
+                    generator.writeNumberField("code", 301);
+                    generator.writeStringField("message", message);
+                    generator.writeEndObject();
                 }
             } catch (ClientException e) {
-                generator.writeNumberField("code", 401);
-                generator.writeStringField("msg", "网络错误！验证码未能发送，请稍后再试。");
+                generator.writeStartObject();
+                generator.writeNumberField("code", 301);
+                generator.writeStringField("message", "网络错误！验证码未能发送，请稍后再试。");
+                generator.writeEndObject();
             }
         }
-        generator.writeEndObject();
         generator.flush();
         generator.close();
     }
@@ -156,25 +164,49 @@ public class SmsServlet extends HttpServlet {
         JsonGenerator generator = jasonFactory.createGenerator(response.getOutputStream(), JsonEncoding.UTF8)
                 .setPrettyPrinter(new DefaultPrettyPrinter());
         boolean checked = true;
-        generator.writeStartObject();
         if (!validate(mobile)) {
+            generator.writeStartObject();
             generator.writeNumberField("code", 400);
-            generator.writeStringField("msg", "错误的手机号码!");
+            generator.writeStringField("message", "错误的手机号码!");
+            generator.writeEndObject();
             checked = false;
         }
         if (!validate(smsCode)) {
+            generator.writeStartObject();
             generator.writeNumberField("code", 400);
             generator.writeStringField("msg", "验证码格式错误!");
+            generator.writeEndObject();
             checked = false;
         }
         if (checked) {
             Integer savedSmsCode = cache.get(mobile);
             if (savedSmsCode != null && savedSmsCode.intValue() == smsCode) {
-                generator.writeNumberField("code", 200);
-                generator.writeStringField("msg", "ok");
+                UserApplicationService service = new UserApplicationService();
+                UserDescriptor userDescriptor = service.authenticateBySmsCode(mobile, smsCode);
+                if (userDescriptor == UserDescriptor.NullUserDescriptor) {
+                    //int auth_error_times = captchaCache.get(username);
+                    //captchaCache.put(username, auth_error_times++);
+                    generator.writeStartObject();
+                    generator.writeStringField("code", "401");
+                    generator.writeStringField("message", "unverified username or password is mismatch");
+                    generator.writeEndObject();
+                } else {
+                    generator.writeStartObject();
+                    generator.writeStringField("code", "200");
+                    generator.writeStringField("message", "ok");
+                    generator.writeStringField("referer", request.getHeader("Referer"));
+                    generator.writeObjectFieldStart("user");
+                    generator.writeStringField("id", userDescriptor.id());
+                    generator.writeStringField("username", userDescriptor.username());
+                    generator.writeBooleanField("available", userDescriptor.isAvailable());
+                    generator.writeEndObject();
+                    generator.writeEndObject();
+                }
             } else {
+                generator.writeStartObject();
                 generator.writeNumberField("code", 201);
-                generator.writeStringField("msg", "短信验证码不正确或已过期。");
+                generator.writeStringField("message", "短信验证码不正确或已过期。");
+                generator.writeEndObject();
             }
         }
         generator.writeEndObject();

@@ -55,7 +55,7 @@ public class UserExceptionFilter implements Filter {
         } catch (UserPasswordWeakException e) {
             generator.writeStartObject();
             generator.writeNumberField("code", 401);
-            generator.writeStringField("message", "密码应当包含数字的字母,长度在6-16位之间!");
+            generator.writeStringField("message", "密码应当包含数字和字母,长度在6-16位之间!");
             generator.writeEndObject();
         }
         generator.flush();
