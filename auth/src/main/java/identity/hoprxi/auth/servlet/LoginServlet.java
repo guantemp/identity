@@ -108,6 +108,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = null;
         String password = null;
+        String js_code = null;
         String method = "byPassword";
         JsonFactory jasonFactory = new JsonFactory();
         JsonParser parser = jasonFactory.createParser(request.getInputStream());
@@ -126,6 +127,9 @@ public class LoginServlet extends HttpServlet {
                     case "method":
                         method = parser.getValueAsString();
                         break;
+                    case "js_code":
+                        js_code = parser.getValueAsString();
+                        break;
                 }
             }
         }
@@ -140,7 +144,7 @@ public class LoginServlet extends HttpServlet {
                 request.getRequestDispatcher("/v1/sms").forward(request, response);
                 break;
             case "byShortcut":
-                request.getRequestDispatcher("/v1/wxAuth").forward(request, response);
+                request.getRequestDispatcher("/v1/auth?js_code=" + js_code).forward(request, response);
                 break;
         }
         generator.flush();

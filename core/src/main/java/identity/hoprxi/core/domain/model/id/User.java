@@ -161,7 +161,7 @@ public class User {
      */
     private void protectPassword(String password) {
         if (new PasswordService().isWeak(password))
-            throw new IllegalArgumentException("password is weak.");
+            throw new UserPasswordWeakException("password is weak.");
         this.password = DomainRegistry.hashService().hash(password);
     }
 
