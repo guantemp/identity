@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2021 www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package identity.hoprxi;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import identity.hoprxi.core.domain.model.id.Enablement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -57,5 +58,8 @@ public class AppTest {
         if (null == telephoneNumber && (MOBILE_CN_PATTERN.matcher(username).find() || FIXED_TELEPHONE_CN_PATTERN.matcher(username).find()))
             telephoneNumber = username;
         System.out.println(telephoneNumber);
+        JsonFactory jasonFactory = new JsonFactory();
+        //JsonGenerator generator = jasonFactory.createGenerator(new StringWriter(System.out), JsonEncoding.UTF8)
+        //.setPrettyPrinter(new DefaultPrettyPrinter());
     }
 }

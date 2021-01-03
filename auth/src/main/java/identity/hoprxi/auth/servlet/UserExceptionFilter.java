@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2021 www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class UserExceptionFilter implements Filter {
         } catch (UserPasswordWeakException e) {
             generator.writeStartObject();
             generator.writeNumberField("code", 401);
-            generator.writeStringField("message", "密码应当包含数字和字母,长度在6-16位之间!");
+            generator.writeStringField("message", "密码应当包含数字和大、小写字母,长度在6-16位之间!");
             generator.writeEndObject();
         }
         generator.flush();

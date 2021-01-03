@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2021 www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
  * @since JDK8.0
  */
 @WebServlet(urlPatterns = {"/v1/sms"}, name = "sms", asyncSupported = false, initParams = {
-        @WebInitParam(name = "expire", value = "5*60*1000"), @WebInitParam(name = "accessKey", value = "LTAI4FypER7p4KzaTVFcRHjd"),
+        @WebInitParam(name = "expire", value = "5*60*1000"), @WebInitParam(name = "accessKey", value = ""),
         @WebInitParam(name = "secret", value = ""), @WebInitParam(name = "signName", value = "ABC商城"),
         @WebInitParam(name = "templateCode", value = "SMS_206562265")})
 public class SmsServlet extends HttpServlet {
@@ -76,7 +76,6 @@ public class SmsServlet extends HttpServlet {
         resp.setContentType("application/json; charset=UTF-8");
         JsonGenerator generator = jasonFactory.createGenerator(resp.getOutputStream(), JsonEncoding.UTF8)
                 .setPrettyPrinter(new DefaultPrettyPrinter());
-        generator.writeStartObject();
         if (!validate(mobile)) {
             generator.writeStartObject();
             generator.writeNumberField("code", 400);
@@ -130,7 +129,7 @@ public class SmsServlet extends HttpServlet {
                 }
             } catch (ClientException e) {
                 generator.writeStartObject();
-                generator.writeNumberField("code", 301);
+                generator.writeNumberField("code", 302);
                 generator.writeStringField("message", "网络错误！验证码未能发送，请稍后再试。");
                 generator.writeEndObject();
             }

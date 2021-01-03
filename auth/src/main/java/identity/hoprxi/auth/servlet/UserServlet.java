@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2021 www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import identity.hoprxi.core.application.UserApplicationService;
 import identity.hoprxi.core.application.command.RegisterUserCommand;
+import identity.hoprxi.core.application.command.SocializationBindUserCommand;
 import identity.hoprxi.core.domain.model.id.Enablement;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
 import salt.hoprxi.cache.Cache;
@@ -55,11 +56,11 @@ public class UserServlet extends HttpServlet {
         String username = null;
         String password = null;
         String confirmPassword = null;
-        String unionId = null;
-        String thirdParty = null;
-        int smsCode = 0;
+        String bindId = null;
+        String thirdPartyName = null;
+        int code = 0;
         String invitationCode = null;
-        String method = "bySmsCode";
+        String method = "byCode";
         JsonFactory jasonFactory = new JsonFactory();
         JsonParser parser = jasonFactory.createParser(request.getInputStream());
         while (!parser.isClosed()) {
@@ -71,8 +72,8 @@ public class UserServlet extends HttpServlet {
                     case "method":
                         method = parser.getValueAsString();
                         break;
-                    case "smsCode":
-                        smsCode = parser.getValueAsInt();
+                    case "code":
+                        code = parser.getValueAsInt();
                         break;
                     case "invitationCode":
                         invitationCode = parser.getValueAsString();
@@ -86,11 +87,11 @@ public class UserServlet extends HttpServlet {
                     case "confirmPassword":
                         confirmPassword = parser.getValueAsString();
                         break;
-                    case "unionId":
-                        unionId = parser.getValueAsString();
+                    case "bindId":
+                        bindId = parser.getValueAsString();
                         break;
-                    case "thirdParty":
-                        thirdParty = parser.getValueAsString();
+                    case "thirdPartyName":
+                        thirdPartyName = parser.getValueAsString();
                         break;
                 }
             }
@@ -100,18 +101,17 @@ public class UserServlet extends HttpServlet {
                 .setPrettyPrinter(new DefaultPrettyPrinter());
         switch (method) {
             case "bind":
-                break;
-            case "bySmsCode":
-                registerUser(generator, username, password, confirmPassword, smsCode);
+                socializationBindUser(generator, username, code, bindId, thirdPartyName);
                 break;
             case "byCode":
+                registerUser(generator, username, password, confirmPassword, code);
                 break;
         }
         generator.flush();
         generator.close();
     }
 
-    private void registerUser(JsonGenerator generator, String username, String password, String confirmPassword, int smsCode) throws IOException {
+    private void socializationBindUser(JsonGenerator generator, String username, int code, String bindId, String thirdPartyName) throws IOException {
         if (!checkUserName(username)) {
             generator.writeStartObject();
             generator.writeNumberField("code", 400);
@@ -119,34 +119,59 @@ public class UserServlet extends HttpServlet {
             generator.writeEndObject();
             return;
         }
-        Integer code = cache.get(username);
-        if (code != null && code.intValue() != smsCode) {
+        Integer cachedCode = cache.get(username);
+        if (cachedCode != null && cachedCode.intValue() != code) {
             generator.writeStartObject();
             generator.writeNumberField("code", 401);
-            generator.writeStringField("message", "短信验证码不正确或已过期。");
+            generator.writeStringField("message", "验证码不正确或已过期。");
+            generator.writeEndObject();
+            return;
+        }
+        UserApplicationService service = new UserApplicationService();
+        SocializationBindUserCommand socializationBindUserCommand = new SocializationBindUserCommand(username, bindId, thirdPartyName);
+        UserDescriptor userDescriptor = service.socializationBindUser(socializationBindUserCommand);
+        this.outputUserDescriptor(generator, userDescriptor);
+    }
+
+    private void registerUser(JsonGenerator generator, String username, String password, String confirmPassword, int code) throws IOException {
+        if (!checkUserName(username)) {
+            generator.writeStartObject();
+            generator.writeNumberField("code", 400);
+            generator.writeStringField("message", "错误/非法的用户名");
+            generator.writeEndObject();
+            return;
+        }
+        Integer cachedCode = cache.get(username);
+        if (cachedCode != null && cachedCode.intValue() != code) {
+            generator.writeStartObject();
+            generator.writeNumberField("code", 401);
+            generator.writeStringField("message", "验证码不正确或已过期。");
             generator.writeEndObject();
             return;
         }
         if (!chekPassword(password, confirmPassword)) {
             generator.writeStartObject();
             generator.writeNumberField("code", 402);
-            generator.writeStringField("message", "密码不符合规范");
+            generator.writeStringField("message", "两次输入的密码不一致");
             generator.writeEndObject();
             return;
         }
         UserApplicationService service = new UserApplicationService();
         RegisterUserCommand registerUserCommand = new RegisterUserCommand(username, null, null, password, true, Enablement.PERMANENCE.deadline());
         UserDescriptor userDescriptor = service.registerUser(registerUserCommand);
+        this.outputUserDescriptor(generator, userDescriptor);
+    }
+
+    private void outputUserDescriptor(JsonGenerator generator, UserDescriptor userDescriptor) throws IOException {
         if (userDescriptor == UserDescriptor.NullUserDescriptor) {
             generator.writeStartObject();
             generator.writeStringField("code", "401");
-            generator.writeStringField("message", "用户未能注册!");
+            generator.writeStringField("message", "用户未注册!");
             generator.writeEndObject();
         } else {
-            generator.writeStartObject();
-            generator.writeStringField("code", "200");
-            generator.writeStringField("message", "ok");
             //generator.writeStringField("referer", request.getHeader("Referer"));
+            generator.writeStartObject();
+            generator.writeStringField("token", "byShortcut");
             generator.writeObjectFieldStart("user");
             generator.writeStringField("id", userDescriptor.id());
             generator.writeStringField("username", userDescriptor.username());

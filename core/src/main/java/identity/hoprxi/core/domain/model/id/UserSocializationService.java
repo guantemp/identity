@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2021 www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,13 +63,12 @@ public class UserSocializationService {
             DomainRegistry.domainEventPublisher().publish(new UserCreated(user.id(), username, user.telephoneNumber(), user.email(), Enablement.PERMANENCE));
         }
         Socialization socialization = socializationRepository.find(unionId);
-        //exists,do nothing
-        if (socialization != null) {
-            return UserDescriptor.NullUserDescriptor;
+        //not exists,bind
+        if (socialization == null) {
+            socialization = new Socialization(unionId, user.id(), Socialization.ThirdParty.valueOf(thirdPartyName));
+            socializationRepository.save(socialization);
+            DomainRegistry.domainEventPublisher().publish(new SocializationBoundUser(unionId, user.id(), thirdPartyName));
         }
-        socialization = new Socialization(unionId, user.id(), Socialization.ThirdParty.valueOf(thirdPartyName));
-        socializationRepository.save(socialization);
-        DomainRegistry.domainEventPublisher().publish(new SocializationBoundUser(unionId, user.id(), thirdPartyName));
         return user.toUserDescriptor();
     }
 
