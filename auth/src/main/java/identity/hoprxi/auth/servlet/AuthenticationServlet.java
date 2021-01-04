@@ -39,15 +39,15 @@ import java.util.regex.Pattern;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 2020-12-08
+ * @version 0.0.2 2021-01-04
  */
-@WebServlet(urlPatterns = {"/v1/login"}, name = "login", asyncSupported = false, initParams = {
+@WebServlet(urlPatterns = {"/v1/auth"}, name = "auth", asyncSupported = false, initParams = {
         @WebInitParam(name = "auth_error_times", value = "3")})
-public class LoginServlet extends HttpServlet {
+public class AuthenticationServlet extends HttpServlet {
     private static int auth_error_times = 3; // error times
     //(?=.*[~@#$%\*-\+=:,\\?\[\]\{}]) 去除特殊字符
     private static Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,16}$");
-    private static Cache<String, Integer> smsCache = CacheManager.buildCache("sms");
+    private static Cache<String, Integer> codeCache = CacheManager.buildCache("code");
     private static Cache<String, Integer> captchaCache = CacheManager.buildCache("captcha");
 
     @Override
@@ -109,6 +109,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = null;
         String password = null;
+        int code = 0;
         String method = "byPassword";
         JsonFactory jasonFactory = new JsonFactory();
         JsonParser parser = jasonFactory.createParser(request.getInputStream());
@@ -127,6 +128,9 @@ public class LoginServlet extends HttpServlet {
                     case "method":
                         method = parser.getValueAsString();
                         break;
+                    case "code":
+                        code = parser.getValueAsInt();
+                        break;
                 }
             }
         }
@@ -135,23 +139,22 @@ public class LoginServlet extends HttpServlet {
                 .setPrettyPrinter(new DefaultPrettyPrinter());
         switch (method) {
             case "byPassword":
-                loginByPassword(generator, username, password, request.getHeader("Referer"));
+                this.authByPassword(generator, username, password, request.getHeader("Referer"));
                 break;
-            case "bySmsCode":
-                request.getRequestDispatcher("/v1/sms").forward(request, response);
+            case "byCode":
+                this.authByCode(generator, username, code, request.getHeader("Referer"));
                 break;
         }
         generator.flush();
         generator.close();
     }
 
-    private void loginByPassword(JsonGenerator generator, String username, String password, String referer) throws IOException {
+    private void authByPassword(JsonGenerator generator, String username, String password, String referer) throws IOException {
         if (!checkUserName(username)) {
             generator.writeStartObject();
             generator.writeNumberField("code", 400);
             generator.writeStringField("message", "错误/非法的用户名");
             generator.writeEndObject();
-            return;
         }
         if (!checkPassword(password)) {
             generator.writeStartObject();
@@ -180,6 +183,43 @@ public class LoginServlet extends HttpServlet {
             generator.writeStringField("username", userDescriptor.username());
             generator.writeBooleanField("available", userDescriptor.isAvailable());
             generator.writeEndObject();
+            generator.writeEndObject();
+        }
+    }
+
+    private void authByCode(JsonGenerator generator, String username, int code, String referer) throws IOException {
+        if (!checkUserName(username)) {
+            generator.writeStartObject();
+            generator.writeNumberField("code", 400);
+            generator.writeStringField("message", "错误/非法的用户名");
+            generator.writeEndObject();
+        }
+        Integer savedCode = codeCache.get(username);
+        if (savedCode != null && savedCode.intValue() == code) {
+            UserApplicationService service = new UserApplicationService();
+            UserDescriptor userDescriptor = service.authenticateByCode(username, code);
+            if (userDescriptor == UserDescriptor.NullUserDescriptor) {
+                //int auth_error_times = captchaCache.get(username);
+                //captchaCache.put(username, auth_error_times++);
+                generator.writeStartObject();
+                generator.writeStringField("code", "401");
+                generator.writeStringField("message", "unverified username or code is mismatch");
+                generator.writeEndObject();
+            } else {
+                generator.writeStartObject();
+                generator.writeStringField("referer", referer);
+                generator.writeStringField("token", "byode");
+                generator.writeObjectFieldStart("user");
+                generator.writeStringField("id", userDescriptor.id());
+                generator.writeStringField("username", userDescriptor.username());
+                generator.writeBooleanField("available", userDescriptor.isAvailable());
+                generator.writeEndObject();
+                generator.writeEndObject();
+            }
+        } else {
+            generator.writeStartObject();
+            generator.writeNumberField("code", 201);
+            generator.writeStringField("message", "验证码不正确或已过期。");
             generator.writeEndObject();
         }
     }

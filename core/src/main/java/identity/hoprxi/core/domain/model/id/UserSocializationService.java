@@ -43,10 +43,7 @@ public class UserSocializationService {
         if ((userRepository.isUsernameExists(username) || userRepository.isTelephoneNumberExists(username) || userRepository.isEmailExists(username))
                 || (null != user.telephoneNumber() && (userRepository.isTelephoneNumberExists(user.telephoneNumber()) || userRepository.isUsernameExists(user.telephoneNumber())))
                 || (null != user.email() && (userRepository.isEmailExists(user.email()) || userRepository.isUsernameExists(user.email())))) {
-            throw new UsernameExistsException("{\n" +
-                    "\t\"code\": 40001,\n" +
-                    "\t\"message\": \"用户名已存在\"\n" +
-                    "}");
+            throw new UsernameExistsException("用户名已存在");
         }
         userRepository.save(user);
         DomainRegistry.domainEventPublisher().publish(new UserCreated(user.id(), username, user.telephoneNumber(), user.email(), enablement));
@@ -78,5 +75,10 @@ public class UserSocializationService {
             socializationRepository.remove(unionId);
             DomainRegistry.domainEventPublisher().publish(new SocializationUnboundUser(unionId));
         }
+    }
+
+    public void changUserPassword(String username, String newPassword) {
+        User user = userRepository.findByUsername(username);
+        user.resetPassword(newPassword);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 www.hoprxi.com All Rights Reserved.
+ * Copyright (c) 2021 www.hoprxi.com All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
  */
 package identity.hoprxi.core.application;
 
+import identity.hoprxi.core.application.command.ChangeUserPasswordCommand;
 import identity.hoprxi.core.application.command.ChangeUsernameCommand;
 import identity.hoprxi.core.application.command.RegisterUserCommand;
-import identity.hoprxi.core.application.command.ResetUserPasswordCommand;
 import identity.hoprxi.core.application.command.SocializationBindUserCommand;
 import identity.hoprxi.core.domain.model.id.User;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
@@ -58,7 +58,7 @@ public class UserApplicationService {
         return authenticationService.authenticateByEmailAndPassword(usernameOrTelOrEmail, password);
     }
 
-    public UserDescriptor authenticateBySmsCode(String tel, int smsCode) {
+    public UserDescriptor authenticateByCode(String tel, int code) {
         return authenticationService.authenticateByTelAndSmsCode(tel);
     }
 
@@ -70,9 +70,10 @@ public class UserApplicationService {
         return userSocializationService.socializationBindUser(socializationBindUserCommand.getUsername(), socializationBindUserCommand.getUnionId(), socializationBindUserCommand.getThirdPartyName());
     }
 
-    public void resetUserPassword(ResetUserPasswordCommand resetUserPasswordCommand) {
-        User user = existingUser(resetUserPasswordCommand.getUserId());
-        user.resetPassword(resetUserPasswordCommand.getNewPassword());
+    public void resetUserPassword(ChangeUserPasswordCommand changeUserPasswordCommand) {
+        User user = userRepository.findByUsername(changeUserPasswordCommand.getUsername());
+        if (user != null)
+            user.resetPassword(changeUserPasswordCommand.getNewPassword());
     }
 
     public void changeUsername(ChangeUsernameCommand changeUsernameCommand) {

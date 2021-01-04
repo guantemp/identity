@@ -25,8 +25,6 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import identity.hoprxi.core.application.UserApplicationService;
-import identity.hoprxi.core.domain.model.id.UserDescriptor;
 import salt.hoprxi.cache.Cache;
 import salt.hoprxi.cache.CacheManager;
 
@@ -46,13 +44,12 @@ import java.util.regex.Pattern;
  * @since JDK8.0
  */
 @WebServlet(urlPatterns = {"/v1/sms"}, name = "sms", asyncSupported = false, initParams = {
-        @WebInitParam(name = "expire", value = "5*60*1000"), @WebInitParam(name = "accessKey", value = ""),
-        @WebInitParam(name = "secret", value = ""), @WebInitParam(name = "signName", value = "ABC商城"),
+        @WebInitParam(name = "expire", value = "5*60*1000"), @WebInitParam(name = "accessKey", value = "LTAI4FypER7p4KzaTVFcRHjd"),
+        @WebInitParam(name = "secret", value = "FPFpdtHV6Dd3n0y45sB28czgIlXY8t"), @WebInitParam(name = "signName", value = "ABC商城"),
         @WebInitParam(name = "templateCode", value = "SMS_206562265")})
-public class SmsServlet extends HttpServlet {
+public class AliSmsServlet extends HttpServlet {
     private static Pattern MOBILE_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
-    private static Pattern SMS_CODE_PATTERN = Pattern.compile("^\\d{6,6}$");
-    private static Cache<String, Integer> cache = CacheManager.buildCache("sms");
+    private static Cache<String, Integer> cache = CacheManager.buildCache("code");
     private static String accessKey;
     private static String secret;
     private static String signName;
@@ -140,87 +137,10 @@ public class SmsServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String mobile = null;
-        int smsCode = 0;
-        JsonFactory jasonFactory = new JsonFactory();
-        JsonParser parser = jasonFactory.createParser(request.getInputStream());
-        while (!parser.isClosed()) {
-            JsonToken jsonToken = parser.nextToken();
-            if (JsonToken.FIELD_NAME.equals(jsonToken)) {
-                String fieldName = parser.getCurrentName();
-                parser.nextToken();
-                switch (fieldName) {
-                    case "mobile":
-                        mobile = parser.getValueAsString();
-                        break;
-                    case "smsCode":
-                        smsCode = parser.getValueAsInt();
-                        break;
-                }
-            }
-        }
-        response.setContentType("application/json; charset=UTF-8");
-        JsonGenerator generator = jasonFactory.createGenerator(response.getOutputStream(), JsonEncoding.UTF8)
-                .setPrettyPrinter(new DefaultPrettyPrinter());
-        boolean checked = true;
-        if (!validate(mobile)) {
-            generator.writeStartObject();
-            generator.writeNumberField("code", 400);
-            generator.writeStringField("message", "错误的手机号码!");
-            generator.writeEndObject();
-            checked = false;
-        }
-        if (!validate(smsCode)) {
-            generator.writeStartObject();
-            generator.writeNumberField("code", 400);
-            generator.writeStringField("msg", "验证码格式错误!");
-            generator.writeEndObject();
-            checked = false;
-        }
-        if (checked) {
-            Integer savedSmsCode = cache.get(mobile);
-            if (savedSmsCode != null && savedSmsCode.intValue() == smsCode) {
-                UserApplicationService service = new UserApplicationService();
-                UserDescriptor userDescriptor = service.authenticateBySmsCode(mobile, smsCode);
-                if (userDescriptor == UserDescriptor.NullUserDescriptor) {
-                    //int auth_error_times = captchaCache.get(username);
-                    //captchaCache.put(username, auth_error_times++);
-                    generator.writeStartObject();
-                    generator.writeStringField("code", "401");
-                    generator.writeStringField("message", "unverified username or password is mismatch");
-                    generator.writeEndObject();
-                } else {
-                    generator.writeStartObject();
-                    generator.writeStringField("code", "200");
-                    generator.writeStringField("message", "ok");
-                    generator.writeStringField("referer", request.getHeader("Referer"));
-                    generator.writeObjectFieldStart("user");
-                    generator.writeStringField("id", userDescriptor.id());
-                    generator.writeStringField("username", userDescriptor.username());
-                    generator.writeBooleanField("available", userDescriptor.isAvailable());
-                    generator.writeEndObject();
-                    generator.writeEndObject();
-                }
-            } else {
-                generator.writeStartObject();
-                generator.writeNumberField("code", 201);
-                generator.writeStringField("message", "短信验证码不正确或已过期。");
-                generator.writeEndObject();
-            }
-        }
-        generator.writeEndObject();
-        generator.flush();
-        generator.close();
     }
 
     private boolean validate(String mobile) {
         if (mobile == null || mobile.isEmpty() || !MOBILE_PATTERN.matcher(mobile).matches())
-            return false;
-        return true;
-    }
-
-    private boolean validate(int smsCode) {
-        if (smsCode == 0 || !SMS_CODE_PATTERN.matcher(String.valueOf(smsCode)).matches())
             return false;
         return true;
     }

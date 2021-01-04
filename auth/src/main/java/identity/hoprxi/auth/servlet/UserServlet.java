@@ -19,8 +19,8 @@ package identity.hoprxi.auth.servlet;
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import identity.hoprxi.core.application.UserApplicationService;
+import identity.hoprxi.core.application.command.ChangeUserPasswordCommand;
 import identity.hoprxi.core.application.command.RegisterUserCommand;
-import identity.hoprxi.core.application.command.SocializationBindUserCommand;
 import identity.hoprxi.core.domain.model.id.Enablement;
 import identity.hoprxi.core.domain.model.id.UserDescriptor;
 import salt.hoprxi.cache.Cache;
@@ -37,11 +37,11 @@ import java.util.Optional;
 /***
  * @author <a href="www.hoprxi.com/authors/guan xianghuang">guan xiangHuan</a>
  * @since JDK8.0
- * @version 0.0.1 20180408
+ * @version 0.0.2 2021-01-04
  */
 @WebServlet(urlPatterns = {"/v1/user/*"}, name = "user", asyncSupported = false)
 public class UserServlet extends HttpServlet {
-    private static Cache<String, Integer> cache = CacheManager.buildCache("sms");
+    private static Cache<String, Integer> cache = CacheManager.buildCache("code");
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -56,11 +56,8 @@ public class UserServlet extends HttpServlet {
         String username = null;
         String password = null;
         String confirmPassword = null;
-        String bindId = null;
-        String thirdPartyName = null;
         int code = 0;
         String invitationCode = null;
-        String method = "byCode";
         JsonFactory jasonFactory = new JsonFactory();
         JsonParser parser = jasonFactory.createParser(request.getInputStream());
         while (!parser.isClosed()) {
@@ -69,9 +66,6 @@ public class UserServlet extends HttpServlet {
                 String fieldName = parser.getCurrentName();
                 parser.nextToken();
                 switch (fieldName) {
-                    case "method":
-                        method = parser.getValueAsString();
-                        break;
                     case "code":
                         code = parser.getValueAsInt();
                         break;
@@ -87,91 +81,41 @@ public class UserServlet extends HttpServlet {
                     case "confirmPassword":
                         confirmPassword = parser.getValueAsString();
                         break;
-                    case "bindId":
-                        bindId = parser.getValueAsString();
-                        break;
-                    case "thirdPartyName":
-                        thirdPartyName = parser.getValueAsString();
-                        break;
                 }
             }
         }
         response.setContentType("application/json; charset=UTF-8");
         JsonGenerator generator = jasonFactory.createGenerator(response.getOutputStream(), JsonEncoding.UTF8)
                 .setPrettyPrinter(new DefaultPrettyPrinter());
-        switch (method) {
-            case "bind":
-                socializationBindUser(generator, username, code, bindId, thirdPartyName);
-                break;
-            case "byCode":
-                registerUser(generator, username, password, confirmPassword, code);
-                break;
-        }
-        generator.flush();
-        generator.close();
-    }
-
-    private void socializationBindUser(JsonGenerator generator, String username, int code, String bindId, String thirdPartyName) throws IOException {
+        boolean checked = true;
         if (!checkUserName(username)) {
             generator.writeStartObject();
             generator.writeNumberField("code", 400);
             generator.writeStringField("message", "错误/非法的用户名");
             generator.writeEndObject();
-            return;
+            checked = false;
         }
         Integer cachedCode = cache.get(username);
-        if (cachedCode != null && cachedCode.intValue() != code) {
+        if (cachedCode == null || cachedCode.intValue() != code) {
             generator.writeStartObject();
             generator.writeNumberField("code", 401);
             generator.writeStringField("message", "验证码不正确或已过期。");
             generator.writeEndObject();
-            return;
-        }
-        UserApplicationService service = new UserApplicationService();
-        SocializationBindUserCommand socializationBindUserCommand = new SocializationBindUserCommand(username, bindId, thirdPartyName);
-        UserDescriptor userDescriptor = service.socializationBindUser(socializationBindUserCommand);
-        this.outputUserDescriptor(generator, userDescriptor);
-    }
-
-    private void registerUser(JsonGenerator generator, String username, String password, String confirmPassword, int code) throws IOException {
-        if (!checkUserName(username)) {
-            generator.writeStartObject();
-            generator.writeNumberField("code", 400);
-            generator.writeStringField("message", "错误/非法的用户名");
-            generator.writeEndObject();
-            return;
-        }
-        Integer cachedCode = cache.get(username);
-        if (cachedCode != null && cachedCode.intValue() != code) {
-            generator.writeStartObject();
-            generator.writeNumberField("code", 401);
-            generator.writeStringField("message", "验证码不正确或已过期。");
-            generator.writeEndObject();
-            return;
+            checked = false;
         }
         if (!chekPassword(password, confirmPassword)) {
             generator.writeStartObject();
             generator.writeNumberField("code", 402);
             generator.writeStringField("message", "两次输入的密码不一致");
             generator.writeEndObject();
-            return;
+            checked = false;
         }
-        UserApplicationService service = new UserApplicationService();
-        RegisterUserCommand registerUserCommand = new RegisterUserCommand(username, null, null, password, true, Enablement.PERMANENCE.deadline());
-        UserDescriptor userDescriptor = service.registerUser(registerUserCommand);
-        this.outputUserDescriptor(generator, userDescriptor);
-    }
-
-    private void outputUserDescriptor(JsonGenerator generator, UserDescriptor userDescriptor) throws IOException {
-        if (userDescriptor == UserDescriptor.NullUserDescriptor) {
+        if (checked) {
+            UserApplicationService service = new UserApplicationService();
+            RegisterUserCommand registerUserCommand = new RegisterUserCommand(username, null, null, password, true, Enablement.PERMANENCE.deadline());
+            UserDescriptor userDescriptor = service.registerUser(registerUserCommand);
             generator.writeStartObject();
-            generator.writeStringField("code", "401");
-            generator.writeStringField("message", "用户未注册!");
-            generator.writeEndObject();
-        } else {
-            //generator.writeStringField("referer", request.getHeader("Referer"));
-            generator.writeStartObject();
-            generator.writeStringField("token", "byShortcut");
+            generator.writeStringField("token", "register");
             generator.writeObjectFieldStart("user");
             generator.writeStringField("id", userDescriptor.id());
             generator.writeStringField("username", userDescriptor.username());
@@ -179,6 +123,8 @@ public class UserServlet extends HttpServlet {
             generator.writeEndObject();
             generator.writeEndObject();
         }
+        generator.flush();
+        generator.close();
     }
 
     private boolean checkUserName(String username) {
@@ -196,6 +142,69 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        super.doPut(request, response);
+        String username = null;
+        String password = null;
+        String confirmPassword = null;
+        int code = 0;
+        JsonFactory jasonFactory = new JsonFactory();
+        JsonParser parser = jasonFactory.createParser(request.getInputStream());
+        while (!parser.isClosed()) {
+            JsonToken jsonToken = parser.nextToken();
+            if (JsonToken.FIELD_NAME.equals(jsonToken)) {
+                String fieldName = parser.getCurrentName();
+                parser.nextToken();
+                switch (fieldName) {
+                    case "code":
+                        code = parser.getValueAsInt();
+                        break;
+                    case "username":
+                        username = parser.getValueAsString();
+                        break;
+                    case "password":
+                        password = parser.getValueAsString();
+                        break;
+                    case "confirmPassword":
+                        confirmPassword = parser.getValueAsString();
+                        break;
+                }
+            }
+        }
+        response.setContentType("application/json; charset=UTF-8");
+        JsonGenerator generator = jasonFactory.createGenerator(response.getOutputStream(), JsonEncoding.UTF8)
+                .setPrettyPrinter(new DefaultPrettyPrinter());
+        boolean checked = true;
+        if (!checkUserName(username)) {
+            generator.writeStartObject();
+            generator.writeNumberField("code", 400);
+            generator.writeStringField("message", "错误/非法的用户名");
+            generator.writeEndObject();
+            checked = false;
+        }
+        Integer cachedCode = cache.get(username);
+        if (cachedCode == null || cachedCode.intValue() != code) {
+            generator.writeStartObject();
+            generator.writeNumberField("code", 401);
+            generator.writeStringField("message", "验证码不正确或已过期。");
+            generator.writeEndObject();
+            checked = false;
+        }
+        if (!chekPassword(password, confirmPassword)) {
+            generator.writeStartObject();
+            generator.writeNumberField("code", 402);
+            generator.writeStringField("message", "两次输入的密码不一致");
+            generator.writeEndObject();
+            checked = false;
+        }
+        if (checked) {
+            UserApplicationService service = new UserApplicationService();
+            ChangeUserPasswordCommand changeUserPasswordCommand = new ChangeUserPasswordCommand(username, password);
+            service.resetUserPassword(changeUserPasswordCommand);
+            generator.writeStartObject();
+            generator.writeNumberField("code", 200);
+            generator.writeStringField("message", "密码已修改");
+            generator.writeEndObject();
+        }
+        generator.flush();
+        generator.close();
     }
 }

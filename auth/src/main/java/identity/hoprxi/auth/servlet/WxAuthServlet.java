@@ -48,7 +48,7 @@ import java.nio.charset.StandardCharsets;
  */
 @WebServlet(urlPatterns = {"/v1/wxAuth"}, name = "wxAuth", asyncSupported = false, initParams = {
         @WebInitParam(name = "appid", value = "wx16772085b996e8e0"),
-        @WebInitParam(name = "secret", value = "")})
+        @WebInitParam(name = "secret", value = "21d09e4f8930cbc8949fcf7be911f3df")})
 public class WxAuthServlet extends HttpServlet {
     private static String appid = null;
     private static String secret = null;
@@ -162,11 +162,7 @@ public class WxAuthServlet extends HttpServlet {
             if (userDescriptor == UserDescriptor.NullUserDescriptor) {//check openId
                 userDescriptor = service.authenticateByThirdParty(openId);
                 if (userDescriptor == UserDescriptor.NullUserDescriptor) {
-                    generator.writeStartObject();
-                    generator.writeNumberField("code", 300);
-                    generator.writeStringField("message", "账号未绑定!");
-                    generator.writeStringField("bindId", openId);
-                    generator.writeEndObject();
+                    this.notAuthenticatedUser(generator, nickName, avatarUrl, openId);
                 } else {//openId has bound
                     SocializationBindUserCommand socializationBindUserCommand = new SocializationBindUserCommand(userDescriptor.username(),
                             unionId, "WECHAT");
@@ -180,19 +176,24 @@ public class WxAuthServlet extends HttpServlet {
             UserApplicationService service = new UserApplicationService();
             UserDescriptor userDescriptor = service.authenticateByThirdParty(openId);
             if (userDescriptor == UserDescriptor.NullUserDescriptor) {
-                generator.writeStartObject();
-                generator.writeNumberField("code", 300);
-                generator.writeStringField("message", "账号未绑定!");
-                generator.writeObjectFieldStart("user");
-                generator.writeStringField("bindId", openId);
-                generator.writeStringField("nickName", nickName);
-                generator.writeStringField("avatarUrl", avatarUrl);
-                generator.writeEndObject();
-                generator.writeEndObject();
+                this.notAuthenticatedUser(generator, nickName, avatarUrl, openId);
             } else {
                 this.authenticatedUser(generator, nickName, avatarUrl, openId, userDescriptor);
             }
         }
+    }
+
+    private void notAuthenticatedUser(JsonGenerator generator, String nickName, String avatarUrl, String openId) throws IOException {
+        generator.writeStartObject();
+        generator.writeNumberField("code", 300);
+        generator.writeStringField("message", "账号未绑定!");
+        generator.writeObjectFieldStart("rawData");
+        generator.writeStringField("bindId", openId);
+        generator.writeStringField("nickName", nickName);
+        generator.writeStringField("avatarUrl", avatarUrl);
+        generator.writeStringField("thirdPartyName", "WECHAT");
+        generator.writeEndObject();
+        generator.writeEndObject();
     }
 
     private void authenticatedUser(JsonGenerator generator, String nickName, String avatarUrl, String unionId, UserDescriptor userDescriptor) throws IOException {
