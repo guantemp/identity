@@ -122,5 +122,4 @@ public class SocializationBindUserServlet extends HttpServlet {
     private boolean checkUserName(String username) {
         return Optional.ofNullable(username).map(u -> username.length() > 1 && username.length() <= 255).orElse(false);
     }
-
 }

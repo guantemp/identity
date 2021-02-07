@@ -42,9 +42,9 @@ import java.util.regex.Pattern;
  * @version 0.0.2 2021-01-04
  */
 @WebServlet(urlPatterns = {"/v1/auth"}, name = "auth", asyncSupported = false, initParams = {
-        @WebInitParam(name = "auth_error_times", value = "3")})
+        @WebInitParam(name = "auth_error_times", value = "6")})
 public class AuthenticationServlet extends HttpServlet {
-    private static int auth_error_times = 3; // error times
+    private static int auth_error_times = 6; // error times
     //(?=.*[~@#$%\*-\+=:,\\?\[\]\{}]) 去除特殊字符
     private static Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,16}$");
     private static Cache<String, Integer> codeCache = CacheManager.buildCache("code");
@@ -55,7 +55,7 @@ public class AuthenticationServlet extends HttpServlet {
         super.init();
         ServletConfig config = getServletConfig();
         if (config != null) {
-            auth_error_times = NumberHelper.intOf(config.getInitParameter("auth_error_times"), 3);
+            auth_error_times = NumberHelper.intOf(config.getInitParameter("auth_error_times"), 6);
         }
     }
 
