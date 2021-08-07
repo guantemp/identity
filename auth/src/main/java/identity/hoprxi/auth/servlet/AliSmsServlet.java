@@ -44,8 +44,8 @@ import java.util.regex.Pattern;
  * @since JDK8.0
  */
 @WebServlet(urlPatterns = {"/v1/sms"}, name = "sms", asyncSupported = false, initParams = {
-        @WebInitParam(name = "expire", value = "5*60*1000"), @WebInitParam(name = "accessKey", value = ""),
-        @WebInitParam(name = "secret", value = ""), @WebInitParam(name = "signName", value = "ABC商城"),
+        @WebInitParam(name = "expire", value = "5*60*1000"), @WebInitParam(name = "accessKey", value = "LTAI4FyvC5dAwjbXtV7ycrKf"),
+        @WebInitParam(name = "secret", value = "GX0wJwQv8G9TQnG1K97Ql0rTE0yBgE"), @WebInitParam(name = "signName", value = "ABC商城"),
         @WebInitParam(name = "templateCode", value = "SMS_206562265")})
 public class AliSmsServlet extends HttpServlet {
     private static Pattern MOBILE_PATTERN = Pattern.compile("^[1](([3][0-9])|([4][5,7,9])|([5][^4,6,9])|([6][6])|([7][3,5,6,7,8])|([8][0-9])|([9][8,9]))[0-9]{8}$");
